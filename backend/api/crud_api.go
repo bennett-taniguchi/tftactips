@@ -22,7 +22,7 @@ func NewCrudAPI() *CrudAPI {
 	// Get API Gateway URL from environment variables
 	apiGatewayURL := os.Getenv("API_GATEWAY_URL")
 	if apiGatewayURL == "" {
-		apiGatewayURL = "https://mga0vgs4zg.execute-api.us-east-1.amazonaws.com/put_get_item" // Default or fallback URL
+		apiGatewayURL = "https://mga0vgs4zg.execute-api.us-east-1.amazonaws.com/prod" // Default or fallback URL
 	}
 
 	return &CrudAPI{
