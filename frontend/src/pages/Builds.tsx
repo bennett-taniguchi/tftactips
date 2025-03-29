@@ -1,8 +1,13 @@
+import TFTCompPreview from "@/components/builds/BuildPreview";
+
+ 
+
 export default function Builds() {
     return (
-        <div>
+        <div className="mx-auto">
 
-           Popular Builds:
+       
+           <TFTCompPreview/>
         </div>
     )
 }

@@ -1,54 +1,63 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
-import Home from './pages/Home'
-import Builds from './pages/Builds'
-import CurrentSet from './pages/CurrentSet'
-import CrudTester from './pages/CrudTester'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import NavMenu from "./NavMenu";
+import Builds from "./pages/Builds";
+import CrudTester from "./pages/CrudTester";
+import CurrentSet from "./pages/CurrentSet";
+import { PopulateData } from "./pages/PopulateData";
+import TraitIcon from "./components/trait/TraitIcon";
+import Home from "./components/home/Home";
 
+
+ 
+
+const PageLayout = ({ children }: any) => (
+  <div className="text-gray-100">{children}</div>
+);
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex flex-col items-center mt-6 mb-4">
-        <h1 className="text-4xl font-bold mb-5 text-blue-600 tracking-wide">
-          <span className="text-blue-800">TFT</span>ac<span className="text-blue-400">.tips</span>
-        </h1>
-        
-        <nav className="w-full flex justify-center">
-          <ul className="flex items-center gap-3">
-          <li>
-          <Link to="/crudtester" className="bg-blue-100 px-4 py-2 rounded-full hover:bg-blue-200 transition-colors text-purple-700 font-bold">
-                Testing
-              </Link>
-            </li>
-      
-            <li>
-              <Link to="/" className="bg-blue-100 px-4 py-2 rounded-full hover:bg-blue-200 transition-colors text-purple-700 font-bold">
-                Home
-              </Link>
-            </li>
-            <li className="text-gray-300">•</li>
-            <li>
-              <Link to="/builds" className="bg-blue-100 px-4 py-2 rounded-full hover:bg-blue-200 transition-colors text-purple-700 font-bold">
-                Builds
-              </Link>
-            </li>
-            <li className="text-gray-300">•</li>
-            <li>
-              <Link to="/currentset" className="bg-blue-100 px-4 py-2 rounded-full hover:bg-blue-200 transition-colors text-purple-700 font-bold">
-                Set 14
-              </Link>
-            </li>
-          </ul>
-        </nav>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+        <NavMenu />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/builds"
+              element={
+                <PageLayout>
+                  <Builds />
+                </PageLayout>
+              }
+            />
+            <Route
+              path="/currentset"
+              element={
+                <PageLayout>
+                  <CurrentSet />
+                </PageLayout>
+              }
+            />
+            <Route
+              path="/crudtester"
+              element={
+                <PageLayout>
+                  <CrudTester />
+                </PageLayout>
+              }
+            />
+            <Route
+              path="/populatedata"
+              element={
+                <PageLayout>
+                  <PopulateData />
+                </PageLayout>
+              }
+            />
+          </Routes>
+        </div>
       </div>
-
-      <Routes> 
-        <Route path="/crudtester" element={<CrudTester/>}/>
-        <Route path="/" element={<Home />} />
-        <Route path="/builds" element={<Builds />} />
-        <Route path="/currentset" element={<CurrentSet />} />
-      </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

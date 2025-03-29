@@ -8,14 +8,14 @@ interface Field {
 }
 
 interface Item extends ApiItem {
-  id: number | string;
-  name: string;
+  id: number | string ;
+  name: string ;
   [key: string]: any;
 }
 
 const CrudTester: React.FC = () => {
   // Available tables with type safety
-  const tables: TableName[] = ['augments', 'builds', 'champions', 'items', 'traits', 'users'];
+  const tables: TableName[] = ['tft_augments', 'tft_builds', 'tft_champions', 'tft_items', 'tft_traits', 'tft_users'];
   
   // State for the form with proper types
   const [selectedTable, setSelectedTable] = useState<TableName | ''>('');
@@ -44,16 +44,16 @@ const CrudTester: React.FC = () => {
     let value = e.target.value;
     
     // If the name doesn't start with the appropriate prefix, add it
-    if (selectedTable === 'augments' && !value.startsWith('#AUGMENT')) {
-      value = '#AUGMENT';
-    } else if (selectedTable === 'champions' && !value.startsWith('#CHAMPION')) {
-      value = '#CHAMPION';
-    } else if (selectedTable === 'items' && !value.startsWith('#ITEM')) {
-      value = '#ITEM';
-    } else if (selectedTable === 'traits' && !value.startsWith('#TRAIT')) {
-      value = '#TRAIT';
+    if (selectedTable === 'tft_augments' && !value.startsWith('#AUGMENT')) {
+      value = '#AUGMENT ';
+    } else if (selectedTable === 'tft_champions' && !value.startsWith('#CHAMPION')) {
+      value = '#CHAMPION ';
+    } else if (selectedTable === 'tft_items' && !value.startsWith('#ITEM')) {
+      value = '#ITEM ';
+    } else if (selectedTable === 'tft_traits' && !value.startsWith('#TRAIT')) {
+      value = '#TRAIT ';
     }
-    
+ 
     setName(value);
   };
   
@@ -95,11 +95,23 @@ const CrudTester: React.FC = () => {
       }
     });
     
-    const payload = {
+    //CURR {"eight":"trox", "id":"1742941542629", "name":"#CHAMPIONaatrox"}
+    //NEEDDED {"#CHAMPION":"aatrox", "METADATA":{"id":"1742941542629", "eight":"trox"}}
+    // par
+    let partitionArr = name.split(' ')
+    let partitionKey =   {} as Record<string,string>;
+    let fullName = ""
+    for(let i =1; i < partitionArr.length;i++) {
+     fullName+= partitionArr[i]
+    }
+    partitionKey[partitionArr[0]+""] = fullName
+
+    const payload = { // match dynamodb schemas
       name,
+      partitionKey,
       ...fieldsObject
     };
-    
+    console.log('payload',payload)
     setIsLoading(true);
     setError('');
     
@@ -262,10 +274,10 @@ const CrudTester: React.FC = () => {
                 onChange={handleNameChange}
                 className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                 placeholder={`Enter name (e.g., ${
-                  selectedTable === 'augments' ? '#AUGMENT Something' : 
-                  selectedTable === 'champions' ? '#CHAMPION Someone' : 
-                  selectedTable === 'items' ? '#ITEM Something' : 
-                  selectedTable === 'traits' ? '#TRAIT Something' : 
+                  selectedTable === 'tft_augments' ? '#AUGMENT Something' : 
+                  selectedTable === 'tft_champions' ? '#CHAMPION Someone' : 
+                  selectedTable === 'tft_items' ? '#ITEM Something' : 
+                  selectedTable === 'tft_traits' ? '#TRAIT Something' : 
                   'Name'
                 })`}
               />

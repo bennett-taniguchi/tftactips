@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
+
 	"time"
 )
 
@@ -43,23 +45,33 @@ type UpdateOperation struct {
 	ExpressionAttributeValues map[string]interface{} `json:"ExpressionAttributeValues"`
 }
 
-func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
-	// Log the starting of the function and the table name
-	tableName = "tft_items"
-	log.Printf("GetAll function called for table: %s", tableName)
+// tableName: items,augments,etc.
+// op: GET,POST,...
+func finalUrl(tableName string, op string, gatewayUrl string) string {
+	tableArr := strings.Split(tableName, "_")
+	table := tableName
+	if len(tableArr) == 2 {
+		table = tableArr[1]
+	}
 
-	// Build the URL with query parameters
-	reqURL, err := url.Parse(c.apiGatewayURL + "/items/GET?TableName=tft_items")
+	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName
+	log.Print("FINALAPIROUTE", apiRoute)
+	return apiRoute
+}
+
+func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
+
+	apiRoute := finalUrl(tableName, "GET", c.apiGatewayURL)
+
+	log.Printf("GetAll function called for table: %s", tableName)
+	log.Print(" ApiRoute: ", apiRoute)
+
+	reqURL, err := url.Parse(apiRoute)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing API URL: %v", err)
 	}
 
-	// Log the full request URL for debugging
 	fullURL := reqURL.String()
-	// Add the query parameter for TableName
-	// query := reqURL.Query()
-	// query.Set("TableName", tableName) // Add TableName to query string
-	// reqURL.RawQuery = query.Encode()  // Set the raw query part of the URL
 
 	log.Printf("Making GET request to: %s", fullURL)
 
@@ -142,31 +154,91 @@ func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
 
 // Create adds a new item to the specified table
 func (c *CrudAPI) Create(tableName string, item TableItem) error {
-	// Build the URL with query parameters
-	reqURL, err := url.Parse(c.apiGatewayURL)
+
+	tableArr := strings.Split(tableName, "_")
+	table := tableName
+	if len(tableArr) == 2 {
+		table = tableArr[1]
+	}
+
+	// 1. Build the URL
+	reqURL, err := url.Parse(c.apiGatewayURL + "/" + table + "/POST")
 	if err != nil {
 		return fmt.Errorf("error parsing API URL: %v", err)
 	}
 
 	q := reqURL.Query()
-	q.Set("TableName", tableName)
+	q.Set("TableName", (tableName))
 	reqURL.RawQuery = q.Encode()
 
-	// Marshal the item to JSON
-	jsonData, err := json.Marshal(item)
+	// 2. Extract partition key from the item
+	partitionKey, partitionValue, err := extractPartitionKey(item)
+	if err != nil {
+		return err
+	}
+	//3. Extract non pk,metadata:
+	data := extractNonMetadata(item)
+	// 3. Structure the item for DynamoDB
+	dynamoItem := map[string]interface{}{
+		partitionKey: partitionValue,
+		"METADATA":   item["id"],
+	}
+	for key, value := range data {
+		// Optional: Skip if the key already exists to avoid overwriting
+		if _, exists := dynamoItem[key]; !exists {
+			dynamoItem[key] = value
+		}
+	}
+
+	// 4. Marshal and send the request
+	return sendRequest(reqURL.String(), dynamoItem)
+}
+
+// Helper function to extract partition key
+func extractPartitionKey(item TableItem) (string, string, error) {
+	fieldMap, ok := item["partitionKey"].(map[string]interface{})
+	if !ok {
+		return "", "", fmt.Errorf("partitionKey is not a map")
+	}
+
+	for key, value := range fieldMap {
+		if strings.HasPrefix(key, "#") {
+			return key, fmt.Sprintf("%v", value), nil
+		}
+	}
+
+	return "", "", fmt.Errorf("no valid partition key found with # prefix")
+}
+
+// Helper function to extract metadata fields
+// currently it is id
+func extractNonMetadata(item TableItem) map[string]interface{} {
+	metadata := make(map[string]interface{})
+	for key, value := range item {
+		if key != "id" && key != "name" && key != "partitionKey" { // do not accept the actual metadata, or aliases for partitionkey
+			metadata[key] = value
+		}
+	}
+	return metadata
+}
+
+// Helper function to send the request and process response
+func sendRequest(url string, data interface{}) error {
+	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return fmt.Errorf("error marshaling item to JSON: %v", err)
 	}
 
-	// Create the POST request
-	req, err := http.NewRequest("POST", reqURL.String(), bytes.NewBuffer(jsonData))
+	log.Printf("Request URL: %s", url)
+	log.Printf("Request data: %s", string(jsonData))
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("error creating request: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
-	// Make the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -174,22 +246,36 @@ func (c *CrudAPI) Create(tableName string, item TableItem) error {
 	}
 	defer resp.Body.Close()
 
-	// Read the response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("error reading response body: %v", err)
 	}
 
-	// Check if the status code indicates an error
 	if resp.StatusCode != http.StatusOK {
-		var errorResp map[string]string
-		if err := json.Unmarshal(body, &errorResp); err == nil {
-			return fmt.Errorf("API error: %s", errorResp["error"])
-		}
-		return fmt.Errorf("API returned status code %d: %s", resp.StatusCode, string(body))
+		return handleErrorResponse(resp.StatusCode, body)
 	}
 
 	return nil
+}
+
+// Helper function to handle error responses
+func handleErrorResponse(statusCode int, body []byte) error {
+	var errorResp map[string]interface{}
+	if err := json.Unmarshal(body, &errorResp); err == nil {
+		log.Printf("API error details: %+v", errorResp)
+
+		// Check various possible error field names
+		for _, field := range []string{"error", "message", "errorMessage", "Error"} {
+			if errMsg, ok := errorResp[field].(string); ok {
+				return fmt.Errorf("API error: %s", errMsg)
+			}
+		}
+
+		errBytes, _ := json.Marshal(errorResp)
+		return fmt.Errorf("API error: %s", string(errBytes))
+	}
+
+	return fmt.Errorf("API returned status code %d: %s", statusCode, string(body))
 }
 
 // Update modifies an existing item in the specified table

@@ -9,7 +9,7 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 // Table names that can be used with the API
-export type TableName = 'augments' | 'builds' | 'champions' | 'items' | 'traits' | 'users';
+export type TableName = 'tft_augments' | 'tft_builds' | 'tft_champions' | 'tft_items' | 'tft_traits' | 'tft_users';
 
 // Generic item interface for any table data
 export interface Item {
