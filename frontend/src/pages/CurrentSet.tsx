@@ -1,7 +1,7 @@
 import TFTTraitRow from "@/components/set/TFTTraitRow";
+import TraitIcon from "@/components/trait/TraitIcon";
 import { cn } from "@/lib/utils";
-
-import React from 'react';
+ 
 
 
  
@@ -17,24 +17,25 @@ export default function CurrentSet() {
 
   return (
     <div className="text-center pb-[20px]">
-      <div className="mx-auto w-[90svw]   flex-grow bg-blue-200 rounded-lg">
+      <div className="mx-auto w-[90svw]   flex-grow bg-gray-800/50 rounded-lg">
         <div className="text-left  ">
-          <div className="w-[90svw]   bg-blue-400 rounded-t-lg">
-            <div className="pl-[20px] pt-[15px] flex flex-row  ">
+          <div className="w-[90svw]   bg-linear-to-t from-purple-500 to-indigo-500 rounded-t-lg">
+            <div className="pl-[20px] pt-[15px] flex flex-row  pb-5">
               {" "}
               <span className=" font-bold text-4xl  text-white drop-shadow-2xl">
                 Traits
               </span>
-              <div className="ml-[20px] flex flex-row pl-[10px] pt-[10px] gap-2 bg-blue-500 rounded-full pr-2">
+              <div className="ml-[20px] flex flex-row pl-[10px] py-[10px] gap-2 bg-gray-800/50 rounded-full pr-2">
                 {numbers.map((num) => (
-                  <button
-                    className={cn(
-                      " mt-[-5px] cursor-pointer  mx-auto   w-[40px]  h-[30px] rounded-full text-center text-black align-text-bottom ",
-                      getBgColor(num)
-                    )}
-                  >
-                    {num}
-                  </button>
+                  // <button
+                  //   className={cn(
+                  //     " mt-[-5px] cursor-pointer  mx-auto   w-[40px]  h-[30px] rounded-full text-center text-black align-text-bottom ",
+                  //     getBgColor(num)
+                  //   )}
+                  // >
+                  //   {num}
+                  // </button>
+                  <TraitIcon  size={40} num={num} bgColor={cn(getBgColor(num))}/>
                 ))}
               </div>
             </div>
@@ -46,7 +47,7 @@ export default function CurrentSet() {
           </div>
         </div>
       </div>
-      <div className="py-[20px]"></div>
+      {/* <div className="py-[20px]"></div>
       <div className="mx-auto w-[90svw] h-[400px] bg-blue-300 rounded-lg">
         <div className="text-left pl-[20px] ">
           <span className=" font-bold text-4xl  text-blue-700 drop-shadow-2xl">
@@ -62,7 +63,7 @@ export default function CurrentSet() {
             Augments
           </span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

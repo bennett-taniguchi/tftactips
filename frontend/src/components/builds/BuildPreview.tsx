@@ -1,7 +1,8 @@
 import React from 'react';
 import TraitIcon from '../trait/TraitIcon';
+import { cn } from '@/lib/utils';
 
-const TFTCompPreview = () => {
+const TFTCompPreview = ({tier}:any) => {
   // Sample data
   const compName = "Anima Squad Vertical";
   const traits = [
@@ -61,19 +62,32 @@ const TFTCompPreview = () => {
       default: return 'border-gray-400 bg-gray-800';
     }
   };
-
+  let gradientString = "from-purple-400 to-blue-500"
+ // let bgString= "bg-gradient-to-r from-gray-900 from-50% via-red-500/50 via-70% to-black to-90% "
+   let bgString= " bg-linear-[155deg,black_5%,red_60%,orange_90%,yellow] "
+  if(tier=='S') {
+    gradientString = 'from-red-400 to-orange-500'
+   
+  } else if(tier=="A") {
+gradientString = 'from-blue-400 to-purple-500'
+ bgString= "bg-linear-[155deg,teal_5%,purple_60%,blue_90%,teal]"
+  } else {
+gradientString = 'from-green-200 to-amber-200'
+  bgString= "bg-linear-[155deg,teal_5%,pink_60%,green_90%,lime]"
+  }
+ 
   return (
-    <div className="w-full   p-4 bg-gradient-to-b from-gray-900 to-black rounded-lg border border-purple-500/50">
+    <div className={cn("w-full   p-4  rounded-lg border border-purple-500/50 mb-5 ",bgString)}>
       <div className="flex flex-col gap-4">
         {/* Row with all sections */}
         <div className="flex flex-row items-start gap-4">
           {/* Comp Name */}
-          <div className="w-48">
-            <h3 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-1">  {compName}</h3>
+          <div className="w-48 ">
+            <h3 className={cn("text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r   mb-1" , gradientString)}>  {compName} </h3>
             
-            <div className="w-64">
-            <h3 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-1">Traits</h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="w-64f">
+            <h3 className={cn("text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r  mb-1",gradientString)}>Traits</h3>
+            <div className="  flex flex-wrap gap-2 bg-gray-900/50 p-5">
               {traits.map((trait, index) => (
                 <div key={index} className="relative   flex items-center justify-center" style={{ clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)" }}>
                    <TraitIcon   isPrismatic bgColor='bg-black/30' size={60} src="https://tft-set14.s3.us-east-2.amazonaws.com/traits/tft14_emblem_cyberboss-tft_set14+(1).png"/>
@@ -81,7 +95,7 @@ const TFTCompPreview = () => {
                  </div>
               ))}
 
-<div className='border-black border bg-white rounded-full w-7 h-7 text-center   z-50 absolute ml-[40px] mt-[40px] text-xl font-extrabold  '>   <span className=' text-purple-600'>{3}</span>
+<div className='border-black border bg-white rounded-full w-7 h-7 text-center   z-50    text-xl font-extrabold  '>   <span className=' text-purple-600'>{3}</span>
 </div>
             </div>
           </div>
@@ -92,7 +106,7 @@ const TFTCompPreview = () => {
           
           {/* Units */}
           <div className="w-64">
-            <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-1">Units</h3>
+            <h3 className={cn("text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r   mb-1 ",gradientString)}>Units</h3>
             <div className="flex flex-wrap gap-2">
               {units.map((unit, index) => (
                 <div key={index} className={`w-12 h-12 rounded-full ${getCostColor(unit.cost)} border-2 overflow-hidden flex items-center justify-center`}>
@@ -104,7 +118,7 @@ const TFTCompPreview = () => {
           
           {/* Placement */}
           <div className="w-200 ">
-            <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-1">Placement</h3>
+            <h3 className={cn("text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r   mb-1 ",gradientString)}>Placement</h3>
             <div className="flex flex-col gap-1">
               {placement.map((row, rowIndex) => (
                 <div key={rowIndex} className="flex" style={{ marginLeft: rowIndex % 2 === 0 ? '0' : '20px' }}>
@@ -123,7 +137,7 @@ const TFTCompPreview = () => {
         
         {/* Carries Section */}
         <div  >
-          <h3 className="text-right text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-1">Carries</h3>
+          <h3 className={cn("text-right text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r   mb-1 ", gradientString)}>Carries</h3>
           <div className="flex gap-4  justify-end">
             {carries.map((carry, index) => (
               <div key={index} className="flex bg-gray-800/60 p-2 rounded border border-purple-500/30">

@@ -7,7 +7,9 @@ export default function Builds() {
         <div className="mx-auto">
 
        
-           <TFTCompPreview/>
+           <TFTCompPreview tier={"S"}/>
+           <TFTCompPreview tier={"A"}/>
+           <TFTCompPreview tier={"B"}/>
         </div>
     )
 }
