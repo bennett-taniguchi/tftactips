@@ -45,6 +45,18 @@ type UpdateOperation struct {
 	ExpressionAttributeValues map[string]interface{} `json:"ExpressionAttributeValues"`
 }
 
+func finalUrlPartition(tableName string, op string, gatewayUrl string, pKey string, pVal string) string {
+	tableArr := strings.Split(tableName, "_")
+	table := tableName
+	if len(tableArr) == 2 {
+		table = tableArr[1]
+	}
+
+	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&PartitionKey=" + pKey + "&PartitionValue=" + pVal
+	log.Print("FINALAPIROUTE", apiRoute)
+	return apiRoute
+}
+
 // tableName: items,augments,etc.
 // op: GET,POST,...
 func finalUrl(tableName string, op string, gatewayUrl string) string {
@@ -57,6 +69,99 @@ func finalUrl(tableName string, op string, gatewayUrl string) string {
 	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName
 	log.Print("FINALAPIROUTE", apiRoute)
 	return apiRoute
+}
+
+func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) ([]TableItem, error) {
+	apiRoute := finalUrlPartition(tableName, "GET", c.apiGatewayURL, pkey, pval)
+
+	log.Printf("GetAll function called for table: %s and pkey %s and pval %s", tableName, pkey, pval)
+	log.Print(" ApiRoute: ", apiRoute)
+
+	reqURL, err := url.Parse(apiRoute)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing API URL: %v", err)
+	}
+
+	fullURL := reqURL.String()
+
+	log.Printf("Making GET request to: %s", fullURL)
+
+	// Make the GET request with a timeout
+	client := &http.Client{
+		Timeout: 30 * time.Second, // Add a reasonable timeout
+	}
+
+	resp, err := client.Get(fullURL)
+	if err != nil {
+		return nil, fmt.Errorf("error making GET request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Log the response status and headers
+	log.Printf("Received response with status: %d", resp.StatusCode)
+	log.Printf("Response Headers: %+v", resp.Header)
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %v", err)
+	}
+
+	// Log a truncated version of the response body for debugging
+	bodyStr := string(body)
+	if len(bodyStr) > 500 {
+		log.Printf("Response body (truncated): %s...", bodyStr[:500])
+	} else {
+		log.Printf("Response body: %s", bodyStr)
+	}
+
+	// Check if the status code indicates an error
+	if resp.StatusCode != http.StatusOK {
+		// Try to parse as JSON error first
+		var errorResp map[string]interface{}
+		if err := json.Unmarshal(body, &errorResp); err == nil {
+			// Log the full error structure for debugging
+			log.Printf("API error details: %+v", errorResp)
+
+			// Check various possible error field names
+			for _, field := range []string{"error", "message", "errorMessage", "Error"} {
+				if errMsg, ok := errorResp[field].(string); ok {
+					return nil, fmt.Errorf("API error: %s", errMsg)
+				}
+			}
+
+			// If we can't find a specific error message field, return the whole object
+			errBytes, _ := json.Marshal(errorResp)
+			return nil, fmt.Errorf("API error: %s", string(errBytes))
+		}
+
+		// Fallback to raw body if not JSON
+		return nil, fmt.Errorf("API returned status code %d: %s", resp.StatusCode, string(body))
+	}
+
+	// Parse the response
+	var result struct {
+		Items []TableItem `json:"Items"`
+	}
+
+	// Check if the response might be directly returning Items array rather than an object
+	if bodyStr[0] == '[' {
+		log.Printf("Response appears to be a direct array, trying to parse as Items")
+		var items []TableItem
+		if err := json.Unmarshal(body, &items); err != nil {
+			return nil, fmt.Errorf("error parsing response as array: %v", err)
+		}
+		return items, nil
+	}
+
+	// Try parsing as expected structure with Items field
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("error parsing response JSON: %v (body: %s)", err, bodyStr[:min(len(bodyStr), 200)])
+	}
+
+	log.Printf("Successfully parsed response, found %d items", len(result.Items))
+	return result.Items, nil
+
 }
 
 func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {

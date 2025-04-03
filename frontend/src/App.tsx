@@ -16,7 +16,7 @@ const PageLayout = ({ children }: any) => (
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-emerald-900">
         <NavMenu />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           <Routes>

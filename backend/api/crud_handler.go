@@ -48,9 +48,17 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Handle based on HTTP method
+	pkey := r.URL.Query().Get("pkey")
+	pval := r.URL.Query().Get("pval")
+	fmt.Printf("Query params: pkey: %s pval: %s", pkey, pval)
 	switch r.Method {
 	case "GET":
-		h.handleGet(w, r, tableName)
+		if pkey != "" && pval != "" {
+			h.handleParameterizedGet(w, r, tableName, pkey, pval)
+		} else {
+			h.handleGet(w, r, tableName)
+		}
+
 	case "POST":
 		h.handlePost(w, r, tableName)
 	case "PUT":
@@ -60,6 +68,27 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func (h *CrudHandler) handleParameterizedGet(w http.ResponseWriter, r *http.Request, tableName string, pkey string, pval string) {
+	items, err := h.crudAPI.GetByPartitionKey(tableName, pkey, pval)
+	if err != nil {
+		log.Printf("Error fetching items from %s: on PKEY: %s with PVAL: %s %v", tableName, pkey, pval, err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"error": fmt.Sprintf("Failed to fetch items: %v", err),
+		})
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"items": items,
+	})
 }
 
 // handleGet handles GET requests to retrieve all items from a table
@@ -74,10 +103,10 @@ func (h *CrudHandler) handleGet(w http.ResponseWriter, r *http.Request, tableNam
 		})
 		return
 	}
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"items": items,

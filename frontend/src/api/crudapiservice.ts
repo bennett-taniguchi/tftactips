@@ -45,10 +45,40 @@ export class ApiError extends Error {
   }
 }
 
+
 /**
  * Service for CRUD API operations
  */
 export const CrudService = {
+
+  
+  getByPartitionKey: async (tableName: TableName, pkey: string, pval:string): Promise<Item[]> => {
+
+    console.log(`${API_BASE_URL}/api/crud/?table=${tableName}&pkey=${pkey}&pval=${pval}`)
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/crud/?table=${tableName}&pkey=${pkey}&pval=${pval}`, {
+        method: 'GET',
+       
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new ApiError(error.error || 'Failed to fetch items', response.status);
+      }
+      
+      const data = await response.json() as GetItemsResponse;
+      console.log('data',)
+      return data.items || [];
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError((error as Error).message);
+    }
+  },
   /**
    * Get all items from a table
    * @param tableName The table to fetch from
