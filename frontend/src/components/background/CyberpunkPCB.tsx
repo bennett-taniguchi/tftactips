@@ -492,7 +492,7 @@ const CyberpunkPCB = () => {
         style={{
           background: 'linear-gradient(to bottom, #000, #001a09)',
           width: '100vw',
-          height: '450vh'
+          height: '270vh'
         }}
       >
         {/* Grid pattern overlay */}

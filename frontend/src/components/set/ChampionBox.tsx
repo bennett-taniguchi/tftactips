@@ -152,15 +152,15 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
         const formattedKey = displayKey.charAt(0).toUpperCase() + displayKey.slice(1);
         
         return (
-          <p key={key}>{formattedKey}: <span className="text-white">{ability[key]}</span></p>
+          <p key={key}>{formattedKey}: <span className="text-white text-sm">{ability[key]}</span></p>
         );
       });
     };
 
     return (
-      <div className={`${theme.textAccent}  text-xs p-5 h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left`}>
-        <div className="flex-grow">
-          <p>Ability: {ability.name}</p>
+      <div className={`${theme.textAccent} text-xs p-5 h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left relative pb-10`}>
+        <div className="flex-grow overflow-y-auto pr-2 max-h-full">
+          <p className="text-lg">Ability: {ability.name}</p>
           <div className="font-extralight text-xs">{ability.desc}</div>
           
           {/* Dynamically render ability stats in priority order */}
@@ -169,16 +169,18 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
           </div>
         </div>
         
-        <div className="flex justify-end mt-auto">
-          <img 
-            src={abilityUrl} 
-            className={`border border-yellow-500/50 w-20 h-20 mr-4 mb-4 saturate-150 object-cover`}
-            style={{ objectFit: "cover" }}
-            onError={(e) => {
-              // Fallback if image fails to load
-              e.currentTarget.src = "https://tft-set14.s3.us-east-2.amazonaws.com/placeholder.png";
-            }}
-          />
+        {/* Absolutely positioned ability image at the bottom */}
+        <div className="absolute bottom-[10px] right-5 transform  z-20">
+          <div className={`rounded-full border-2 ${theme.border} w-16 h-16 shadow-lg ${theme.shadow}`}>
+            <img 
+              src={abilityUrl} 
+              className="w-full h-full object-cover saturate-150 rounded-full"
+              onError={(e) => {
+                // Fallback if image fails to load
+                e.currentTarget.src = "https://tft-set14.s3.us-east-2.amazonaws.com/placeholder.png";
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -186,16 +188,17 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
 
   function ChampStats() {
     return (
-      <div className={`${theme.textAccent} h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left p-2`}>
-        <p className="text-lg font-semibold mb-2">Champion Statistics</p>
-        <div className="grid grid-cols-2 gap-2 flex-grow">
-          <p>Health: <span className="text-white">{data.stats?.hp || "N/A"}</span></p>
-          <p>Mana: <span className="text-white">{data.stats?.mana || "N/A"}</span></p>
-          <p>Armor: <span className="text-white">{data.stats?.armor || "N/A"}</span></p>
-          <p>MR: <span className="text-white">{data.stats?.mr || "N/A"}</span></p>
-          <p>DPS: <span className="text-white">{data.stats?.dps || "N/A"}</span></p>
-          <p>Attack Speed: <span className="text-white">{data.stats?.attackSpeed || "N/A"}</span></p>
-          <p>Range: <span className="text-white">{data.stats?.range || "N/A"}</span></p>
+      <div className={`${theme.textAccent} h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left p-4`}>
+        <p className="text-lg font-semibold mb-2">Champion Stats</p>
+        <div className="grid grid-cols-2 gap-y-3 gap-x-2 flex-grow text-sm overflow-y-auto max-h-full">
+          <p>Health: <span className="text-white font-medium">{data.stats?.hp || "N/A"}</span></p>
+          <p>Mana: <span className="text-white font-medium">{data.stats?.mana || "N/A"}</span></p>
+          <p>Armor: <span className="text-white font-medium">{data.stats?.armor || "N/A"}</span></p>
+          <p>MR: <span className="text-white font-medium">{data.stats?.mr || "N/A"}</span></p>
+          <p>DPS: <span className="text-white font-medium">{data.stats?.dps || "N/A"}</span></p>
+          <p>Attack Speed: <span className="text-white font-medium">{data.stats?.attackSpeed || "N/A"}</span></p>
+          <p>Range: <span className="text-white font-medium">{data.stats?.range || "N/A"}</span></p>
+          <p>Damage: <span className="text-white font-medium">{data.stats?.damage || "N/A"}</span></p>
         </div>
       </div>
     );
@@ -203,15 +206,17 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
 
   function ChampPlaystyle() {
     return (
-      <div className={`${theme.textAccent} h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left p-2`}>
+      <div className={`${theme.textAccent} h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left p-4`}>
         <p className="text-lg font-semibold mb-2">Playstyle Tips</p>
-        <ul className="list-disc pl-5 space-y-1 font-extralight flex-grow">
-          <li>Best positioned: {data.position || "Flexible"}</li>
-          <li>Recommended items: {data.items?.join(", ") || "Varies based on comp"}</li>
-          <li>Synergizes with: {data.synergies?.join(", ") || "Champions sharing traits"}</li>
-          <li>Power spikes: {data.powerSpikes || "When ability activates"}</li>
-          <li>Counter strategies: {data.counters || "CC and burst damage"}</li>
-        </ul>
+        <div className="overflow-y-auto pr-2 max-h-full">
+          <ul className="list-disc pl-5 space-y-2 font-extralight">
+            <li>Best positioned: <span className="text-white">{data.position || "Flexible"}</span></li>
+            <li>Recommended items: <span className="text-white">{data.items?.join(", ") || "Varies based on comp"}</span></li>
+            <li>Synergizes with: <span className="text-white">{data.synergies?.join(", ") || "Champions sharing traits"}</span></li>
+            <li>Power spikes: <span className="text-white">{data.powerSpikes || "When ability activates"}</span></li>
+            <li>Counter strategies: <span className="text-white">{data.counters || "CC and burst damage"}</span></li>
+          </ul>
+        </div>
       </div>
     );
   }
@@ -233,13 +238,13 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
   const inactiveButtonStyle = `cursor-pointer ${theme.buttonInactive} bg-gray-900 text-white/50 font-mono rounded-b-none border-t border-x`;
 
   return (
-    <div className={`h-full relative overflow-hidden bg-gray-900 ${theme.border} drop-shadow-lg ${theme.shadow} p-5 rounded flex flex-col`}>
+    <div className={`border h-full relative overflow-hidden bg-gray-900 ${theme.border} drop-shadow-lg ${theme.shadow} p-5 rounded flex flex-col`}>
       {/* Background glow effect */}
       <div className={`absolute -inset-1 bg-gradient-to-r ${theme.gradient}`}></div>
 
       {/* Champion card content */}
       <div className="relative z-10 flex flex-col h-full ">
-        <div className="flex justify-between items-start bg-gray-800/30    px-5">
+        <div className="flex justify-between items-start bg-gray-800/30 pt-2 px-5">
           <div>
             <p className={`text-4xl font-bold text-white font-mono tracking-tight text-shadow ${theme.shadow}`}>
               {data.name}
@@ -254,7 +259,7 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
 
           {/* Image container with traits below */}
           <div className="flex flex-col items-center ">
-            <div className="w-28 h-28 overflow-hidden   rounded ">
+            <div className="w-28 h-28 overflow-hidden rounded ">
               <img
                 className="w-28 h-28 object-cover saturate-150"
                 src={champurl}
@@ -294,7 +299,7 @@ export default function ChampionBox({ item }: ChampionBoxProps) {
         </div>
         
         {/* Tab content - flex-grow to take remaining height */}
-        <div className={`border-t border-x ${theme.border} text-lg font-light rounded-b-none p-2 flex-grow overflow-auto`}>
+        <div className={`border-t border-x ${theme.border} text-lg font-light rounded-b-none p-0 flex-grow overflow-visible relative`}>
           {renderTabContent()}
         </div>
 

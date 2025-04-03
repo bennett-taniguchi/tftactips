@@ -53,13 +53,16 @@ if(isLoading)
       </div>
 
       {/* First section - Traits */}
-      <div className="  relative mx-auto w-[90svw] rounded-xl flex-grow border border-lime-400 bg-gradient-to-t from-emerald-900 to-green-900 shadow-inner overflow-hidden">
+      <div className="  relative mx-auto w-[90svw] rounded-xl flex-grow     bg-gradient-to-t from-emerald-900 to-green-900 shadow-inner overflow-hidden">
       
         <div className=" mt-[-20px] w-full rounded-2xl ">
          
-         <div className=" absolute w-[100svw] opacity-50 h-[200svh]  ">
+         <div className=" absolute w-[50svw] opacity-50 h-[200svh] mt-[-36svh] ">
             {" "}
             <CyberpunkPCB />
+            <div className="mt-[-15svh]">
+            <CyberpunkPCB />
+            </div>
           </div>
 
           {/* Trait grid content - positioned above the hexagonal background */}
@@ -82,10 +85,10 @@ if(isLoading)
       <div className="py-[10px]  ">  <CyberPunkTitle text='Champions'/></div>
 
       {/* Second section - Champions */}
-      <div className="  mx-auto w-[90svw] flex-grow rounded-lg border-lime-400 border  bg-gradient-to-b from-emerald-950/10 from-50% via-purple-800 via-60% to-orange-800">
+      <div className="  mx-auto w-[95svw] flex-grow rounded-lg  bg-gradient-to-b from-emerald-950/10 from-50% via-purple-800 via-60% to-orange-800">
        
 
-        <div className="   mx-auto w-[90svw] flex-grow rounded-lg  ">
+        <div className="   mx-auto w-[95svw] flex-grow rounded-lg  ">
          
       
 
