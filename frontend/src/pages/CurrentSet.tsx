@@ -74,8 +74,9 @@ if(isLoading)
                   "",
                   " drop-shadow-2xl shadow-amber-500 border border-lime-700 bg-gray-900  hover:bg-gray-900"
                 )}
-              >
-                <TraitBox item={trait} />
+              > 
+             
+                <TraitBox item={trait}/>
               </div>
             ))}
           </div>
