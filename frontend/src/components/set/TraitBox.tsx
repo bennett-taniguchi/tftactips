@@ -4,23 +4,17 @@ export default function TraitBox({ item}: any) {
     }
     console.log(item)
     function traitNameToUrl(trait: string) {
-     
+     console.log("TRAIT",trait)
       trait = trait.replace(" ", "");
 
       if (trait == "BoomBot" ||data.apiName.includes("Ballis")) trait = "BoomBots";
-      if (trait.includes("God")) trait = "netgod"
+      if (trait.toLowerCase().includes("god")) trait = "netgod"
       if (trait == "A.M.P.") trait = "amp";
-  
+      console.log("TRAIT f",trait)
       return `https://tft-set14.s3.us-east-2.amazonaws.com/traits/${trait.toLowerCase()}.png`;
     }
 
-    // function dealwithurl(url: string) {
-    //   return (
-    //     "https://tft-set14.s3.us-east-2.amazonaws.com/" +
-    //     url.split("/").slice(3).join("/")
-    //   );
-    // }
-
+ 
     const data = JSON.parse(item.data);
 
    console.log

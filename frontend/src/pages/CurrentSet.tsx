@@ -96,7 +96,7 @@ if(isLoading)
           <div className="text-left pl-[20px] ">
             <div className="py-5 m-5 grid grid-cols-4 gap-4">
               {championResult.map((champion: any, idx: number) => (
-                <div key={idx} className="h-[600px]">
+                <div key={idx} className="h-[675px]  ">
                   <ChampionBox item={champion}  />
                 </div>
               ))}
