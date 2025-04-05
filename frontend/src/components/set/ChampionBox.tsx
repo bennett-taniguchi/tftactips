@@ -57,7 +57,7 @@ interface ThemeStyles {
  * @param apiName Champion API name
  * @returns Formatted URL
  */
-function getChampionImageUrl(apiName: string): string {
+export function getChampionImageUrl(apiName: string): string {
   return `https://tft-set14.s3.us-east-2.amazonaws.com/champions/${apiName.toLowerCase()}_small.png`;
 }
 
