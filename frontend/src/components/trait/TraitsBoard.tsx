@@ -374,7 +374,7 @@ const TraitBoard: FC = () => {
       {/* Trait Info Box - Reads from selectedTraitData */}
       {infoBoxVisible && selectedTraitData && (
         <div
-          className="fixed left-15 top-2/5 w-96 bg-gray-800 bg-opacity-90 text-white rounded-lg shadow-lg z-50 transform transition-all duration-300 ease-out"
+          className="fixed left-20 top-4/9 w-96 bg-gray-800/40 bg-opacity-90 text-white rounded-lg shadow-lg z-50 transform transition-all duration-300 ease-out"
           style={{
             boxShadow: "0 0 20px rgba(150,100,255,0.3), 0 0 40px rgba(100,70,200,0.1)",
             animation: "slideIn 0.3s ease-out forwards",
