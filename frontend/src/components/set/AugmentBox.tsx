@@ -26,6 +26,8 @@ export function AugmentBox({ item }: any) {
         return true
     }return false
   }
+ 
+
   return (
     <div 
       className={cn(
@@ -74,15 +76,15 @@ export function AugmentBox({ item }: any) {
         {effects && Object.keys(effects).length > 0 ? (
           <div className="flex-grow bg-gray-800/50 rounded-md p-3 border border-emerald-500/20 overflow-y-auto">
             <h3 className="text-emerald-300 mb-2 font-medium">Effects</h3>
-            <div className="grid grid-cols-1 gap-y-2 gap-x-4 justify-items-center flex">
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4 justify-items-center ">
               {Object.entries(effects).map(([key, value]) => (
                 
                 !checkHashEffect(key)
                 
                 ?
                 <div key={key} className="flex justify-between">
-                <span className="text-gray-400">{key}:</span>
-                <span className="text-cyan-300 font-medium">{String(handleRounding(value))}</span>
+                <span className="text-gray-400 text-sm">{key}:</span>
+                <span className="text-cyan-300 font-medium  text-md">{String(handleRounding(value))}</span>
               </div>
                 :
                 <div></div>
