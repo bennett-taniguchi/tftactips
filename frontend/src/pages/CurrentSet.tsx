@@ -1,34 +1,42 @@
 import CrudService, { Item } from "@/api/crudapiservice";
-import CyberpunkCircuit from "@/components/background/CyberPunkCircuit";
 import CyberpunkPCB from "@/components/background/CyberpunkPCB";
 import TftacLogo from "@/components/logo/LoadingLogo";
 import ChampionBox from "@/components/set/ChampionBox";
 import TraitBox from "@/components/set/TraitBox";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";
 
-import TraitIcon from "@/components/trait/TraitIcon";
 import {initializeTraitChampionData} from "../../utils/champions"
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import ChampionHierarchy from "@/components/set/ChampionHierarchy";
+import { AugmentBox } from "@/components/set/AugmentBox";
 
 export default function CurrentSet() {
-  let numbers = [1, 2, 3, 4, 5];
+ 
   let [traitResult, setTraitResult] = useState<Item[]>([]);
   let [championResult, setChampionResult] = useState<Item[]>([]);
+  let [augmentResult, setAugmentResult] = useState<Item[]>([])
+
   const [traitChampionMap,setTraitChampionMap] = useState<any>([])
   useEffect(() => {
     async function fetch() {
       try {
-        let traitRes = await CrudService.getAll("tft_traits");
+        let traitResult = await CrudService.getAll("tft_traits");
         let championResult = await CrudService.getAll("tft_champions");
+        let augmentResult = await CrudService.getAll("tft_augments")
+
         let sortedChampionResult = championResult.sort(
           (a, b) => JSON.parse(a.data).cost - JSON.parse(b.data).cost
         );
-        setTraitResult(traitRes as Item[]);
+        setTraitResult(traitResult as Item[]);
         setChampionResult(sortedChampionResult as Item[]);
-        setTraitChampionMap(initializeTraitChampionData(sortedChampionResult as any,traitRes).traitChampionsMap)
-        
+        setTraitChampionMap(initializeTraitChampionData(sortedChampionResult as any,traitResult).traitChampionsMap)
+
+        let augmentedAugments =  [] as Item[]
+        augmentResult.forEach((aug) => {
+          augmentedAugments.push({...aug, parsedData:JSON.parse(aug.data)})
+        })
+        setAugmentResult(augmentedAugments)
       } catch (e) {
         console.log(e);
       }
@@ -38,7 +46,7 @@ export default function CurrentSet() {
   }, []);
 
   useEffect(() => {
-console.log('traitChampionMap',traitChampionMap)
+ 
   },[traitChampionMap])
 
   function getBgColor(idx: number) {
@@ -124,6 +132,13 @@ console.log('traitChampionMap',traitChampionMap)
       </div>
 
       <div className="py-[20px]"></div>
+
+      <div className="grid grid-cols-4 gap-4">
+        {augmentResult.map((augment:any,idx:any) => (
+ <AugmentBox item={augment} key={idx}/>
+        ))}
+       
+      </div>
     </div>
   );
 }

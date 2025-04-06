@@ -22,7 +22,7 @@ interface ChampionData {
   data?: any;
 }
 
-interface AbilityData {
+export type AbilityData = {
   name?: string;
   desc?: string;
   [key: string]: any;
@@ -66,7 +66,7 @@ export function getChampionImageUrl(apiName: string): string {
  * @param imageUrl Original ability image URL
  * @returns Formatted URL
  */
-function getAbilityImageUrl(imageUrl: string): string {
+export function getAbilityImageUrl(imageUrl: string): string {
   return imageUrl
     .replace(
       "https://accesspoint-jgeyja4kne59ihb37jud8qefh8ytsuse2a-s3alias.s3-accesspoint.us-east-2.amazonaws.com/",
@@ -174,21 +174,7 @@ function getCostTheme(cost: string): ThemeStyles {
   }
 }
 
-/**
- * Formats a key for display
- * @param key Original key name
- * @returns Formatted key
- */
-function formatKeyForDisplay(key: string): string {
-  // Format the key for display (remove underscores, capitalize)
-  const displayKey = key
-    .replace(/_/g, " ")
-    .replace(/([A-Z])/g, " $1")
-    .trim();
-
-  // Capitalize first letter
-  return displayKey.charAt(0).toUpperCase() + displayKey.slice(1);
-}
+ 
 
 /**
  * Calculates DPS from attack speed and damage
@@ -207,10 +193,32 @@ interface AbilityStatsProps {
   ability: AbilityData;
 }
 
+interface AbilityStatsProps {
+  ability: AbilityData;
+  isPopup?: boolean; // New boolean flag for popup mode
+}
+
+/**
+ * Formats ability key names for display
+ */
+function formatKeyForDisplay(key: string): string {
+  // Convert camelCase to Title Case with spaces
+  if (/[a-z][A-Z]/.test(key)) {
+    return key
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/\b\w/g, char => char.toUpperCase());
+  }
+  
+  // If already has spaces or is single word, just capitalize first letter
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
 /**
  * Renders ability stats in a formatted way
+ * @param ability - The ability object with stats
+ * @param isPopup - Whether this is being rendered in a popup dialog (for compact styling)
  */
-function AbilityStats({ ability }: AbilityStatsProps): JSX.Element | null {
+export function AbilityStats({ ability, isPopup = false }: AbilityStatsProps): JSX.Element | null {
   if (!ability) return null;
 
   // Get all keys from the ability object
@@ -243,18 +251,43 @@ function AbilityStats({ ability }: AbilityStatsProps): JSX.Element | null {
     return aPriority - bPriority;
   });
 
-  return (
-    <>
-      {sortedKeys.map((key) => {
-        const formattedKey = formatKeyForDisplay(key);
+  // If no popup (normal mode), render as regular list
+  if (!isPopup) {
+    
+    return (
+      <>
+        {sortedKeys.map((key) => {
+          const formattedKey = formatKeyForDisplay(key);
 
+          return (
+            <p key={key}>
+              {formattedKey}: <span className="text-white text-sm">{ability[key]}</span>
+            </p>
+          );
+        })}
+      </>
+    );
+  }
+  
+  // Popup mode - render in a grid with more compact styling
+  return (
+    <div className="grid grid-cols-1 gap-x-4 gap-y-1 mt-2 pb-3">
+      {(sortedKeys.length==0)
+      ? 
+       <div></div>
+   :
+      sortedKeys.map((key) => {
+        const formattedKey = formatKeyForDisplay(key);
+        
         return (
-          <p key={key}>
-            {formattedKey}: <span className="text-white text-sm">{ability[key]}</span>
-          </p>
+          <div key={key} className="flex flex-row justify-between items-baseline">
+            <span className="text-emerald-400 font-sm text-sm mr-1">{formattedKey}:</span>
+            <span className="text-cyan-200 text-xs font-semibold">{ability[key]}</span>
+          </div>
         );
-      })}
-    </>
+      })
+    }
+    </div>
   );
 }
 
@@ -279,7 +312,7 @@ function ChampAbility({ ability, theme, imageAbilityS3 }: ChampAbilityProps): JS
   const abilityUrl = getAbilityImageUrl(imageAbilityS3);
   let topP = "pt-5"
   if(ability.desc!.length >= 320) {
-    console.log(ability.name,ability.desc!.length)
+    
     topP= "pt-[-20px]"
   }
   return (

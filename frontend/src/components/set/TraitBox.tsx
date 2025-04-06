@@ -5,46 +5,37 @@ export type Effect = {
   effect: string;
 };
 
-export default function TraitBox({ item , children}: any) {
+export default function TraitBox({ item, children }: any) {
   if (!item) {
     return <div></div>;
   }
 
-  function RenderEffect({ effect, data, height = 300 }: any) {
+  function RenderEffect({ effect, data, height = 250 }: any) {
     let effectArr: Effect[] = JSON.parse(effect);
   
     // Function to determine background color based on trait activation level
     const getTraitColor = (count: number) => {
-      if(count === 1) return "bg-red-400";
-      if (count >= 9) return "bg-purple-700";
-      if (count >= 7) return "bg-amber-600";
-      if (count >= 5) return "bg-cyan-700";
-      if (count >= 3) return "bg-blue-700";
-      return "bg-gray-700";
+      if(count === 1) return "bg-red-400/80";
+      if (count >= 9) return "bg-purple-700/80";
+      if (count >= 7) return "bg-amber-600/80";
+      if (count >= 5) return "bg-cyan-700/80";
+      if (count >= 3) return "bg-blue-700/80";
+      return "bg-gray-700/20";
     };
     
     // Calculate scaling factors based on height
-    const headerHeight = Math.max(30, height * 0.12); // Min 30px, or 12% of height
+    let headerHeight = 0;
     const contentHeight = height - headerHeight;
     const itemHeight = Math.max(36, contentHeight / effectArr.length);
     const iconSize = Math.max(24, Math.min(36, itemHeight * 0.7)); // Scale icon between 24-36px
     const fontSize = height < 200 ? 'text-xs' : height < 300 ? 'text-sm' : 'text-base';
     
+     
     return (
       <div 
         className="w-full bg-gradient-to-b from-gray-900/90 via-gray-800/80 to-gray-700/80 rounded-lg border border-cyan-500/30 shadow-lg shadow-cyan-500/10 overflow-hidden"
         style={{ height: `${height}px` }}
       >
-        {/* Header with trait name */}
-        <div 
-          className="bg-gray-900/80 border-b border-cyan-500/30 flex items-center px-3"
-          style={{ height: `${headerHeight}px` }}
-        >
-          <h3 className="text-cyan-500 font-bold tracking-wide truncate">
-            {data.name}
-          </h3>
-        </div>
-        
         {/* Effects list - using a scrollable container if needed */}
         <div 
           className="overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-gray-800"
@@ -55,30 +46,17 @@ export default function TraitBox({ item , children}: any) {
             return (
               <div
                 key={idx}
-                className="flex items-center bg-gray-800/60 border-b border-cyan-600/10 last:border-b-0 overflow-hidden"
-                style={{ height: `${itemHeight}px` }}
+                className="  flex items-center bg-gray-800/60 border-b border-cyan-600/10 last:border-b-0 overflow-hidden"
+                style={{ height: `${itemHeight}px`, maxHeight: `${itemHeight}px` }}
               >
                 {/* Left side with hexagon */}
-                <div className="flex items-center justify-center p-1 min-w-[40px]">
-                  <TraitIcon
-                    size={iconSize}
-                    num={count}
-                    bgColor={getTraitColor(count)}
-                  />
+                <div className={`${getTraitColor(count)} m-5 p-2   border-cyan-400/50 border    text-sm flex-shrink-0 flex items-center justify-center min-w-[30px] min-h-[30px]`}>
+                 
+                  <p  >{count}</p>
                 </div>
                 
                 {/* Right side with effect description */}
-                <div className={`pl-2 border-l border-cyan-600/20 ${fontSize} text-gray-200 flex-grow truncate`}>
-                  {/* For very small heights, show just essential info */}
-                  {height < 150 ? (
-                    <div className="flex">
-                      <span className="font-bold mr-1">{count}:</span>
-                      <span className="truncate">{eff.effect.split('.')[0]}</span>
-                    </div>
-                  ) : (
-                    <div className="truncate">{eff.effect}</div>
-                  )}
-                </div>
+               <p className="text-sm   mx-auto">{eff.effect}</p>
               </div>
             );
           })}
@@ -121,7 +99,7 @@ export default function TraitBox({ item , children}: any) {
 
       <div className="w-full mx-auto flex flex-col">
         <RenderEffect effect={data.bonus} data={data} />
-       {children}
+        {children}
       </div>
       <style>
         {`
