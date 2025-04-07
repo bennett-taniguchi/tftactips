@@ -6,8 +6,7 @@ import CurrentSet from "./pages/CurrentSet";
 import { PopulateData } from "./pages/PopulateData";
 import TraitIcon from "./components/trait/TraitIcon";
 import Home from "./components/home/Home";
-
-
+ 
  
 
 const PageLayout = ({ children }: any) => (
@@ -16,7 +15,9 @@ const PageLayout = ({ children }: any) => (
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-emerald-900">
+  
+      <div className="  min-h-screen bg-gradient-to-b from-gray-950 to-blue-900">
+     
         <NavMenu />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
           <Routes>
@@ -54,8 +55,9 @@ function App() {
               }
             />
           </Routes>
-        </div>
+        </div>   
       </div>
+    
     </BrowserRouter>
   );
 }

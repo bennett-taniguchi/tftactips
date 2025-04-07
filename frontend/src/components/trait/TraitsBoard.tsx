@@ -306,10 +306,12 @@ const TraitBoard: FC = () => {
     }).filter(Boolean) as JSX.Element[]; // Filter out potential nulls and assert type
   };
 
-
+  // bg-gradient-to-r from-red-900 from-1% via-purple-900 via-25% to-blue-900 to-60%
   return (
     <div className="relative min-h-screen  overflow">
-      <div className="bg-gradient-to-r from-red-900 from-1% via-purple-900 via-25% to-blue-900 to-60% h-[200svh] w-[200svw] absolute top-[-50svh] left-[-20svw]"/>
+      
+      <div className=" h-[200svh] w-[200svw] absolute top-[-50svh] left-[-20svw]"/>
+
       {/* Background isometric grid container (Keep existing structure) */}
       <div className="fixed inset-0" style={{ zIndex: 1 }}>
         <div className="absolute inset-0 overflow-hidden">
@@ -319,8 +321,8 @@ const TraitBoard: FC = () => {
               <div
                 className="floor"
                 style={{
-                  position: "absolute", width: "700px", height: "800px",
-                  top: "8%", left: "64%",
+                  position: "absolute", width: "700px", height: "450px",
+                  top: "20%", left: "62%",
                   transform: "translateX(-30%) rotateX(45deg) rotateZ(45deg)",
                   transformOrigin: "50% 50%", transformStyle: "preserve-3d",
                   background: "linear-gradient(135deg, rgba(30,30,50,0.8), rgba(10,10,20,0.9))",
@@ -352,8 +354,8 @@ const TraitBoard: FC = () => {
               <div
                 className="cards"
                 style={{
-                  display: "grid", gridTemplateColumns: "repeat(4, 8em)", gridTemplateRows: "repeat(6, 8em)", // Adjusted rows for 24 items
-                  gridGap: ".5em", position: "absolute", top: "10%", left: "70%",
+                  display: "grid", gridTemplateColumns: "repeat(4, 6em)", gridTemplateRows: "repeat(6, 5em)", // Adjusted rows for 24 items
+                  gridGap: ".5em", position: "absolute", top: "35%", left: "70%",
                   transform: "translateX(-50%) rotateX(45deg) rotateZ(45deg)",
                   transformOrigin: "50% 50%", transformStyle: "preserve-3d",
                   pointerEvents: "auto", cursor: "pointer", zIndex: 2,
