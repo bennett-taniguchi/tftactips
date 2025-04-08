@@ -87,7 +87,7 @@ export function AugmentBox({ item }: any) {
                 <span className="text-cyan-300 font-medium  text-md">{String(handleRounding(value))}</span>
               </div>
                 :
-                <div></div>
+                <div key={key}></div>
             
               ))}
             </div>

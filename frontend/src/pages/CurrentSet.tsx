@@ -1,62 +1,76 @@
-import CrudService, { Item } from "@/api/crudapiservice";
+ 
 import CyberpunkPCB from "@/components/background/CyberpunkPCB";
 import TftacLogo from "@/components/logo/LoadingLogo";
 import ChampionBox from "@/components/set/ChampionBox";
 import TraitBox from "@/components/set/TraitBox";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";
-
-import {initializeTraitChampionData} from "../../utils/champions"
+ 
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import ChampionHierarchy from "@/components/set/ChampionHierarchy";
+import { useGlobalContext } from "@/components/context/context";
 import { AugmentBox } from "@/components/set/AugmentBox";
+ 
 
 export default function CurrentSet() {
- 
-  let [traitResult, setTraitResult] = useState<Item[]>([]);
-  let [championResult, setChampionResult] = useState<Item[]>([]);
-  let [augmentResult, setAugmentResult] = useState<Item[]>([])
-
-  const [traitChampionMap,setTraitChampionMap] = useState<any>([])
+  // let [traitResult, setTraitResult] = useState<Item[]>([]);
+  // let [championResult, setChampionResult] = useState<Item[]>([]);
+  // let [augmentResult, setAugmentResult] = useState<Item[]>([]);
+  // const [traitChampionMapResult, setTraitChampionMapResult] = useState<any>([]);
+  const { champions, augments, traits, traitChampionsMap } =
+    useGlobalContext();
   useEffect(() => {
-    async function fetch() {
-      try {
-        let traitResult = await CrudService.getAll("tft_traits");
-        let championResult = await CrudService.getAll("tft_champions");
-        let augmentResult = await CrudService.getAll("tft_augments")
+    // if (championResult.length == 0) setChampionResult(champions);
 
-        let sortedChampionResult = championResult.sort(
-          (a, b) => JSON.parse(a.data).cost - JSON.parse(b.data).cost
-        );
-        setTraitResult(traitResult as Item[]);
-        setChampionResult(sortedChampionResult as Item[]);
-        setTraitChampionMap(initializeTraitChampionData(sortedChampionResult as any,traitResult).traitChampionsMap)
+    // if (traitResult.length == 0) setTraitResult(traits);
 
-        let augmentedAugments =  [] as Item[]
-        augmentResult.forEach((aug) => {
-          augmentedAugments.push({...aug, parsedData:JSON.parse(aug.data)})
-        })
-        setAugmentResult(augmentedAugments)
-      } catch (e) {
-        console.log(e);
-      }
-    }
-    fetch();
-    
-  }, []);
+    // if (augmentResult.length == 0) setAugmentResult(augments);
 
-  useEffect(() => {
- 
-  },[traitChampionMap])
+    // if (traitChampionMapResult.length == 0)
+    //   setTraitChampionMapResult(traitChampionsMap);
+  }, [champions, augments, traits, traitChampionsMap]);
+  // useEffect(() => {
+  //   async function fetch() {
+  //     try {
+  //       let traitResult = await CrudService.getAll("tft_traits");
+  //       let championResult = await CrudService.getAll("tft_champions");
+  //       let augmentResult = await CrudService.getAll("tft_augments")
 
-  function getBgColor(idx: number) {
-    if (idx == 1) return "bg-zinc-500 hover:bg-zinc-700 cursor-pointer";
-    if (idx == 2) return "bg-green-500 hover:bg-green-700 cursor-pointer";
-    if (idx == 3) return "bg-blue-600 hover:bg-blue-800 cursor-pointer";
-    if (idx == 4) return "bg-purple-500 hover:bg-purple-700 cursor-pointer";
-    if (idx == 5) return "bg-orange-500 hover:bg-orange-700 cursor-pointer";
-  }
-  let isLoading = traitResult.length == 0 || championResult.length == 0 || traitChampionMap.length == 0;
+  //       let sortedChampionResult = championResult.sort(
+  //         (a, b) => JSON.parse(a.data).cost - JSON.parse(b.data).cost
+  //       );
+  //       setTraitResult(traitResult as Item[]);
+  //       setChampionResult(sortedChampionResult as Item[]);
+  //       setTraitChampionMap(initializeTraitChampionData(sortedChampionResult as any,traitResult).traitChampionsMap)
+
+  //       let augmentedAugments =  [] as Item[]
+  //       augmentResult.forEach((aug) => {
+  //         augmentedAugments.push({...aug, parsedData:JSON.parse(aug.data)})
+  //       })
+  //       setAugmentResult(augmentedAugments)
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   }
+  //   fetch();
+
+  // }, []);
+
+  // useEffect(() => {
+
+  // },[traitChampionMap])
+
+  // function getBgColor(idx: number) {
+  //   if (idx == 1) return "bg-zinc-500 hover:bg-zinc-700 cursor-pointer";
+  //   if (idx == 2) return "bg-green-500 hover:bg-green-700 cursor-pointer";
+  //   if (idx == 3) return "bg-blue-600 hover:bg-blue-800 cursor-pointer";
+  //   if (idx == 4) return "bg-purple-500 hover:bg-purple-700 cursor-pointer";
+  //   if (idx == 5) return "bg-orange-500 hover:bg-orange-700 cursor-pointer";
+  // }
+  let isLoading =
+    traits.length == 0 ||
+    champions.length == 0 ||
+    traitChampionsMap.length == 0;
 
   if (isLoading)
     return (
@@ -64,7 +78,7 @@ export default function CurrentSet() {
         <TftacLogo />
       </div>
     );
- 
+
   return (
     <div className="text-center  justify-self-center">
       <div className="pb-10">
@@ -90,7 +104,7 @@ export default function CurrentSet() {
 
           {/* Trait grid content - positioned above the hexagonal background */}
           <div className=" bg-cyan-900/50 relative z-30 p-5 grid grid-cols-2 gap-8 mt-4 ">
-            {traitResult.map((trait: any, idx: number) => (
+            {traits.map((trait: any, idx: number) => (
               <div
                 key={idx}
                 className={cn(
@@ -98,13 +112,19 @@ export default function CurrentSet() {
                   " drop-shadow-2xl shadow-amber-500 border  border-none  bg-transparent  "
                 )}
               >
-                <TraitBox item={trait}  
-                // children={ChampionHierarchy(traitChampionMap[JSON.parse(trait.data).name])}
-                > <div className="w-full   mt-[20px]">
-                  <ChampionHierarchy champions={traitChampionMap[JSON.parse(trait.data).name]}/>
+                <TraitBox
+                  item={trait}
+                  // children={ChampionHierarchy(traitChampionMap[JSON.parse(trait.data).name])}
+                >
+                  {" "}
+                  <div className="w-full   mt-[20px]">
+                    <ChampionHierarchy
+                      champions={
+                        traitChampionsMap[JSON.parse(trait.data).name] as any
+                      }
+                    />
                   </div>
                 </TraitBox>
-               
               </div>
             ))}
           </div>
@@ -121,7 +141,7 @@ export default function CurrentSet() {
         <div className="   mx-auto w-[95svw] flex-grow rounded-lg  ">
           <div className="text-left pl-[20px] ">
             <div className="py-5 m-5 grid grid-cols-4 gap-4">
-              {championResult.map((champion: any, idx: number) => (
+              {champions.map((champion: any, idx: number) => (
                 <div key={idx} className="h-[675px]  ">
                   <ChampionBox item={champion} />
                 </div>
@@ -134,10 +154,9 @@ export default function CurrentSet() {
       <div className="py-[20px]"></div>
 
       <div className="grid grid-cols-4 gap-4">
-        {augmentResult.map((augment:any,idx:any) => (
- <AugmentBox item={augment} key={idx}/>
+        {augments.map((augment: any, idx: any) => (
+          <AugmentBox item={augment} key={idx} />
         ))}
-       
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
-import TraitIcon from "../trait/TraitIcon";
-
+ 
 export type Effect = {
   count: string;
   effect: string;
@@ -10,7 +9,7 @@ export default function TraitBox({ item, children }: any) {
     return <div></div>;
   }
 
-  function RenderEffect({ effect, data, height = 250 }: any) {
+  function RenderEffect({ effect, height = 250 }: any) {
     let effectArr: Effect[] = JSON.parse(effect);
   
     // Function to determine background color based on trait activation level
@@ -27,8 +26,8 @@ export default function TraitBox({ item, children }: any) {
     let headerHeight = 0;
     const contentHeight = height - headerHeight;
     const itemHeight = Math.max(36, contentHeight / effectArr.length);
-    const iconSize = Math.max(24, Math.min(36, itemHeight * 0.7)); // Scale icon between 24-36px
-    const fontSize = height < 200 ? 'text-xs' : height < 300 ? 'text-sm' : 'text-base';
+    // const iconSize = Math.max(24, Math.min(36, itemHeight * 0.7)); // Scale icon between 24-36px
+    // const fontSize = height < 200 ? 'text-xs' : height < 300 ? 'text-sm' : 'text-base';
     
      
     return (

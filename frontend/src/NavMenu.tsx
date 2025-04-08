@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { Home, Grid, Book, Cpu, Trophy, Star, Users, Settings, Menu, X, Database, FlaskConical } from 'lucide-react';
+import { Home, Grid, Menu, X, Database, FlaskConical } from 'lucide-react';
 
 // Define proper TypeScript interfaces
 interface NavItemProps {
@@ -60,8 +60,8 @@ const NavMenu = () => {
                   to="/builds" 
                   active={location.pathname === '/builds'} 
                 />
-                <NavItem 
-                  icon={<Cpu size={18} />} 
+                <NavItemSet14 
+                  icon={<img src="./img/cybercity.png" className='w-7 h-7' />} 
                   text="Set 14" 
                   to="/currentset" 
                   active={location.pathname === '/currentset'} 
@@ -114,7 +114,7 @@ const NavMenu = () => {
                 active={location.pathname === '/builds'} 
               />
               <MobileNavItem 
-                icon={<Cpu size={18} />} 
+                icon={<img src="./img/cybercity.png" className='w-7 h-7' />} 
                 text="Set 14" 
                 to="/currentset" 
                 active={location.pathname === '/currentset'} 
@@ -138,10 +138,46 @@ const NavMenu = () => {
     </div>
   );
 };
-let NavInactiveStyle='text-gray-300 hover:text-white border border-transparent hover:bg-purple-900 hover:bg-opacity-10 hover:border hover:border-purple-500 hover:border-opacity-20'
-let NavActiveStyle ='text-white bg-purple-600/50 bg-opacity-20 border border-purple-400 border-opacity-30 '
+let NavInactiveStyle='text-white/50 hover:text-white border border-transparent hover:bg-purple-900/40 hover:bg-opacity-10    hover:border-opacity-20'
+let NavActiveStyle ='text-purple-400 bg-purple-600/30 bg-opacity-20  border-opacity-30 '
+
+const Nav14ActiveStyle = 'bg-green-900 text-green-400 bg-green-700 animate-pulse';
+const Nav14InactiveStyle = 'text-white/50 hover:bg-green-900 ';
+
+// NavItemSet14 Component with humming green border and green text
+const NavItemSet14 = ({ icon, text, to, active }: NavItemProps) => (
+  <a
+    href={to}
+    className={`flex items-center px-3 py-1 text-sm font-medium rounded-md transition-all duration-200 ${
+      active 
+        ? Nav14ActiveStyle
+        : Nav14InactiveStyle
+    }`}
+    style={{
+      animation: !active ? 'greenHumming 6s infinite ease-in-out' : 'greenHummingBright 6s infinite ease-in-out',
+    }}
+  >
+    <style>
+    
+{`  @keyframes greenHumming {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+    50% { box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.6); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.1); }
+  }
+    @keyframes greenHummingBright {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.8); }
+    50% { box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.9); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2); }
+  }
+ `}
+    </style>
+    <span className={`mr-2 ${active ? 'text-green-400' : 'text-green-300'}`}>{icon}</span>
+    {text}
+  </a>
+);
 // Desktop Nav Item Component
 const NavItem = ({ icon, text, to, active }: NavItemProps) => (
+
   <Link
     to={to}
     className={`  flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${

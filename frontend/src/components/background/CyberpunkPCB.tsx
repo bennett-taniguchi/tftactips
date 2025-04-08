@@ -264,34 +264,34 @@ const CyberpunkPCB = () => {
   // Animation timing for pulse effects
   useEffect(() => {
     if (!animationActive || !boardRef.current) return;
-
+   setAnimationActive(false);
     const animateTraces = () => {
       const allPrimaryPaths = [
-        ...Array.from(boardRef.current.querySelectorAll('.primary-trace-upper path')),
-        ...Array.from(boardRef.current.querySelectorAll('.section-connectors path')),
-        ...Array.from(boardRef.current.querySelectorAll('.primary-trace-middle path')),
-        ...Array.from(boardRef.current.querySelectorAll('.section-connectors path')),
-        ...Array.from(boardRef.current.querySelectorAll('.primary-trace-lower path'))
+        ...Array.from(boardRef.current!.querySelectorAll('.primary-trace-upper path')),
+        ...Array.from(boardRef.current!.querySelectorAll('.section-connectors path')),
+        ...Array.from(boardRef.current!.querySelectorAll('.primary-trace-middle path')),
+        ...Array.from(boardRef.current!.querySelectorAll('.section-connectors path')),
+        ...Array.from(boardRef.current!.querySelectorAll('.primary-trace-lower path'))
       ];
 
       const allSecondaryPaths = [
-        ...Array.from(boardRef.current.querySelectorAll('.secondary-trace-upper path')),
-        ...Array.from(boardRef.current.querySelectorAll('.secondary-trace-middle path')),
-        ...Array.from(boardRef.current.querySelectorAll('.secondary-trace-lower path'))
+        ...Array.from(boardRef.current!.querySelectorAll('.secondary-trace-upper path')),
+        ...Array.from(boardRef.current!.querySelectorAll('.secondary-trace-middle path')),
+        ...Array.from(boardRef.current!.querySelectorAll('.secondary-trace-lower path'))
       ];
 
-      const viaElements = boardRef.current.querySelectorAll('.via circle');
-      const icElements = boardRef.current.querySelectorAll('.ic-chip');
+      const viaElements = boardRef.current!.querySelectorAll('.via circle');
+      const icElements = boardRef.current!.querySelectorAll('.ic-chip');
 
       const totalPrimaryDuration = allPrimaryPaths.reduce((max, path, index) => {
-        const length = path.getTotalLength();
+        const length = (path as any).getTotalLength();
         const delay = index * 200;
         const duration = Math.min(length * 8, 3000);
         return Math.max(max, delay + duration);
       }, 0);
 
       const totalSecondaryDuration = allSecondaryPaths.reduce((max, path, index) => {
-        const length = path.getTotalLength();
+        const length = (path as any).getTotalLength();
         const delay = 1500 + index * 150;
         const duration = Math.min(length * 6, 2000);
         return Math.max(max, delay + duration);
@@ -301,14 +301,14 @@ const CyberpunkPCB = () => {
 
       // Reset styles before re-animating
       allPrimaryPaths.forEach(path => {
-        const length = path.getTotalLength();
-        path.style.strokeDasharray = length as any;
-        path.style.strokeDashoffset = length as any;
+        const length = (path as any).getTotalLength();
+        (path as any).style.strokeDasharray = length as any;
+        (path as any).style.strokeDashoffset = length as any;
       });
       allSecondaryPaths.forEach(path => {
-        const length = path.getTotalLength();
-        path.style.strokeDasharray = length as any;
-        path.style.strokeDashoffset = length as any;
+        const length = (path as any).getTotalLength();
+        (path as any).style.strokeDasharray = length as any;
+        (path as any).style.strokeDashoffset = length as any;
       });
       viaElements.forEach(via => via.classList.remove('active'));
       icElements.forEach(ic => {
@@ -320,7 +320,7 @@ const CyberpunkPCB = () => {
 
       // Animate primary traces
       allPrimaryPaths.forEach((path, index) => {
-        const length = path.getTotalLength();
+        const length = (path as any).getTotalLength();
         const delay = index * 200;
         const duration = Math.min(length * 8, 3000);
 
@@ -336,13 +336,13 @@ const CyberpunkPCB = () => {
 
         // Start pulse animation immediately after the trace starts
         setTimeout(() => {
-          createPulseAnimation(path, duration);
+          createPulseAnimation(path as any, duration);
         }, delay);
       });
 
       // Animate secondary traces with staggered timing
       allSecondaryPaths.forEach((path, index) => {
-        const length = path.getTotalLength();
+        const length = (path as any).getTotalLength();
         const delay = 1500 + index * 150;
         const duration = Math.min(length * 6, 2000);
 
@@ -358,7 +358,7 @@ const CyberpunkPCB = () => {
 
         // Start secondary pulse animation
         setTimeout(() => {
-          createPulseAnimation(path, duration * 0.8);
+          createPulseAnimation(path as any, duration * 0.8);
         }, delay);
       });
 
@@ -394,15 +394,7 @@ const CyberpunkPCB = () => {
     };
   }, [animationActive]);
 
-  // Helper function to generate random colors
-  const getRandomColor = (): string => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
+ 
 
   // Helper function to create pulse animations that travel along paths with random color
   const createPulseAnimation = (path: SVGPathElement, duration: number) => {

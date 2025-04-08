@@ -65,31 +65,31 @@ const FirstBuild = () => {
   return <TFTBuild {...sampleBuild} />;
 };
 
-const SecondBuild = () => {
-    const sampleBuild = {
-      buildName: "AMP + Strategist",
-      tier: 1,
-      difficulty: "hard",
-      traits: [
-          {name: "Strategist", count:5, level:4},
-        { name: "AMP", count: 4, level: 3 },
-        { name: "Street Demon", count: 3, level: 1 },
+// const SecondBuild = () => {
+//     const sampleBuild = {
+//       buildName: "AMP + Strategist",
+//       tier: 1,
+//       difficulty: "hard",
+//       traits: [
+//           {name: "Strategist", count:5, level:4},
+//         { name: "AMP", count: 4, level: 3 },
+//         { name: "Street Demon", count: 3, level: 1 },
   
-      ],
-      champions: [
-        { name: "Samira", cost: 5, stars: 1 },
-        { name: "Ziggs", cost: 4, stars: 2 },
-        { name: "Neeko", cost: 4, stars: 2 },
-        { name: "Annie", cost: 4, stars: 2 },
-        { name: "Yuumi", cost: 3, stars: 1 },
-        { name: "Naafiri", cost: 2, stars: 1 },
-        { name: "Leblanc", cost: 2, stars: 1 },
-        { name: "Ekko", cost: 2, stars: 1 },
+//       ],
+//       champions: [
+//         { name: "Samira", cost: 5, stars: 1 },
+//         { name: "Ziggs", cost: 4, stars: 2 },
+//         { name: "Neeko", cost: 4, stars: 2 },
+//         { name: "Annie", cost: 4, stars: 2 },
+//         { name: "Yuumi", cost: 3, stars: 1 },
+//         { name: "Naafiri", cost: 2, stars: 1 },
+//         { name: "Leblanc", cost: 2, stars: 1 },
+//         { name: "Ekko", cost: 2, stars: 1 },
        
-      ],
-      carousel: ["Tear", "Sword", "Rod"],
-      augments: ["Anima Squad Crest", "Big Grab Bag", "Glass Cannon II"]
-    };
+//       ],
+//       carousel: ["Tear", "Sword", "Rod"],
+//       augments: ["Anima Squad Crest", "Big Grab Bag", "Glass Cannon II"]
+//     };
   
-    return <TFTBuild {...sampleBuild} />;
-  };
+//     return <TFTBuild {...sampleBuild} />;
+//   };

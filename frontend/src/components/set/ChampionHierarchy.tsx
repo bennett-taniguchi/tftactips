@@ -13,7 +13,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { CalendarIcon } from "lucide-react";
+ 
 
 // --- Assume these types/functions exist based on your context ---
 // Define or import your Champion type based on the sample data
@@ -103,9 +103,9 @@ const TraitIcon: React.FC<{ traitName: string }> = ({ traitName }) => (
       src={traitToUrl(traitName)}
       alt={traitName}
       className="w-full h-full object-cover"
-      onError={(e) => {
-        /* Optional error handling */
-      }}
+      // onError={(e) => {
+      //   /* Optional error handling */
+      // }}
     />
   </div>
 );

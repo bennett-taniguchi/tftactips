@@ -189,7 +189,7 @@ interface TraitChampionData {
  * @param traitResult Array of trait objects
  * @returns Processed data structure with champions and traits
  */
-function initializeTraitChampionData(
+ function initializeTraitChampionData(
   championResult: Champion[], 
   traitResult: any[]
 ): TraitChampionData {

@@ -36,7 +36,7 @@ const CyberPanel: React.FC<CyberPanelProps> = ({
   className, 
   size = "md", 
   glow = "cyan",
-  onClick 
+ 
 }) => {
   // Define glow color variants
   const glowVariants = {

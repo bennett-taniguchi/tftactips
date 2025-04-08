@@ -1,4 +1,4 @@
-import { useRef, useState, RefObject, JSX, FC } from "react"; // Removed unused useEffect, kept JSX/RefObject for clarity if needed elsewhere, added FC
+import {  useState, JSX, FC } from "react"; // Removed unused useEffect, kept JSX/RefObject for clarity if needed elsewhere, added FC
 
 // Define interfaces for component props
 interface TraitHexProps {
@@ -241,7 +241,7 @@ const TraitBoard: FC = () => {
 
 
   // Handle trait click - Use the structured data
-  const handleTraitClick = (traitId: string, index: number, bgColor: string): void => {
+  const handleTraitClick = (traitId: string ): void => {
     const traitData = allTraitsData[traitId]; // Find trait data using the lowercase id
 
     if (traitData) {
