@@ -3,7 +3,7 @@ import CrudService, { Item } from '@/api/crudapiservice';
 import { createContext, ReactNode, useContext, useState, useEffect, useRef } from 'react';
 import { initializeTraitChampionData } from '../../../utils/champions'
  
-
+ 
 interface GlobalContextType {
   champions: Item[];
   augments: Item[];
@@ -52,6 +52,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(storedState);
         setState(parsed);
+        console.log(parsed)
         initialized.current = true;
         console.log("Restored state from session storage");
         return; // Skip fetching if we restored from storage
@@ -96,8 +97,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
       );
       
       const augmentedAugments = augmentResult.map((aug: Item) => ({
-        ...aug, 
-        parsedData: JSON.parse(aug.data)
+          ...JSON.parse(aug.data)
       }));
       
       const { traitChampionsMap } = initializeTraitChampionData(

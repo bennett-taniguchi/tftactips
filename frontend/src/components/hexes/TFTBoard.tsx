@@ -28,9 +28,9 @@ export const TFTBoard = ({ renderHexContent }:any) => {
 
   // Calculate dimensions
   const hexWidth = 100;  // width of a hex in pixels
-  const hexHeight = 87;  // height of a hex in pixels
-  const horizontalSpacing = 0;  // Horizontal spacing between hexes
-  const verticalSpacing = 36;    // Additional vertical spacing
+  const hexHeight = 100;  // height of a hex in pixels
+  const horizontalSpacing = 1;  // Horizontal spacing between hexes
+  const verticalSpacing = 19;    // Additional vertical spacing
   
   // Calculate row y-positions with proper spacing
   const rowVerticalOffset = hexHeight * 0.75 + verticalSpacing; // 75% of hex height + spacing

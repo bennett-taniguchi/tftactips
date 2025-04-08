@@ -6,7 +6,7 @@ import CyberpunkBentoBox, {
 import SearchBar from "../search/SearchBar";
 
 const Home = () => {
-  console.log(window.screen);
+ 
 
   // Example handler for panel clicks
   const handlePanelClick = (panelId: number) => {
