@@ -1,5 +1,5 @@
  
-import Build from "@/components/builds/Build";
+import Build from "@/components/builds/Build/Build";
 const buildData = {
   title: "Anima Squad Vertical",
   traits: {
