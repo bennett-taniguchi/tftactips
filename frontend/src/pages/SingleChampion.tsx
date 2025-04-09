@@ -4,14 +4,14 @@ import FullScreenChampionDetail from "@/components/champion/FullScreenChampionDe
 import { useGlobalContext } from "@/components/context/context";
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function SingleChampion() {
-  const { champions, traitChampionsMap } = useGlobalContext();
+  const { champions } = useGlobalContext();
   const params = useParams();
   let champname = params["*"];
   const [champion, setChampion] = useState<Item>();
-
+  const navigate = useNavigate();
   if(!champname || champname=="") return (<div></div>)
 
   useEffect(() => {
@@ -33,9 +33,7 @@ export default function SingleChampion() {
       <div className="w-[40svw] h-[100svh]">
         <FullScreenChampionDetail
           item={champion as  Item}
-          onClose={function (): void {
-            throw new Error("Function not implemented.");
-          }}
+          onClose={() => navigate(-1)}
         />
       </div>
     );

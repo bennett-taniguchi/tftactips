@@ -1,76 +1,69 @@
-export default function CyberPunkTitle({ text }: any) {
-  return (
-    <div className="relative pt-6 px-8 pb-4 flex justify-center">
-      <h1 className="font-mono text-6xl font-extrabold tracking-wider text-emerald-400 uppercase relative">
-        {text}
-        {/* Grid Overlay that only appears on text */}
-        <div className="absolute inset-0 overflow-hidden mix-blend-multiply pointer-events-none">
-          {/* Horizontal grid lines */}
-          <div
-            className="absolute top-0 left-0 right-0 h-full w-full"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(16, 185, 129, 0.3) 5px, rgba(16, 185, 129, 0.3) 6px)",
-              backgroundSize: "100% 10px",
-            }}
-          ></div>
+import React from 'react';
 
-          {/* Vertical grid lines */}
-          <div
-            className="absolute top-0 left-0 right-0 h-full w-full"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(16, 185, 129, 0.3) 10px, rgba(16, 185, 129, 0.3) 11px)",
-              backgroundSize: "20px 100%",
-            }}
-          ></div>
-        </div>
-        {/* Glitch effect overlays */}
-        <div
-          className="absolute inset-0 text-emerald-500 opacity-50 animate-pulse"
-          style={{
-            animation: "pulse 2s infinite",
-            left: "2px",
-            top: "2px",
-          }}
-        >
+export default function CyberPunkTitle({ text }:any) {
+  return (
+    <div className="relative pt-8 px-8 pb-6 flex justify-center">
+      <h1 className="font-mono text-6xl font-extrabold tracking-wider text-emerald-400 uppercase relative">
+        {/* Base shadow layer - larger text below */}
+        <span className="absolute z-8 text-yellow-900 blur-sm text-5xl" 
+              style={{ 
+                animation: 'cyberpunkPulse 6s infinite',
+                left: '0px', 
+                top: '10px' 
+              }}>
           {text}
-        </div>
-        <div
-          className="absolute inset-0 text-yellow-500/40 animate-pulse"
-          style={{
-            animation: "pulse 3s infinite",
-            animationDelay: "0.5s",
-            left: "-2px",
-            clipPath: "inset(1% 0 1% 0)",
-          }}
-        >
+        </span>
+
+        {/* Middle shadow layer */}
+        <span className="absolute z-9 text-emerald-900 text-6xl"
+              style={{ 
+                  animation: 'cyberpunkPulse 3s infinite',
+                left: '-8px', 
+                top: '0px',
+                textShadow: '0 0 8px rgba(5, 150, 105, 0.6)',
+                fontSize: '105%'
+              }}>
           {text}
-        </div>
-        <div
-          className="absolute inset-0 text-gray-500/10"
-          style={{
-            animation: "bounce 5s infinite",
-            animationDelay: "1s",
-            left: "1px",
-            top: "-1px",
-            clipPath: "inset(1% 0 0 0)",
-          }}
-        >
+        </span>
+
+        {/* Main text with glow effect */}
+        <span className="relative z-10 text-6xl  " 
+              style={{
+                        
+                textShadow: '0 0 12px rgba(16, 185, 129, 0.8), 0 0 4px rgba(16, 185, 129, 0.4)'
+              }}>
           {text}
-        </div>
-        {/* CSS Animations for glitch effect */}
+        </span>
+
+        {/* Highlight overlay for top edge */}
+        <span className="absolute inset-0 text-emerald-300 opacity-70"
+              style={{
+                clipPath: 'polygon(0 0, 100% 0, 100% 30%, 0 30%)',
+                transform: 'translateY(-2px)',
+               
+              }}>
+          {text}
+        </span>
+
+        {/* Glitch accent layer */}
+        {/* <span className="absolute inset-0  z-9 text-yellow-400 opacity-30"
+              style={{
+                left: '-2px',
+                top: '1px',
+                clipPath: 'inset(40% 0 40% 0)',
+                animation: 'cyberpunkPulse 4s infinite'
+              }}>
+          {text}
+        </span> */}
+
+        {/* CSS Animations */}
         <style>{`
-        @keyframes glitch {
-          0% { transform: translate(0); }
-          
-          100% { transform: translate(0); }
-        }
-        h1 {
-          animation: glitch 6s infinite;
-          text-shadow: 0 0 10px rgba(16, 185, 129, 0.7);
-        }
-      `}</style>
+          @keyframes cyberpunkPulse {
+            0%, 100% { opacity: 0.1; transform: translateX(0); }
+            50% { opacity: 0.9; transform: translateX(1px); }
+            75% { opacity: 0.2; transform: translateX(-1px); }
+          }
+        `}</style>
       </h1>
     </div>
   );

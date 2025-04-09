@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import { Home, Grid, Menu, X, Database, FlaskConical } from 'lucide-react';
-import SearchBar from './components/search/SearchBar';
+import { Home, Grid, Menu, X,  } from 'lucide-react';
+ 
 
 // Define proper TypeScript interfaces
 interface NavItemProps {
@@ -68,6 +68,18 @@ const NavMenu = () => {
                   to="/champions" 
                   active={location.pathname === '/champions'} 
                 />
+                 <NavItem 
+                  icon={<Grid size={18} />} 
+                  text="Traits" 
+                  to="/traits" 
+                  active={location.pathname === '/traits'} 
+                />
+                <NavItem 
+                  icon={<Grid size={18} />} 
+                  text="Items" 
+                  to="/items" 
+                  active={location.pathname === '/items'} 
+                />
                 <NavItemSet14 
                   icon={<img src="./img/cybercity.png" className='w-7 h-7' />} 
                   text="Set 14" 
@@ -115,6 +127,18 @@ const NavMenu = () => {
                 text="Champions" 
                 to="/champions" 
                 active={location.pathname === '/champions'} 
+              />
+               <MobileNavItem 
+                icon={<Grid size={18} />} 
+                text="Traits" 
+                to="/traits" 
+                active={location.pathname === '/traits'} 
+              />
+               <MobileNavItem 
+                icon={<Grid size={18} />} 
+                text="Items" 
+                to="/items" 
+                active={location.pathname === '/items'} 
               />
               <MobileNavItem 
                 icon={<img src="./img/cybercity.png" className='w-7 h-7' />} 

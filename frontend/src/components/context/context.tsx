@@ -2,6 +2,8 @@
 import CrudService, { Item } from '@/api/crudapiservice';
 import { createContext, ReactNode, useContext, useState, useEffect, useRef } from 'react';
 import { initializeTraitChampionData } from '../../../utils/champions'
+import { ItemData, parseItems } from '../../../utils/items'
+ 
  
  
 interface GlobalContextType {
@@ -104,12 +106,13 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
         sortedChampionResult as any[], 
         traitResult
       );
+      const parsedItems = parseItems(itemResult as any[]);
       
       setState({
         champions: sortedChampionResult as Item[],
         augments: augmentedAugments as Item[],
         traits: traitResult as Item[],
-        items: itemResult as Item[],
+        items: parsedItems as Item[],
         traitChampionsMap: traitChampionsMap as any,
         isLoading: false
       });

@@ -256,18 +256,4 @@ export default function BuildScreen({title,view,setView,champions,traits,descrip
     
 }
 
-// Helper component for TraitIcon (to match the original)
-function TraitIcon({ src, size = 40, bgColor = "bg-black/60", className = "" }:any) {
-    return (
-      <div
-        className={`${bgColor} rounded-full flex items-center justify-center ${className}`}
-        style={{ width: size, height: size }}
-      >
-        <img 
-          src={src}
-          alt="Trait"
-          className="w-4/5 h-4/5 object-contain"
-        />
-      </div>
-    );
-  }
+ 

@@ -1,13 +1,17 @@
  
+import { useGlobalContext } from "@/components/context/context";
 import CyberpunkBentoBox, {
   PanelConfig,
   CyberPanel,
 } from "../components/home/CyberpunkBentoBox";
 import SearchBar from "../components/search/SearchBar";
+import { useEffect } from "react";
 
 const Home = () => {
+ const {traits,champions,augments,items} = useGlobalContext()
+ useEffect(() => {
+ },[traits,champions,augments,items])
  
-
   // Example handler for panel clicks
   const handlePanelClick = (panelId: number) => {
     console.log(`Panel ${panelId} clicked`);

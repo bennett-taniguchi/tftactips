@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger } from "../../ui/tabs";
+import { useState } from "react";
+ 
 import BuildRow from "./BuildRow";
 import BuildScreen from "./BuildScreen";
  

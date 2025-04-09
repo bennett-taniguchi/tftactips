@@ -11,6 +11,8 @@ import { GlobalProvider } from "./components/context/context";
 import { Builds } from "./pages/Builds";
 import Champions from "./pages/Champions";
 import SingleChampion from "./pages/SingleChampion";
+import Traits from "./pages/Traits";
+import Items from "./pages/Items";
 
 const PageLayout = ({ children }: any) => (
   <div className="text-gray-100">{children}</div>
@@ -27,6 +29,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/champions" element={<Champions />} />
               <Route path="/champions/*" element={<SingleChampion />} />
+              <Route path="/traits" element={<Traits />} />
+              <Route path="/items" element={<Items />} />
               <Route
                 path="/builds"
                 element={

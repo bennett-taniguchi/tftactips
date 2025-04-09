@@ -2,11 +2,11 @@
 import CyberpunkPCB from "@/components/background/CyberpunkPCB";
 import TftacLogo from "@/components/logo/LoadingLogo";
  
-import TraitBox from "@/components/set/TraitBox";
+import TraitBox from "@/components/trait/TraitBox";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";
  
 import { cn } from "@/lib/utils";
-import { useContext, useEffect } from "react";
+import {  useEffect } from "react";
  
 import { useGlobalContext } from "@/components/context/context";
 import { AugmentBox } from "@/components/set/AugmentBox";
