@@ -2,6 +2,7 @@ import { Item } from "@/api/crudapiservice";
 import { Button } from "../ui/button";
 import { JSX, useState } from "react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 // === TYPE DEFINITIONS ===
 
@@ -26,7 +27,7 @@ export type AbilityData = {
   name?: string;
   desc?: string;
   [key: string]: any;
-}
+};
 
 interface ChampionStats {
   hp?: number;
@@ -67,11 +68,10 @@ export function getChampionImageUrl(apiName: string): string {
  * @returns Formatted URL
  */
 export function getAbilityImageUrl(imageUrl: string): string {
-  return imageUrl
-    .replace(
-      "https://accesspoint-jgeyja4kne59ihb37jud8qefh8ytsuse2a-s3alias.s3-accesspoint.us-east-2.amazonaws.com/",
-      "https://tft-set14.s3.us-east-2.amazonaws.com/"
-    );
+  return imageUrl.replace(
+    "https://accesspoint-jgeyja4kne59ihb37jud8qefh8ytsuse2a-s3alias.s3-accesspoint.us-east-2.amazonaws.com/",
+    "https://tft-set14.s3.us-east-2.amazonaws.com/"
+  );
 }
 
 /**
@@ -120,7 +120,8 @@ function getCostTheme(cost: string): ThemeStyles {
         accent1: "bg-green-500/70",
         accent2: "bg-green-400/70",
         textAccent: "text-green-300",
-        buttonActive: "hover:bg-green-900/80 border-green-500/30 bg-green-900/80",
+        buttonActive:
+          "hover:bg-green-900/80 border-green-500/30 bg-green-900/80",
         buttonInactive: "hover:bg-green-900/30 border-green-400/30",
       };
     case 3:
@@ -144,7 +145,8 @@ function getCostTheme(cost: string): ThemeStyles {
         accent1: "bg-purple-500/70",
         accent2: "bg-fuchsia-400/70",
         textAccent: "text-fuchsia-300",
-        buttonActive: "hover:bg-purple-900/80 border-purple-500/30 bg-purple-900/80",
+        buttonActive:
+          "hover:bg-purple-900/80 border-purple-500/30 bg-purple-900/80",
         buttonInactive: "hover:bg-purple-900/30 border-purple-400/30",
       };
     case 5:
@@ -156,7 +158,8 @@ function getCostTheme(cost: string): ThemeStyles {
         accent1: "bg-amber-500/70",
         accent2: "bg-yellow-400/70",
         textAccent: "text-amber-300",
-        buttonActive: "hover:bg-amber-900/80 border-amber-500/30 bg-amber-900/80",
+        buttonActive:
+          "hover:bg-amber-900/80 border-amber-500/30 bg-amber-900/80",
         buttonInactive: "hover:bg-amber-900/30 border-amber-400/30",
       };
     default:
@@ -168,13 +171,12 @@ function getCostTheme(cost: string): ThemeStyles {
         accent1: "bg-emerald-500/70",
         accent2: "bg-emerald-400/70",
         textAccent: "text-emerald-300",
-        buttonActive: "hover:bg-emerald-900/80 border-yellow-500/30 bg-emerald-900/80",
+        buttonActive:
+          "hover:bg-emerald-900/80 border-yellow-500/30 bg-emerald-900/80",
         buttonInactive: "hover:bg-emerald-900 border-red-500/30",
       };
   }
 }
-
- 
 
 /**
  * Calculates DPS from attack speed and damage
@@ -182,9 +184,12 @@ function getCostTheme(cost: string): ThemeStyles {
  * @param damage Champion damage
  * @returns Calculated DPS
  */
-function calculateDPS(attackSpeed?: number, damage?: number): number | undefined {
+function calculateDPS(
+  attackSpeed?: number,
+  damage?: number
+): number | undefined {
   if (!attackSpeed || !damage) return undefined;
-  return Math.round((attackSpeed * 100) / 100 * damage);
+  return Math.round(((attackSpeed * 100) / 100) * damage);
 }
 
 // === UI COMPONENTS ===
@@ -205,10 +210,10 @@ function formatKeyForDisplay(key: string): string {
   // Convert camelCase to Title Case with spaces
   if (/[a-z][A-Z]/.test(key)) {
     return key
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/\b\w/g, char => char.toUpperCase());
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
-  
+
   // If already has spaces or is single word, just capitalize first letter
   return key.charAt(0).toUpperCase() + key.slice(1);
 }
@@ -218,7 +223,10 @@ function formatKeyForDisplay(key: string): string {
  * @param ability - The ability object with stats
  * @param isPopup - Whether this is being rendered in a popup dialog (for compact styling)
  */
-export function AbilityStats({ ability, isPopup = false }: AbilityStatsProps): JSX.Element | null {
+export function AbilityStats({
+  ability,
+  isPopup = false,
+}: AbilityStatsProps): JSX.Element | null {
   if (!ability) return null;
 
   // Get all keys from the ability object
@@ -253,7 +261,6 @@ export function AbilityStats({ ability, isPopup = false }: AbilityStatsProps): J
 
   // If no popup (normal mode), render as regular list
   if (!isPopup) {
-    
     return (
       <>
         {sortedKeys.map((key) => {
@@ -261,32 +268,39 @@ export function AbilityStats({ ability, isPopup = false }: AbilityStatsProps): J
 
           return (
             <p key={key}>
-              {formattedKey}: <span className="text-white text-sm">{ability[key]}</span>
+              {formattedKey}:{" "}
+              <span className="text-white text-sm">{ability[key]}</span>
             </p>
           );
         })}
       </>
     );
   }
-  
+
   // Popup mode - render in a grid with more compact styling
   return (
     <div className="grid grid-cols-1 gap-x-4 gap-y-1 mt-2 pb-3">
-      {(sortedKeys.length==0)
-      ? 
-       <div></div>
-   :
-      sortedKeys.map((key) => {
-        const formattedKey = formatKeyForDisplay(key);
-        
-        return (
-          <div key={key} className="flex flex-row justify-between items-baseline">
-            <span className="text-emerald-400 font-sm text-sm mr-1">{formattedKey}:</span>
-            <span className="text-cyan-200 text-xs font-semibold">{ability[key]}</span>
-          </div>
-        );
-      })
-    }
+      {sortedKeys.length == 0 ? (
+        <div></div>
+      ) : (
+        sortedKeys.map((key) => {
+          const formattedKey = formatKeyForDisplay(key);
+
+          return (
+            <div
+              key={key}
+              className="flex flex-row justify-between items-baseline"
+            >
+              <span className="text-emerald-400 font-sm text-sm mr-1">
+                {formattedKey}:
+              </span>
+              <span className="text-cyan-200 text-xs font-semibold">
+                {ability[key]}
+              </span>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
@@ -300,7 +314,11 @@ interface ChampAbilityProps {
 /**
  * Renders champion's ability information
  */
-function ChampAbility({ ability, theme, imageAbilityS3 }: ChampAbilityProps): JSX.Element {
+function ChampAbility({
+  ability,
+  theme,
+  imageAbilityS3,
+}: ChampAbilityProps): JSX.Element {
   if (!ability || !ability.name) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
@@ -308,16 +326,18 @@ function ChampAbility({ ability, theme, imageAbilityS3 }: ChampAbilityProps): JS
       </div>
     );
   }
-  
+
   const abilityUrl = getAbilityImageUrl(imageAbilityS3);
-  let topP = "pt-5"
-  if(ability.desc!.length >= 320) {
-    
-    topP= "pt-[-20px]"
+  let topP = "pt-5";
+  if (ability.desc!.length >= 320) {
+    topP = "pt-[-20px]";
   }
   return (
     <div
-      className={cn(topP,`${theme.textAccent} text-xs   px-5 pb-5 h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left relative pb-10`)}
+      className={cn(
+        topP,
+        `${theme.textAccent} text-xs   px-5 pb-5 h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left relative pb-10`
+      )}
     >
       <div className="flex-grow overflow-y-auto pr-2 max-h-full">
         <p className="text-lg">Ability: {ability.name}</p>
@@ -361,9 +381,7 @@ function StatItem({ iconSrc, value }: StatItemProps): JSX.Element {
   return (
     <div className="flex flex-row gap-2">
       <img className="h-3 w-3 mt-1" src={iconSrc} />
-      <span className="text-white font-medium">
-        {value || "N/A"}
-      </span>
+      <span className="text-white font-medium">{value || "N/A"}</span>
     </div>
   );
 }
@@ -387,7 +405,9 @@ function ChampStats({ stats, theme }: ChampStatsProps): JSX.Element {
 
   const { hp, mana, armor, mr, attackSpeed, damage, range } = stats;
   const dps = calculateDPS(attackSpeed, damage);
-  const formattedAttackSpeed = attackSpeed ? Math.round(attackSpeed * 100) / 100 : undefined;
+  const formattedAttackSpeed = attackSpeed
+    ? Math.round(attackSpeed * 100) / 100
+    : undefined;
 
   return (
     <div
@@ -399,18 +419,18 @@ function ChampStats({ stats, theme }: ChampStatsProps): JSX.Element {
         <StatItem iconSrc="./img/TFT_Mana.png" value={mana} />
         <StatItem iconSrc="./img/TFT_Armor.png" value={armor} />
         <StatItem iconSrc="./img/TFT_MR.png" value={mr} />
-        
+
         <p>
           DPS: <span className="text-white font-medium">{dps || "N/A"}</span>
         </p>
-        
+
         <div className="flex flex-row gap-2">
           <img className="h-3 w-3 mt-1" src="./img/TFT_AS.png" />
           <span className="text-white font-medium">
             {formattedAttackSpeed || "N/A"}
           </span>
         </div>
-        
+
         <StatItem iconSrc="./img/TFT_Range.png" value={range} />
         <StatItem iconSrc="./img/TFT_AD.png" value={damage} />
       </div>
@@ -427,7 +447,11 @@ interface PlaystyleTipProps {
 /**
  * Renders a single playstyle tip
  */
-function PlaystyleTip({ label, value, defaultValue }: PlaystyleTipProps): JSX.Element {
+function PlaystyleTip({
+  label,
+  value,
+  defaultValue,
+}: PlaystyleTipProps): JSX.Element {
   return (
     <li>
       {label}: <span className="text-white">{value || defaultValue}</span>
@@ -443,9 +467,12 @@ interface ChampPlaystyleProps {
 /**
  * Renders champion's playstyle information
  */
-function ChampPlaystyle({ champData, theme }: ChampPlaystyleProps): JSX.Element {
+function ChampPlaystyle({
+  champData,
+  theme,
+}: ChampPlaystyleProps): JSX.Element {
   const { position, items, synergies, powerSpikes, counters } = champData;
-  
+
   return (
     <div
       className={`${theme.textAccent} h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left p-4`}
@@ -453,30 +480,30 @@ function ChampPlaystyle({ champData, theme }: ChampPlaystyleProps): JSX.Element 
       <p className="text-lg font-semibold mb-2">Playstyle Tips</p>
       <div className="overflow-y-auto pr-2 max-h-full">
         <ul className="list-disc pl-5 space-y-2 font-extralight">
-          <PlaystyleTip 
-            label="Best positioned" 
-            value={position} 
-            defaultValue="Flexible" 
+          <PlaystyleTip
+            label="Best positioned"
+            value={position}
+            defaultValue="Flexible"
           />
-          <PlaystyleTip 
-            label="Recommended items" 
-            value={items?.join(", ")} 
-            defaultValue="Varies based on comp" 
+          <PlaystyleTip
+            label="Recommended items"
+            value={items?.join(", ")}
+            defaultValue="Varies based on comp"
           />
-          <PlaystyleTip 
-            label="Synergizes with" 
-            value={synergies?.join(", ")} 
-            defaultValue="Champions sharing traits" 
+          <PlaystyleTip
+            label="Synergizes with"
+            value={synergies?.join(", ")}
+            defaultValue="Champions sharing traits"
           />
-          <PlaystyleTip 
-            label="Power spikes" 
-            value={powerSpikes} 
-            defaultValue="When ability activates" 
+          <PlaystyleTip
+            label="Power spikes"
+            value={powerSpikes}
+            defaultValue="When ability activates"
           />
-          <PlaystyleTip 
-            label="Counter strategies" 
-            value={counters} 
-            defaultValue="CC and burst damage" 
+          <PlaystyleTip
+            label="Counter strategies"
+            value={counters}
+            defaultValue="CC and burst damage"
           />
         </ul>
       </div>
@@ -493,26 +520,36 @@ interface TabNavigationProps {
 /**
  * Renders tab navigation buttons
  */
-function TabNavigation({ activeTab, setActiveTab, theme }: TabNavigationProps): JSX.Element {
+function TabNavigation({
+  activeTab,
+  setActiveTab,
+  theme,
+}: TabNavigationProps): JSX.Element {
   const activeButtonStyle = `${theme.buttonActive} underline underline-offset-4 text-amber-100 font-mono rounded-b-none border-t border-x`;
   const inactiveButtonStyle = `cursor-pointer ${theme.buttonInactive} bg-gray-900 text-white/50 font-mono rounded-b-none border-t border-x`;
-  
+
   return (
     <div className="flex flex-row gap-2 justify-center mt-4">
       <Button
-        className={activeTab === "ability" ? activeButtonStyle : inactiveButtonStyle}
+        className={
+          activeTab === "ability" ? activeButtonStyle : inactiveButtonStyle
+        }
         onClick={() => setActiveTab("ability")}
       >
         Ability
       </Button>
       <Button
-        className={activeTab === "stats" ? activeButtonStyle : inactiveButtonStyle}
+        className={
+          activeTab === "stats" ? activeButtonStyle : inactiveButtonStyle
+        }
         onClick={() => setActiveTab("stats")}
       >
         Stats
       </Button>
       <Button
-        className={activeTab === "playstyle" ? activeButtonStyle : inactiveButtonStyle}
+        className={
+          activeTab === "playstyle" ? activeButtonStyle : inactiveButtonStyle
+        }
         onClick={() => setActiveTab("playstyle")}
       >
         Playstyle
@@ -533,17 +570,14 @@ interface ChampionTraitsProps {
  */
 function ChampionTraits({ traits }: ChampionTraitsProps): JSX.Element | null {
   if (!traits || traits.length === 0) return null;
-  
+
   return (
     <div className="flex items-center gap-1">
       {traits.map((trait: string, idx: number) => (
-        <div 
-          key={idx} 
-          className="relative group"
-        >
-          <img 
-            className="h-6 w-6 rounded-full border border-gray-700 cursor-help" 
-            src={getTraitImageUrl(trait)} 
+        <div key={idx} className="relative group">
+          <img
+            className="h-6 w-6 rounded-full border border-gray-700 cursor-help"
+            src={getTraitImageUrl(trait)}
             alt={trait}
           />
           <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gray-900/90 text-white text-xs px-2 py-1 rounded pointer-events-none z-20 -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
@@ -571,68 +605,148 @@ interface ChampionHeaderProps {
  * @param props.traits - Array of champion traits
  * @returns Rendered champion header in TCG card style
  */
-function ChampionHeader({ champData, theme, imageUrl, traits }: ChampionHeaderProps): JSX.Element {
+function ChampionHeader({
+  champData,
+  theme,
+  imageUrl,
+  traits,
+}: ChampionHeaderProps): JSX.Element {
   // Handle image loading error
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>): void => {
-    e.currentTarget.src = "https://tft-set14.s3.us-east-2.amazonaws.com/traits/cybercity.png";
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ): void => {
+    e.currentTarget.src =
+      "https://tft-set14.s3.us-east-2.amazonaws.com/traits/cybercity.png";
   };
- let topPos = ["Shaco","Zyra", "Seraphine","Morgana","Sylas","Poppy","Dr. Mundo","Jax","Twisted Fate","Rhaast","Vayne","Graves","Ekko","LeBlanc","Jhin","Draven","Illaoi","Darius","Galio","Elise","Senna","Gragas","Fiddlesticks","Jinx","Mordekaiser","Zeri","Zed","Ziggs","Miss Fortune","Xayah","Cho'Gath","Leona"]
-  let objPos = "object-top-right"
-  let h = "5"
-  if(topPos.includes(champData.name)) objPos = "object-top"
-  if(champData.cost == "5"    ) {objPos = "object-top"; h="5.5"}
- let roleColor = "bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text"
- if(champData.role=="ADCarry") roleColor="bg-gradient-to-r from-red-500 to-yellow-500 text-transparent bg-clip-text"
-  if(champData.role=="ADReaper") roleColor="bg-gradient-to-r from-pink-500 to-lime-500 text-transparent bg-clip-text"
-  if(champData.role=="ADTank") roleColor="bg-gradient-to-r from-red-500 to-white text-transparent bg-clip-text"
-  if(champData.role=="APCarry") roleColor="bg-gradient-to-r from-purple-500 to-lime-300 text-transparent bg-clip-text"
-  if(champData.role=="APCasterHighMana") roleColor="bg-gradient-to-r from-purple-500 to-pink-300 text-transparent bg-clip-text"
-  if(champData.role=="APFighter") roleColor="bg-gradient-to-r from-pink-500 to-cyan-300 text-transparent bg-clip-text"
-  if(champData.role=="APReaper") roleColor="bg-gradient-to-r from-purple-500 to-red-300 text-transparent bg-clip-text"
-  if(champData.role=="ADFighter") roleColor="bg-gradient-to-r from-lime-500 to-cyan-100 text-transparent bg-clip-text"
-  
+  let topPos = [
+    "Shaco",
+    "Zyra",
+    "Seraphine",
+    "Morgana",
+    "Sylas",
+    "Poppy",
+    "Dr. Mundo",
+    "Jax",
+    "Twisted Fate",
+    "Rhaast",
+    "Vayne",
+    "Graves",
+    "Ekko",
+    "LeBlanc",
+    "Jhin",
+    "Draven",
+    "Illaoi",
+    "Darius",
+    "Galio",
+    "Elise",
+    "Senna",
+    "Gragas",
+    "Fiddlesticks",
+    "Jinx",
+    "Mordekaiser",
+    "Zeri",
+    "Zed",
+    "Ziggs",
+    "Miss Fortune",
+    "Xayah",
+    "Cho'Gath",
+    "Leona",
+  ];
+  let objPos = "object-top-right";
+  let h = "5";
+  if (topPos.includes(champData.name)) objPos = "object-top";
+  if (champData.cost == "5") {
+    objPos = "object-top";
+    h = "5.5";
+  }
+  let roleColor =
+    "bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text";
+  if (champData.role == "ADCarry")
+    roleColor =
+      "bg-gradient-to-r from-red-500 to-yellow-500 text-transparent bg-clip-text";
+  if (champData.role == "ADReaper")
+    roleColor =
+      "bg-gradient-to-r from-pink-500 to-lime-500 text-transparent bg-clip-text";
+  if (champData.role == "ADTank")
+    roleColor =
+      "bg-gradient-to-r from-red-500 to-white text-transparent bg-clip-text";
+  if (champData.role == "APCarry")
+    roleColor =
+      "bg-gradient-to-r from-purple-500 to-lime-300 text-transparent bg-clip-text";
+  if (champData.role == "APCasterHighMana")
+    roleColor =
+      "bg-gradient-to-r from-purple-500 to-pink-300 text-transparent bg-clip-text";
+  if (champData.role == "APFighter")
+    roleColor =
+      "bg-gradient-to-r from-pink-500 to-cyan-300 text-transparent bg-clip-text";
+  if (champData.role == "APReaper")
+    roleColor =
+      "bg-gradient-to-r from-purple-500 to-red-300 text-transparent bg-clip-text";
+  if (champData.role == "ADFighter")
+    roleColor =
+      "bg-gradient-to-r from-lime-500 to-cyan-100 text-transparent bg-clip-text";
+
+      let name = champData.name
   return (
     <div className="flex flex-col bg-gray-800/30 rounded">
       {/* Champion name & traits bar */}
       <div className="flex items-center px-3 py-2 shadow-inner shadow-black/10 ">
         {/* Cost indicator */}
-        <div className={`flex items-center justify-center rounded-full ${theme.accent1} w-8 h-8 mr-2 flex-shrink-0`}>
+   
+        <div
+          className={`flex items-center justify-center rounded-full ${theme.accent1} w-8 h-8 mr-2 flex-shrink-0`}
+        >
           {/* <span className="text-white font-bold">{champData.cost}</span> */}
-          {champData.cost  == "1"
-          ?
-          <img className="h-3 w-3 grayscale-100" src={`./img/t2.png `}/>
-          :
-          <img className={`h-${h} w-5`} src={`./img/t${champData.cost}.png `}/>
-          }
-         
+          {champData.cost == "1" ? (
+            <img className="h-3 w-3 grayscale-100" src={`./img/t2.png `} />
+          ) : (
+            <img
+              className={`h-${h} w-5`}
+              src={`./img/t${champData.cost}.png `}
+            />
+          )}
         </div>
-        
+       
         {/* Champion name */}
+        
         <p
           className={`text-2xl font-bold text-white font-mono tracking-tight text-shadow ${theme.shadow} mr-auto truncate `}
-        >
-          {champData.name}
+        ><Link to={"/champions/"+name}>  
+          {champData.name}  </Link> 
         </p>
-        
+      
         {/* Traits as hoverable icons */}
         <ChampionTraits traits={traits} />
       </div>
-      
+
       {/* Main champion image */}
+      <Link to={"/champions/"+name}>  
       <div className="w-full h-48 overflow-hidden border border-black/50  ">
         <img
-          className={"w-full h-full object-cover saturate-150  "+ objPos}
+          className={"w-full h-full object-cover saturate-150  " + objPos}
           src={imageUrl}
           style={{ objectFit: "cover" }}
           onError={handleImageError}
           alt={champData.name}
         />
       </div>
-      
+      </Link> 
       {/* Role information below the image */}
-      <div className={`px-3 py-1 bg-gray-900/50  shadow-xs shadow-white/10 rounded-b`}>
-        <p className={`text-sm ${theme.textAccent} font-mono flex justify-between `}>
-          <span></span> <span className={cn(roleColor,`rounded  italic font-extrabold  text-xs  `)}>{champData.role}</span>
+      <div
+        className={`px-3 py-1 bg-gray-900/50  shadow-xs shadow-white/10 rounded-b`}
+      >
+        <p
+          className={`text-sm ${theme.textAccent} font-mono flex justify-between `}
+        >
+          <span></span>{" "}
+          <span
+            className={cn(
+              roleColor,
+              `rounded  italic font-extrabold  text-xs  `
+            )}
+          >
+            {champData.role}
+          </span>
         </p>
       </div>
     </div>
@@ -663,21 +777,25 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
   const renderTabContent = () => {
     switch (activeTab) {
       case "ability":
-        return <ChampAbility 
-          ability={data.ability} 
-          theme={theme}
-          imageAbilityS3={data.imageAbilityS3}
-        />;
+        return (
+          <ChampAbility
+            ability={data.ability}
+            theme={theme}
+            imageAbilityS3={data.imageAbilityS3}
+          />
+        );
       case "stats":
         return <ChampStats stats={data.stats} theme={theme} />;
       case "playstyle":
         return <ChampPlaystyle champData={data} theme={theme} />;
       default:
-        return <ChampAbility 
-          ability={data.ability} 
-          theme={theme}
-          imageAbilityS3={data.imageAbilityS3}
-        />;
+        return (
+          <ChampAbility
+            ability={data.ability}
+            theme={theme}
+            imageAbilityS3={data.imageAbilityS3}
+          />
+        );
     }
   };
 
@@ -692,7 +810,7 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
 
       {/* Champion card content */}
       <div className="relative z-10 flex flex-col h-full">
-        <ChampionHeader 
+        <ChampionHeader
           champData={data}
           theme={theme}
           imageUrl={champUrl}
@@ -700,10 +818,10 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
         />
 
         {/* Tab navigation */}
-        <TabNavigation 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          theme={theme} 
+        <TabNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          theme={theme}
         />
 
         {/* Tab content - flex-grow to take remaining height */}

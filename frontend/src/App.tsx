@@ -1,14 +1,16 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavMenu from "./NavMenu";
  
-import CrudTester from "./pages/CrudTester";
+ 
 import CurrentSet from "./pages/CurrentSet";
-import { PopulateData } from "./pages/PopulateData";
+ 
 
-import Home from "./components/home/Home";
+import Home from "./pages/Home";
 
 import { GlobalProvider } from "./components/context/context";
 import { Builds } from "./pages/Builds";
+import Champions from "./pages/Champions";
+import SingleChampion from "./pages/SingleChampion";
 
 const PageLayout = ({ children }: any) => (
   <div className="text-gray-100">{children}</div>
@@ -23,6 +25,8 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/champions" element={<Champions />} />
+              <Route path="/champions/*" element={<SingleChampion />} />
               <Route
                 path="/builds"
                 element={
@@ -39,22 +43,7 @@ function App() {
                   </PageLayout>
                 }
               />
-              <Route
-                path="/crudtester"
-                element={
-                  <PageLayout>
-                    <CrudTester />
-                  </PageLayout>
-                }
-              />
-              <Route
-                path="/populatedata"
-                element={
-                  <PageLayout>
-                    <PopulateData />
-                  </PageLayout>
-                }
-              />
+           
             </Routes>
           </div>
         </div>

@@ -1,95 +1,125 @@
-import BuildPreviewTitle, { TFTBuild } from "@/components/home/BuildPreviewTile";
-import { Search } from "lucide-react";
+ 
+import CyberpunkBentoBox, {
+  PanelConfig,
+  CyberPanel,
+} from "../components/home/CyberpunkBentoBox";
+import SearchBar from "../components/search/SearchBar";
 
-export default function Home() {
-    return (
-        <div className="container mx-auto text-center pb-5">
-            <h2 className="my-6 text-xl font-bold text-purple-800">Find your comp</h2>
-           
-            <div className="max-w-2xl mx-auto mb-8">
-                <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                        <Search className="h-5 w-5 text-blue-400" />
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Search for Builds, Champions, Items, Augments, etc."
-                        className="w-full py-3 pl-10 pr-4 bg-blue-50 border border-blue-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-500 shadow-sm placeholder-blue-300 text-blue-800"
-                    />
-                </div>
-            </div>
-            
-            <div className="bg-blue-50 rounded-xl p-6 shadow-md mx-auto max-w-5xl border border-blue-100">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
-                    <FirstBuild/>
-                    <BuildPreviewTitle/>
-                    <BuildPreviewTitle/>
-                    <BuildPreviewTitle/>
-                    <BuildPreviewTitle/>
-                    <BuildPreviewTitle/>
-                </div>
-            </div>
-        </div>
-    )
-}
+const Home = () => {
+ 
 
-
-const FirstBuild = () => {
-  const sampleBuild = {
-    buildName: "Anima Squad Vertical",
-    tier: 1,
-    difficulty: "medium",
-    traits: [
-        {name: "Overlord", count:1, level:1},
-      { name: "Anima Squad", count: 7, level: 3 },
-      { name: "Strategist", count: 2, level: 1 },
-      { name: "Bastion", count: 2, level: 1 },
-      { name: "Vanguard", count: 2, level: 1 },
-      { name: "Divinicorp", count: 2, level: 1 }
-    ],
-    champions: [
-      { name: "Aurora", cost: 5, stars: 1 },
-      { name: "Leona", cost: 4, stars: 2 },
-      { name: "Xayah", cost: 4, stars: 2 },
-      { name: "Yuumi", cost: 3, stars: 2 },
-      { name: "Renekton", cost: 5, stars: 1 },
-      { name: "Neeko", cost: 4, stars: 1 },
-      { name: "Illaoi", cost: 2, stars: 1 },
-      { name: "Vayne", cost: 2, stars: 1 },
-      { name: "Sylas", cost: 2, stars: 1 }
-    ],
-    carousel: ["Glove", "Sword", "Belt"],
-    augments: ["Anima Squad Crest", "Big Grab Bag", "Glass Cannon II"]
+  // Example handler for panel clicks
+  const handlePanelClick = (panelId: number) => {
+    console.log(`Panel ${panelId} clicked`);
+    // You could navigate to different sections or show different content here
   };
 
-  return <TFTBuild {...sampleBuild} />;
+  // Example custom panel content
+  const customPanels: PanelConfig[] = [
+    {
+      id: 1,
+      color: "cyan",
+      minSize: 100,
+      defaultSize: 100,
+      content: "Champions",
+    },
+    { id: 2, color: "emerald", minSize: 15, defaultSize: 30, content: "Items" },
+    {
+      id: 3,
+      color: "purple",
+      minSize: 15,
+      defaultSize: 20,
+      content: "Augments",
+    },
+    { id: 4, color: "blue", minSize: 15, defaultSize: 25, content: "Builds" },
+    {
+      id: 5,
+      color: "cyan",
+      minSize: 15,
+      defaultSize: 30,
+      content: "Meta Comps",
+    },
+    { id: 6, color: "emerald", minSize: 15, defaultSize: 20, content: "Stats" },
+    { id: 7, color: "purple", minSize: 15, defaultSize: 25, content: "Guides" },
+    { id: 8, color: "blue", minSize: 15, defaultSize: 20, content: "Traits" },
+    { id: 9, color: "cyan", minSize: 15, defaultSize: 25, content: "Updates" },
+  ];
+  // rgba(150,100,255,0.2)
+  return (
+    <div className="h-[200svh]" style={{ height: "200svh" }}>
+      <div
+        style={{
+          width: "100vw",
+          height: "100%",
+
+          backgroundImage: `linear-gradient(rgba(150,100,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(150,100,255,0.4) 1px, transparent 1px)`,
+          backgroundSize: "140px 140px",
+        }}
+        className="flex flex-col min-h-screen justify-self-center mt-[-48px]"
+      >
+        {/* Content container that will appear above the isometric grid */}
+        <div className="relative z-1  ">
+          {/* Text content section */}
+          <div className="      py-5 px-8 bg-gradient-to-b rounded-lg pointer-events-auto flex flex-col">
+            <div className="bg-linear-to-b from-gray-950 to-gray-950/90   w-[100svw] ml-[-2svw] mt-[-1svh]   text-center py-4 pb-8 flex flex-row  place-content-center">
+              <h1 className="  pt-4 text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">
+                Welcome to tftac.tips♟️
+              </h1>
+              <h1 className="pt-13 italic  text-3xl font-light text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-blue-400    ">
+                Find your pivot
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Component */}
+        <div  className="py-[4svh]" style={{ zIndex: 1 }}>
+          <SearchBar />
+        </div>
+        <div
+          style={{ zIndex: 0 }}
+          className="rounded-xl border border-x-2 border-b-8 border-black ml-[3.5svw] h-[90svh] w-[92.8svw]   mt-[-80.5svh]      flex  "
+        >
+          <img
+            src="./img/cybercity_promo.png"
+            className="object-cover overflow-hidden  rounded-xl"
+          />
+        </div>
+
+        {/* Bento Box Component */}
+        <div className="mt-8 mb-8 mx-auto w-[80svw]">
+          <CyberpunkBentoBox
+            panels={customPanels}
+            onPanelClick={handlePanelClick}
+          />
+        </div>
+
+        {/* Example of using CyberPanel individually */}
+        <div className="mx-auto max-w-6xl mb-8">
+          <div className="grid grid-cols-2 gap-4">
+            <CyberPanel glow="purple" size="lg">
+              <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-blue-300 mb-3">
+                Featured Build
+              </h3>
+              <p className="text-gray-300">
+                Check out our latest featured TFT build with step-by-step
+                positioning and itemization.
+              </p>
+            </CyberPanel>
+
+            <CyberPanel glow="emerald" size="lg">
+              <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300 mb-3">
+                Patch Notes
+              </h3>
+              <p className="text-gray-300">
+                Stay up to date with the latest balance changes and meta shifts.
+              </p>
+            </CyberPanel>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-// const SecondBuild = () => {
-//     const sampleBuild = {
-//       buildName: "AMP + Strategist",
-//       tier: 1,
-//       difficulty: "hard",
-//       traits: [
-//           {name: "Strategist", count:5, level:4},
-//         { name: "AMP", count: 4, level: 3 },
-//         { name: "Street Demon", count: 3, level: 1 },
-  
-//       ],
-//       champions: [
-//         { name: "Samira", cost: 5, stars: 1 },
-//         { name: "Ziggs", cost: 4, stars: 2 },
-//         { name: "Neeko", cost: 4, stars: 2 },
-//         { name: "Annie", cost: 4, stars: 2 },
-//         { name: "Yuumi", cost: 3, stars: 1 },
-//         { name: "Naafiri", cost: 2, stars: 1 },
-//         { name: "Leblanc", cost: 2, stars: 1 },
-//         { name: "Ekko", cost: 2, stars: 1 },
-       
-//       ],
-//       carousel: ["Tear", "Sword", "Rod"],
-//       augments: ["Anima Squad Crest", "Big Grab Bag", "Glass Cannon II"]
-//     };
-  
-//     return <TFTBuild {...sampleBuild} />;
-//   };
+export default Home;

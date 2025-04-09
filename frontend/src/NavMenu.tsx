@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { Home, Grid, Menu, X, Database, FlaskConical } from 'lucide-react';
+import SearchBar from './components/search/SearchBar';
 
 // Define proper TypeScript interfaces
 interface NavItemProps {
@@ -48,6 +49,7 @@ const NavMenu = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:block  p-2 ">
               <div className=" px-7 flex items-center space-x-6">
+               
                 <NavItem 
                   icon={<Home size={18} />} 
                   text="Home" 
@@ -60,24 +62,19 @@ const NavMenu = () => {
                   to="/builds" 
                   active={location.pathname === '/builds'} 
                 />
+                  <NavItem 
+                  icon={<Grid size={18} />} 
+                  text="Champions" 
+                  to="/champions" 
+                  active={location.pathname === '/champions'} 
+                />
                 <NavItemSet14 
                   icon={<img src="./img/cybercity.png" className='w-7 h-7' />} 
                   text="Set 14" 
                   to="/currentset" 
                   active={location.pathname === '/currentset'} 
                 />
-                <NavItem 
-                  icon={<FlaskConical size={18} />} 
-                  text="Testing" 
-                  to="/crudtester" 
-                  active={location.pathname === '/crudtester'} 
-                />
-                <NavItem 
-                  icon={<Database size={18} />} 
-                  text="Populate Data" 
-                  to="/populatedata" 
-                  active={location.pathname === '/populatedata'} 
-                />
+               
               </div>
             </div>
             
@@ -113,24 +110,19 @@ const NavMenu = () => {
                 to="/builds" 
                 active={location.pathname === '/builds'} 
               />
+               <MobileNavItem 
+                icon={<Grid size={18} />} 
+                text="Champions" 
+                to="/champions" 
+                active={location.pathname === '/champions'} 
+              />
               <MobileNavItem 
                 icon={<img src="./img/cybercity.png" className='w-7 h-7' />} 
                 text="Set 14" 
                 to="/currentset" 
                 active={location.pathname === '/currentset'} 
               />
-              <MobileNavItem 
-                icon={<FlaskConical size={18} />} 
-                text="Testing" 
-                to="/crudtester" 
-                active={location.pathname === '/crudtester'} 
-              />
-              <MobileNavItem 
-                icon={<Database size={18} />} 
-                text="Populate Data" 
-                to="/populatedata" 
-                active={location.pathname === '/populatedata'} 
-              />
+             
             </div>
           </div>
         )}
