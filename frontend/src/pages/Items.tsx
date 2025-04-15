@@ -22,7 +22,7 @@ export default function Items() {
           />
         </div>
 
-        <div className="grid grid-cols-5 gap-4 gap-y-2 w-[90svw] justify-self-center">
+        <div className="grid grid-cols-4 gap-4 gap-y-2 w-[90svw] justify-self-center">
           {filteredItems.map((item: any, idx: number) => (
             <div key={idx + ""}>
               <ItemBox item={item} />

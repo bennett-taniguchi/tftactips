@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import {  useEffect } from "react";
  
 import { useGlobalContext } from "@/components/context/context";
-import { AugmentBox } from "@/components/set/AugmentBox";
+import { AugmentBox } from "@/components/augment/AugmentBox";
 import ChampionHierarchy from "@/components/champion/ChampionHierarchy";
 import ChampionBox from "@/components/champion/ChampionBox";
  

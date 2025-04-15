@@ -136,7 +136,7 @@ const CyberpunkBentoBox: React.FC<CyberpunkBentoBoxProps> = ({
         <ResizablePanel minSize={panels[0].minSize} defaultSize={panels[0].defaultSize}>
           <CyberPanel 
             glow={panels[0].color} 
-            className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% h-full cursor-pointer hover:ring-2 hover:ring-cyan-500/30 transition-all"
+            className="h-full cursor-pointer hover:ring-2 hover:ring-emerald-500/30 transition-all"
             onClick={() => onPanelClick(panels[0].id)}
           >
             <div className="flex  h-full "  >

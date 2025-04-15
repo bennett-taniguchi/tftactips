@@ -1,4 +1,5 @@
-import { getItemImage, ItemData } from "../../../utils/items";
+import { formatEffectKey, formatEffectValue, getItemImage, ItemData, replaceTFTTags } from "../../../utils/items";
+import { ScrollArea } from "../ui/scroll-area";
 
 type ItemBoxProps = {
   item: ItemData;
@@ -6,6 +7,20 @@ type ItemBoxProps = {
 
 function RenderEffects({ effects }: any) {
   if (!effects || Object.keys(effects).length === 0) {
+    return <div></div>;
+  }
+
+  // Create filtered effects object that removes hash keys
+  const filteredEffects = Object.entries(effects).reduce((acc, [key, value]) => {
+    const formattedKey = formatEffectKey(key);
+    if (formattedKey !== null) {
+      acc[formattedKey] = formatEffectValue(value);
+    }
+    return acc;
+  }, {} as Record<string, string>);
+  
+  // Check if we have any effects left after filtering
+  if (Object.keys(filteredEffects).length === 0) {
     return <div></div>;
   }
 
@@ -18,31 +33,40 @@ function RenderEffects({ effects }: any) {
     return "bg-gray-700/80";
   };
 
+  // Calculate the dynamic height for each effect row
+  const effectsCount = Object.keys(filteredEffects).length;
+  const containerHeight = 200; // Your fixed container height
+  const rowHeight = Math.floor(containerHeight / effectsCount);
+  
+  // Set a minimum row height to prevent rows from becoming too small
+  const finalRowHeight = Math.max(rowHeight, 20);
+ 
   return (
     <div 
-      className="w-full bg-gradient-to-b from-gray-900/90 via-gray-800/80 to-gray-700/80 rounded-lg border border-cyan-500/30 shadow-lg shadow-cyan-500/10 overflow-hidden"
+      className="w-full bg-gradient-to-b from-gray-900/90 via-gray-800/80 to-gray-700/80 rounded-lg border border-cyan-500/30 shadow-lg shadow-cyan-500/10"
       style={{ height: "200px" }}
     >
-      <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-gray-800 h-full">
-        {Object.entries(effects).map(([key, value], idx) => (
+      <div className="h-full">
+        {Object.entries(filteredEffects).map(([key, value], idx) => (
           <div
             key={idx}
-            className="flex items-center bg-gray-800/60 border-b border-cyan-600/10 last:border-b-0 overflow-hidden"
-            style={{ minHeight: "36px" }}
+            className="flex items-center bg-gray-800/60 border-b border-cyan-600/10 last:border-b-0"
+            style={{ height: `${finalRowHeight}px` }}
           >
             {/* Left side with key label */}
-            <div className={`${getEffectColor(key)} m-2 p-2 border-cyan-400/50 border text-sm flex-shrink-0 flex items-center justify-center min-w-[80px]`}>
-              <p className="text-white font-medium">{key}</p>
+            <div className={`${getEffectColor(key)} m-1 p-1 border-cyan-400/50 border text-xs shrink flex items-center justify-center min-w-[80px]`}>
+              <p className="text-white font-medium truncate">{key}</p>
             </div>
             
             {/* Right side with value */}
-            <p className="text-sm text-gray-200 mx-auto">{value + ""}</p>
+            <p className="text-xs text-gray-200 mx-auto truncate px-2">{value}</p>
           </div>
         ))}
       </div>
     </div>
   );
 }
+
 
 export default function ItemBox({ item }: ItemBoxProps) {
   if (!item || !item.parsedData || !(item.parsedData as any).name) {
@@ -62,12 +86,18 @@ export default function ItemBox({ item }: ItemBoxProps) {
           />
         </div>
 
-        <div className="flex flex-col text-center">
-          <h1 className="text-2xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 animate-gradient py-2">
+        <div className="flex flex-col text-center w-full">
+          <h1 className="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 animate-gradient py-2">
             {data.name}
           </h1>
-          <div className="text-sm font-light text-gray-300 mt-1 max-h-16 overflow-y-auto">
-            {data.desc}
+          {/* Description container with fixed height and proper text handling */}
+          <div className="text-xs font-light text-gray-300 mt-1  overflow-hidden relative w-full px-2">
+            <div 
+              className="break-words text-center w-full" 
+              dangerouslySetInnerHTML={{ 
+                __html: data.desc ? replaceTFTTags(data.desc) : "" 
+              }} 
+            />
           </div>
         </div>
       </div>
@@ -92,6 +122,23 @@ export default function ItemBox({ item }: ItemBoxProps) {
           }
           .inner-shadow {
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+          }
+          
+          /* Add these styles for the TFT tags */
+          .tft-keyword {
+            color: #4ade80;
+            font-weight: bold;
+          }
+          
+          .tft-item-rules {
+            text-align: left;
+            padding: 4px;
+            margin-top: 4px;
+          }
+          
+          .tft-bold {
+            font-weight: bold;
+            color: #f59e0b;
           }
         `}
       </style>

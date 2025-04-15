@@ -195,7 +195,7 @@ type HoverableChampionAbilityProps = {
     );
   }
 
-const ChampionBox: React.FC<{ champion: Champion }> = ({ champion }) => {
+export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ champion,style="" }) => {
   // Extract data, prioritizing parsedData
   const { name, apiName, cost, traits } = useMemo(() => {
     let name = "Unknown";
@@ -253,7 +253,7 @@ const ChampionBox: React.FC<{ champion: Champion }> = ({ champion }) => {
 
   return (
     <div
-      className={cn(
+      className={cn( 
         "flex items-center p-2 w-[10svw] rounded-lg backdrop-blur-lg",
         "transition-all duration-900 space-x-2",
         colors.bg,
@@ -261,7 +261,7 @@ const ChampionBox: React.FC<{ champion: Champion }> = ({ champion }) => {
         colors.border,
         "shadow-md",
         colors.glow,
-
+        style,
         "relative overflow-hidden group"
       )}
     >
@@ -350,7 +350,8 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
         className={`${singleItemSpacing} mx-auto overflow-x-hidden flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-[11svw]`}
       >
         {champions.map((champion) => (
-          <ChampionBox
+          <ChampionRow
+          style=""
             key={champion["CHAMPION#"] || champion.id || champion.name}
             champion={champion}
           />

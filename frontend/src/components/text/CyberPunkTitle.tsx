@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function CyberPunkTitle({ text }:any) {
   return (
-    <div className="relative pt-8 px-8 pb-6 flex justify-center">
-      <h1 className="font-mono text-6xl font-extrabold tracking-wider text-emerald-400 uppercase relative">
+    <div className="relative pt-8 px-8 pb-6 flex justify-center font-inter font-extrabold ">
+      <h1 className=" text-6xl font-bold tracking-wider text-emerald-400 uppercase relative">
         {/* Base shadow layer - larger text below */}
         <span className="absolute z-8 text-yellow-900 blur-sm text-5xl" 
               style={{ 

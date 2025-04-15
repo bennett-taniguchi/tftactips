@@ -14,6 +14,7 @@ export type ChampionType = {
   name: string;
   cost?: number;
   parsedData?: string;
+  traits?: any;
   isCarry?: boolean;
   isTank?: boolean;
   items?: string[];

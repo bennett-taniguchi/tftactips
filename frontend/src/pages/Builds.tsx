@@ -1,5 +1,7 @@
  
 import Build from "@/components/builds/Build/Build";
+import CyberPunkTitle from "@/components/text/CyberPunkTitle";
+import { Button } from "@/components/ui/button";
 const buildData = {
   title: "Anima Squad Vertical",
   traits: {
@@ -60,9 +62,19 @@ const buildData = {
 export function Builds() {
   return (
     <div className="justify-items-center     ">
-      <div className="text-4xl text-white font-extrabold font-mono text-left justify-self-start underline mb-5">Builds</div>
+     
+      <div className="mb-20"> <CyberPunkTitle text="Builds"/></div>
+     
       <div className="flex flex-col  ">
       <Build {...buildData} />
+      </div>
+
+      <div className="">
+        <Button className="right-10 bottom-10 absolute w-20 h-20 border borde-rwhite rounded-full cursor-pointer bg-green-400">
+        <div className="text-6xl text-center mb-3">
+        +
+        </div>
+        </Button>
       </div>
     </div>
   );

@@ -13,6 +13,8 @@ import Champions from "./pages/Champions";
 import SingleChampion from "./pages/SingleChampion";
 import Traits from "./pages/Traits";
 import Items from "./pages/Items";
+import NewBuild from "./pages/NewBuild";
+import Augments from "./pages/Augments";
 
 const PageLayout = ({ children }: any) => (
   <div className="text-gray-100">{children}</div>
@@ -31,11 +33,20 @@ function App() {
               <Route path="/champions/*" element={<SingleChampion />} />
               <Route path="/traits" element={<Traits />} />
               <Route path="/items" element={<Items />} />
+              <Route path="/newbuild" element={<NewBuild />} />
               <Route
                 path="/builds"
                 element={
                   <PageLayout>
                     <Builds />
+                  </PageLayout>
+                }
+              />
+                <Route
+                path="/augments"
+                element={
+                  <PageLayout>
+                    <Augments />
                   </PageLayout>
                 }
               />

@@ -30,7 +30,7 @@ const NavMenu = () => {
   };
 
   return (
-    <div className="font-sans ">
+    <div className="font-sans " style={{zIndex:999}}>
       {/* Navbar Container */}
       <nav className={`bg-gradient-to-b  from-gray-900 to-black fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
@@ -61,6 +61,12 @@ const NavMenu = () => {
                   text="Builds" 
                   to="/builds" 
                   active={location.pathname === '/builds'} 
+                />
+                 <NavItem 
+                  icon={<Grid size={18} />} 
+                  text="Augments" 
+                  to="/augments" 
+                  active={location.pathname === '/augments'} 
                 />
                   <NavItem 
                   icon={<Grid size={18} />} 
@@ -121,6 +127,12 @@ const NavMenu = () => {
                 text="Builds" 
                 to="/builds" 
                 active={location.pathname === '/builds'} 
+              />
+                <MobileNavItem 
+                icon={<Grid size={18} />} 
+                text="Augments" 
+                to="/augments" 
+                active={location.pathname === '/augments'} 
               />
                <MobileNavItem 
                 icon={<Grid size={18} />} 

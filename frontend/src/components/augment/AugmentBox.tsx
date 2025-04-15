@@ -11,7 +11,7 @@ export function AugmentBox({ item }: any) {
   };
 
   // Safely access parsedData
-  const augmentData = item?.parsedData || {};
+  const augmentData = item  || {};
   const { name, desc, effects, imageHighS3 } = augmentData;
  
   function handleRounding (val:any) {
@@ -31,7 +31,7 @@ export function AugmentBox({ item }: any) {
   return (
     <div 
       className={cn(
-        "h-[400px] w-[400px] overflow-hidden rounded-lg",
+        "h-full w-full overflow-hidden rounded-lg",
         "border border-cyan-500/40",
         "shadow-lg shadow-cyan-400/20",
         "bg-gray-900/90 backdrop-blur-md",
