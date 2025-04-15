@@ -138,10 +138,10 @@ const Home = () => {
          
         </div> */}
         {/* Search Component */}
-        <div className="py-[4svh] mt-[-140svh]  " style={{ zIndex: 10 }}>
+        <div className="py-[4svh] mt-[-140svh] ml-[6svw] flex flex-row" style={{ zIndex: 10 }}>
        
             <SearchBar />
- 
+            
         </div>
 
         

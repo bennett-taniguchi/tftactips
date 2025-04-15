@@ -764,14 +764,14 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
   // Tab state management
   const [activeTab, setActiveTab] = useState<string>("ability");
 
-  if (!item) {
+  if (!item || !item['CHAMPION#']) {
     return <div></div>;
   }
-
+ 
   const data: ChampionData = JSON.parse(item.data);
   const champUrl = getChampionImageUrl(data.apiName);
   const theme = getCostTheme(data.cost);
-  const traitsArr: string[] = JSON.parse(data.traits) || [];
+  const traitsArr: string[] =  JSON.parse(data.traits) ;
 
   // Render the appropriate tab content
   const renderTabContent = () => {

@@ -27,7 +27,7 @@ export default function Champions() {
       
       <div className="   mx-auto w-[95svw] flex-grow rounded-lg  ">
         <div className="text-left   ">
-          <div className="py-5 m-5 grid grid-cols-5 gap-4">
+          <div className="py-5 m-5 grid grid-cols-4 gap-4">
             {filteredItems.map((champion: any, idx: number) => (
               <div key={idx} className="h-[675px]  ">
                 <ChampionBox item={champion} />

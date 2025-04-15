@@ -5,7 +5,8 @@ export type Effect = {
 };
 
 export default function TraitBox({ item, children }: any) {
-  if (!item) {
+  console.log('trait')
+  if (!item || !item['TRAIT#']) {
     return <div></div>;
   }
 
@@ -32,7 +33,7 @@ export default function TraitBox({ item, children }: any) {
      
     return (
       <div 
-        className="w-full bg-gradient-to-b from-gray-900/90 via-gray-800/80 to-gray-700/80 rounded-lg border border-cyan-500/30 shadow-lg shadow-cyan-500/10 overflow-hidden"
+        className="w-full bg-gradient-to-b from-gray-900/90 via-gray-800/80 to-gray-700/80 rounded-lg border border-cyan-500/30 shadow-lg shadow-cyan-500/10 overflow-hidden text-white"
         style={{ height: `${height}px` }}
       >
         {/* Effects list - using a scrollable container if needed */}

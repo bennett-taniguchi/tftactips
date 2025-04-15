@@ -32,7 +32,7 @@ export default function Traits() {
             setFilteredItems={setFilteredItems as any}
           />
         </div>
-      <div className=" bg-cyan-900/50 relative z-30 p-5 grid grid-cols-3 gap-8 mt-4 w-[90svw] ">
+      <div className=" bg-cyan-900/50 relative z-30 p-5 grid grid-cols-3 gap-2 mt-4 w-[90svw] ">
         {filteredItems.map((trait: any, idx: number) => (
           <div
             key={idx}

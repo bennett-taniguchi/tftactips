@@ -46,6 +46,8 @@ function FilterBar({
       const fieldsToSearch = [
         item.parsedData?.name,
         item.parsedData?.description,
+        item.name,
+        item['AUGMENT#'],
         item['TRAIT#']
         // Add any other fields you want to search here
       ];

@@ -254,8 +254,8 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
   return (
     <div
       className={cn( 
-        "flex items-center p-2 w-[10svw] rounded-lg backdrop-blur-lg",
-        "transition-all duration-900 space-x-2",
+        "flex items-center p-1 w-[9.5svw] rounded-lg backdrop-blur-lg",
+        "transition-all duration-900 space-x-1",
         colors.bg,
         "border border-t-0 border-l-0",
         colors.border,
@@ -290,7 +290,7 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
       </div>
 
       {/* Info */}
-      <div className="   mr-2 flex-grow flex flex-col justify-center mx-auto overflow-hidden min-w-0 z-10">
+      <div className="    flex-grow flex flex-col justify-center mx-auto overflow-hidden min-w-0 z-10">
         <span
           className={cn(
             "text-sm font-medium truncate text-left ml-[.5svw]",
@@ -307,8 +307,9 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
           </div>
         )}
       </div>
-
+       
       <HoverableChampionAbility champion={champion} colors={colors} />
+      
     </div>
   );
 };
@@ -320,13 +321,13 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
 }) => {
   const colors = COST_COLORS[cost] || DEFAULT_COLORS;
   let singleItemSpacing = "";
-  if (champions.length == 1) singleItemSpacing = "ml-[5svw]";
+  if (champions.length == 1) singleItemSpacing = "ml-[0svw]";
   return (
-    <div className="flex items-start space-x-4 p-3">
+    <div className="flex items-start space-x-1 p-1 mx-auto overflow-x-hidden">
       <div className={`flex-shrink-0 sticky top-4 left-0 z-10 ${colors.bg} ${colors.glow} border-2 ${colors.border} rounded-4xl p-1`}>
         <div
           className={cn(
-            "w-14 h-14 rounded-full flex flex-col items-center justify-center  border-transparent shadow-md",
+            " w-14 h-14 rounded-full flex flex-col items-center justify-center  border-transparent shadow-md",
             colors.bg,
             colors.border,
             colors.glow
@@ -347,7 +348,7 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
 </div>
       <div
         style={{ zIndex: 10 }}
-        className={`${singleItemSpacing} mx-auto overflow-x-hidden flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-[11svw]`}
+        className={`${singleItemSpacing} mx-auto overflow-x-hidden flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-43`}
       >
         {champions.map((champion) => (
           <ChampionRow
@@ -462,7 +463,7 @@ const ChampionHierarchy: React.FC<ChampionHierarchyProps> = ({
         className="content-center flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-700 scrollbar-track-gray-800/50"
         style={{ height: `${contentHeight}px` }}
       >
-        <div className="flex flex-col space-y-4 p-2 ">
+        <div className="flex flex-col space-y-4 p-2 overflow-x-hidden ml-2">
           {sortedCosts.map((cost) => (
             <CostTier
               key={cost}
