@@ -1,9 +1,10 @@
 export function WelcomeGlass() {
   return (
-    <div className="h-[60svh] ml-[-20svw] w-[40svw] ">
-      <h1 className="  text-6xl md:text-8xl font-inter font-extrabold italic text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-300 pb-2">
+    <div className="h-[60svh] ml-[-20svw] w-[40svw]   ">
+      
+      <h1 className="  text-6xl md:text-8xl font-inter font-extrabold italic text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-blue-200 pb-2   mt-5">
           Welcome to Tftac.tips
-        </h1>
+        </h1> 
     </div>
     // <div className="backdrop-blur-md bg-gray-950/60 border border-purple-500/20 shadow-lg rounded-2xl px-8 py-6 overflow-hidden">
     //   {/* Glow effect overlay */}

@@ -103,13 +103,13 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
       onClick={handleClick}
     >
       {champion ? (
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className=" inset-0 flex items-center justify-center">
           <img 
             src={getChampionImageUrl(champion.parsedData.apiName)}
             alt={champion.name}
             className="w-4/5 h-4/5 object-contain rounded-full"
           />
-          <span className="absolute bottom-1 text-xs font-bold text-white drop-shadow-md">
+          <span className="  bottom-1 text-xs font-bold text-white drop-shadow-md">
             {champion.name}
           </span>
         </div>
@@ -181,7 +181,7 @@ export const TFTBoard: React.FC<TFTBoardProps> = ({
  
   return (
     <div 
-      className="mt-10 ml-30  relative w-full h-full flex items-center justify-center"
+      className="  m-auto flex   mt-5 w-8/10 relative "
       style={{ minHeight: `${rowHeight * 4.5}px` }}
     >
       {boardLayout.map((row) => (
@@ -231,7 +231,7 @@ export const DraggableChampion: React.FC<DraggableChampionProps> = ({ champion, 
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center    rounded cursor-grab hover:ring-1 ring-white transition-colors"
+      className="relative flex flex-col items-center justify-center    rounded cursor-grab outline-none hover:outline-dotted outline-white/50   transition-colors"
       draggable
       onDragStart={handleDragStart}
     >
@@ -282,7 +282,7 @@ export const TFTBoardContainer: React.FC<TFTBoardContainerProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full bg-black/30 rounded-md relative overflow-hidden "
+      className="w-full h-full bg-black/30 rounded--b-md relative overflow-hidden  e "
       style={{
         boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 100, 0, 0.2)",
         border: "1px solid rgba(255, 100, 0, 0.3)",

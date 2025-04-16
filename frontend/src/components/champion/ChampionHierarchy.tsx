@@ -254,7 +254,7 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
   return (
     <div
       className={cn( 
-        "flex items-center p-1 w-[9.5svw] rounded-lg backdrop-blur-lg",
+        "flex flex-grow-2 items-center p-1  w-[9.5svw] rounded-lg backdrop-blur-lg",
         "transition-all duration-900 space-x-1",
         colors.bg,
         "border border-t-0 border-l-0",
@@ -271,7 +271,7 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
       {/* Image with border matching cost */}
       <div
         className={cn(
-          "relative w-10 h-10 flex-shrink-0 rounded-md overflow-hidden",
+          "relative w-15 h-9/10   rounded-md overflow-hidden ml-2 mt-1",
           `border border-${colors.border.split("-")[1]}`,
           "shadow-sm",
           colors.glow
@@ -290,7 +290,7 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
       </div>
 
       {/* Info */}
-      <div className="    flex-grow flex flex-col justify-center mx-auto overflow-hidden min-w-0 z-10">
+      <div className="    flex-grow flex flex-col justify-center mx-auto overflow-hidden min-w-0 z-10 -ml-2">
         <span
           className={cn(
             "text-sm font-medium truncate text-left ml-[.5svw]",
@@ -302,7 +302,9 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
         {displayedTraits.length > 0 && (
           <div className="flex items-center space-x-1 mt-0.5 ml-[.5svw] p-1 bg-black/20 rounded mx-auto">
             {displayedTraits.map((trait) => (
+          
               <TraitIcon key={trait} traitName={trait} />
+              
             ))}
           </div>
         )}
@@ -352,7 +354,7 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
       >
         {champions.map((champion) => (
           <ChampionRow
-          style=""
+          style="min-w-[10svw]  hover:w-[10.5svw]"
             key={champion["CHAMPION#"] || champion.id || champion.name}
             champion={champion}
           />
