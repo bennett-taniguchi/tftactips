@@ -1,27 +1,10 @@
-import {
-  AugmentType,
-  ChampionType,
-  GamePhase,
-  getChampionImage,
-  TraitType,
-} from "./Build";
+ 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import { ChampionParsedData } from "utils/champions";
-import { Item, Key } from "@/api/crudapiservice";
-import {
-  useState,
-  ReactElement,
-  JSXElementConstructor,
-  ReactNode,
-  ReactPortal,
-  useRef,
-  SetStateAction,
-  useEffect,
-} from "react";
+import { Search, X } from "lucide-react";
+import { useState, useRef, useEffect, JSX } from "react";
 import { useGlobalContext } from "@/components/context/context";
 import {
   Dialog,
@@ -32,54 +15,184 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ChampionBox from "@/components/champion/ChampionBox";
+import { DraggableChampion, TFTBoardContainer } from "@/components/hexes/TFTBoard";
 import { ChampionRow } from "@/components/champion/ChampionHierarchy";
-import { cn } from "@/lib/utils";
+ 
+// Type definitions
+interface Champion {
+  id?: string;
+  name: string;
+  imageUrl?: string;
+  cost?: number;
+  traits?: string[];
+  [key: string]: any; // Allow for additional properties
+}
 
-export default function EditableBuildScreen({}: any) {
-  const { champions, augments } = useGlobalContext();
+interface PlacedChampions {
+  [position: string]: Champion;
+}
 
-  function ChampionsDialog() {
+interface PhaseState {
+  boardChampions: PlacedChampions;
+  selectedChampions: Champion[];
+}
+
+interface GlobalContext {
+  champions: Champion[];
+  augments: any[];
+  [key: string]: any;
+}
+
+type GamePhaseType = 'early' | 'mid' | 'late';
+
+export default function EditableBuildScreen(): JSX.Element {
+  const { champions, augments } = useGlobalContext() as GlobalContext;
+  const [buildName, setBuildName] = useState<string>("My TFT Build");
+  const [selectedPhase, setSelectedPhase] = useState<GamePhaseType>("mid");
+  const [selectedChampions, setSelectedChampions] = useState<Champion[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const boardContainerRef = useRef<HTMLDivElement>(null);
+  const [boardChampions, setBoardChampions] = useState<PlacedChampions>({});
+  
+  // Keep track of champions for each game phase
+  const [phaseState, setPhaseState] = useState<Record<GamePhaseType, PhaseState>>({
+    early: { boardChampions: {}, selectedChampions: [] },
+    mid: { boardChampions: {}, selectedChampions: [] },
+    late: { boardChampions: {}, selectedChampions: [] }
+  });
+
+  // Effect to save current state when phase changes
+  useEffect(() => {
+    // Save current state to the phase
+    setPhaseState(prev => ({
+      ...prev,
+      [selectedPhase]: {
+        boardChampions: boardChampions,
+        selectedChampions: selectedChampions
+      }
+    }));
+  }, [selectedPhase]);
+  
+  // Effect to load state when phase changes
+  useEffect(() => {
+    // Load state from the phase
+    setBoardChampions(phaseState[selectedPhase].boardChampions || {});
+    setSelectedChampions(phaseState[selectedPhase].selectedChampions || []);
+  }, [selectedPhase, phaseState]);
+
+  // Filter champions based on search query
+  const filteredChampions = champions.filter(champion => 
+    champion.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Handle champion selection from search
+  const handleChampionSelect = (champion: Champion): void => {
+    setSelectedChampions(prev => {
+      const isAlreadySelected = prev.some(c => c.parsedData.name === champion.parsedData.name);
+  
+      if (isAlreadySelected) {
+        // Remove the champion
+        return prev.filter(c => c.id !== champion.id);
+      } else {
+        // Add the champion
+        console.log([...prev, champion])
+        return [...prev, champion];
+      }
+    });
+  };
+
+  // Handle removing a champion from selection
+  const handleRemoveChampion = (name: string | undefined): void => {
+    setSelectedChampions(prev => prev.filter(c => c.parsedData.name !== name));
+  };
+
+  // Handle dropping a champion on the board
+  const handleDropChampion = (row: number, col: number, champion: Champion): void => {
+    setBoardChampions(prev => ({
+      ...prev,
+      [`${row},${col}`]: champion
+    }));
+  };
+
+  // Handle removing a champion from the board
+  const handleRemoveFromBoard = (row: number, col: number): void => {
+    setBoardChampions(prev => {
+      const updated = { ...prev };
+      delete updated[`${row},${col}`];
+      return updated;
+    });
+  };
+
+  // Champion selection dialog component
+  function ChampionsDialog(): JSX.Element {
+    const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
+    console.log(champions)
+    const filteredDialogChampions = champions.filter(champion => 
+      champion['CHAMPION#']?.toLowerCase().includes(dialogSearchQuery.toLowerCase())
+    );
+    
     return (
-      <Dialog>
+      <Dialog >
         <DialogTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
             className="text-white hover:text-gray-200"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-4 h-4 mr-2" />
             Add Champion
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[80svw]">
+        <DialogContent className="sm:max-w-[80svw] bg-gray-800">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>Select Champions</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
+              Search and select champions for your build.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4 h-[80svh] w-[40svw] ">
-            <ScrollArea className="h-[80svh] w-full">
-            {champions.map((champion:any,idx:number) => (
-              <div key={idx+""}  >
-             <ChampionRow
-           style=" w-[40svw]"
-            key={champion["CHAMPION#"] || champion.id || champion.name}
-            champion={champion as any}
-          />
-               
+          
+          <div className="w-full mb-4">
+            <Input
+              placeholder="Search champions..."
+              value={dialogSearchQuery}
+              onChange={(e) => setDialogSearchQuery(e.target.value)}
+              className="  text-black border-gray-700"
+            />
+          </div>
+          
+          <div className="grid gap-4 py-4 h-[60svh] w-full ">
+            <ScrollArea className="h-[60svh] w-full">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {filteredDialogChampions.map((champion, idx) => (
+                  <div
+                    key={champion.parsedData.name}
+                    className="cursor-pointer hover:bg-gray-700/50 p-2 rounded-md transition-colors"
+                    style={{
+                      backgroundColor: selectedChampions.includes(champion) ? "white" : ""
+                    }}
+                    onClick={() => {
+                      handleChampionSelect(champion);
+                    }}
+                  >
+                 
+                    <ChampionRow
+                      style="w-full"
+                      champion={champion as any}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
             </ScrollArea>
           </div>
+          
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button type="button" onClick={() => {}}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     );
   }
+
   return (
     <div
       className="fixed top-0 left-0 w-screen h-screen z-50 flex flex-col"
@@ -92,8 +205,10 @@ export default function EditableBuildScreen({}: any) {
       {/* Header with editable title and close button */}
       <div className="relative w-full py-4 px-8 flex justify-between items-center border-b border-orange-800/30">
         <Input
+          value={buildName}
+          onChange={(e) => setBuildName(e.target.value)}
           placeholder="Build Name"
-          className="   font-bold bg-transparent border-none text-white w-2/3 focus:outline-none ring ring-white/50"
+          className="font-bold bg-transparent border-none text-white w-2/3 focus:outline-none ring ring-white/50"
           style={{
             fontSize: 25,
             textShadow: `
@@ -114,7 +229,11 @@ export default function EditableBuildScreen({}: any) {
         <div className="w-2/3 p-4 border-r border-orange-800/30 flex flex-col">
           {/* Game Phase Selector */}
           <div className="mb-4">
-            <Tabs defaultValue="mid" className="w-full">
+            <Tabs 
+              value={selectedPhase} 
+              onValueChange={(value) => setSelectedPhase(value as GamePhaseType)}
+              className="w-full"
+            >
               <TabsList className="bg-orange-900/20 w-2/5 grid grid-cols-3">
                 <TabsTrigger
                   value="early"
@@ -140,53 +259,78 @@ export default function EditableBuildScreen({}: any) {
 
           {/* Board Positioning */}
           <div
-            className="  mb-4 bg-black/30 rounded-md relative overflow-hidden  basis-2/5"
+            className="mb-4 bg-black/30 rounded-md relative overflow-hidden basis-6/10"
             style={{
               boxShadow:
                 "inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 100, 0, 0.2)",
               border: "1px solid rgba(255, 100, 0, 0.3)",
             }}
+            ref={boardContainerRef}
           >
             <h2 className="text-white text-xl font-bold p-2 bg-black/50">
-              Board Positioning
+              Board Positioning - {selectedPhase.charAt(0).toUpperCase() + selectedPhase.slice(1)} Game
             </h2>
-            <div className="grid grid-cols-7 grid-rows-4 gap-2 p-4 h-full">
-              {/* Generate 28 board slots (7x4) */}
-              {/* {Array.from({ length: 28 }).map((_, index) => (
-                <div 
-                  key={index} 
-                  className="aspect-square rounded-md border border-orange-800/30 bg-black/20 hover:bg-orange-800/20 transition-colors duration-200 flex items-center justify-center"
-                >
-                  This is where you'd place champions 
-                </div>
-              ))} */}
+            <div className="h-full w-full  ">
+              <TFTBoardContainer
+                champions={champions}
+                onDropChampion={handleDropChampion}
+                onRemoveChampion={handleRemoveFromBoard}
+                placedChampions={boardChampions}
+                containerRef={boardContainerRef as any}
+              />
             </div>
           </div>
-          {/* All Champions section with search */}
-          <div>
-            <div className=" flex flex-row    mb-2">
-              <h2 className="text-white text-xl font-bold">All Champions</h2>
-
+          
+          {/* Selected Champions section */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-white text-xl font-bold">Selected Champions</h2>
               <ChampionsDialog />
             </div>
-            <div className="grid grid-cols-5 gap-3"></div>
+            
+            {/* Search input for filtering selected champions */}
+            <div className="mb-3">
+              <Input
+                placeholder="Filter champions..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-gray-800/50 text-white border-gray-700"
+              />
+            </div>
+            
+            {/* Display selected champions as draggable elements */}
+            <div className="grid grid-cols-5 gap-3">
+              {selectedChampions.map((champion) => (
+                <div key={ champion.parsedData.name} className="relative">
+                  <DraggableChampion 
+                    champion={champion} 
+                  />
+                  <button 
+                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                    onClick={() => handleRemoveChampion(champion.parsedData.name)}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Augments */}
           <div className="mb-4">
-            <div className="flex flex-row mb-2">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="text-white text-xl font-bold">Augments</h2>
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-purple-400 hover:text-purple-300"
               >
-                <Search className="w-4 h-4 mr-1 ml-10" />
+                <Search className="w-4 h-4 mr-2" />
                 Add Augment
               </Button>
             </div>
             <div className="grid grid-cols-3 gap-4">
-              {/* Add placeholder augment slots if needed */}
+              {/* Augment slots will go here */}
             </div>
           </div>
         </div>
@@ -200,28 +344,6 @@ export default function EditableBuildScreen({}: any) {
           />
         </div>
       </div>
-
-      {/* Search modal components */}
-      {/* <ChampionSearch 
-        isOpen={showChampionSearch} 
-        onSelect={handleChampionSelect} 
-        onClose={() => setShowChampionSearch(false)} 
-        allChampions={allChampions}
-      />
-      
-      <ItemSearch 
-        isOpen={showItemSearch} 
-        onSelect={handleItemSelect} 
-        onClose={() => setShowItemSearch(false)} 
-        allItems={allItems}
-      />
-      
-      <AugmentSearch 
-        isOpen={showAugmentSearch} 
-        onSelect={handleAugmentSelect} 
-        onClose={() => setShowAugmentSearch(false)} 
-        allAugments={allAugments}
-      /> */}
     </div>
   );
 }

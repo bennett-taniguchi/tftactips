@@ -2,6 +2,7 @@
 import Build from "@/components/builds/Build/Build";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 const buildData = {
   title: "Anima Squad Vertical",
   traits: {
@@ -70,11 +71,13 @@ export function Builds() {
       </div>
 
       <div className="">
+        <Link to="/newbuild">
         <Button className="right-10 bottom-10 absolute w-20 h-20 border borde-rwhite rounded-full cursor-pointer bg-green-400">
         <div className="text-6xl text-center mb-3">
         +
         </div>
         </Button>
+        </Link>
       </div>
     </div>
   );

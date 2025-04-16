@@ -63,15 +63,17 @@ const Home = () => {
       >
         {/* Content container that will appear above the isometric grid */}
 
-        <div className="relative  " style={{zIndex:1}}>
-        <img src="./img/cybercity_promo.png"   className="h-[103svh] w-[100svw] absolute opacity-50" />
+        <div className="relative  " style={{ zIndex: 1 }}>
+          <img
+            src="./img/cybercity_promo.png"
+            className="h-[103svh] w-[100svw] absolute opacity-50"
+          />
         </div>
-     
+
         <div className="relative z-10 mx-auto max-w-5xl  ">
           <WelcomeGlass />
         </div>
         <div>
-          
           <OrbitingHexagons />
         </div>
         {/* <div className="relative h-[100svh] w-[100svw] overflow-hiden">
@@ -138,24 +140,19 @@ const Home = () => {
          
         </div> */}
         {/* Search Component */}
-        <div className="py-[4svh] mt-[-140svh] ml-[6svw] flex flex-row" style={{ zIndex: 10 }}>
-       
-            <SearchBar />
-            
+        <div
+          className="py-[4svh] mt-[-140svh] ml-[6svw] flex flex-row"
+          style={{ zIndex: 10 }}
+        >
+          <SearchBar />
         </div>
 
-        
-
-        <div 
-        
-        className="relative mt-44 justify-self-center flex flex-col  w-[100svw] h-[220svh] bg-gray-950/90">
+        <div className="relative mt-44 justify-self-center flex flex-col  w-[100svw] h-[220svh] bg-gray-950/90">
           {/* Bento Box Component */}
           <div
             style={{ zIndex: 1 }}
-            
             className="absolute   mx-auto   mb-8   mt-[0svh]  ml-[10svw]  h-[40svh] w-[80svw]  "
           >
-   
             <CyberpunkBentoBox
               panels={customPanels}
               onPanelClick={handlePanelClick}
