@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { Home, Grid, Menu, X,  } from 'lucide-react';
+import LoginArea from './components/login/LoginArea';
  
 
 // Define proper TypeScript interfaces
@@ -45,7 +46,7 @@ const NavMenu = () => {
                 tftac.tips
               </Link>
             </div>
-            
+        
             {/* Desktop Navigation */}
             <div className="hidden md:block  p-2 ">
               <div className=" px-7 flex items-center space-x-6">
@@ -55,7 +56,7 @@ const NavMenu = () => {
                   text="Home" 
                   to="/" 
                   active={location.pathname === '/'} 
-                />
+                />   
                 <NavItem 
                   icon={<Grid size={18} />} 
                   text="Builds" 
@@ -92,7 +93,9 @@ const NavMenu = () => {
                   to="/currentset" 
                   active={location.pathname === '/currentset'} 
                 />
-               
+                <div className='-mr-20 cursor-pointer z-10  h-10 w-10 rounded-full mt-2 '>
+                <LoginArea/>
+                </div>
               </div>
             </div>
             

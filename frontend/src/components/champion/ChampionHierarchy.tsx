@@ -354,7 +354,7 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
       >
         {champions.map((champion) => (
           <ChampionRow
-          style="min-w-[10svw]  hover:w-[10.5svw]"
+          style="min-w-[10svw]]"
             key={champion["CHAMPION#"] || champion.id || champion.name}
             champion={champion}
           />

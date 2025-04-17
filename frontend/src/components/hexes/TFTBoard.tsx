@@ -26,13 +26,13 @@ interface HexProps {
   row: number;
   col: number;
   champion: Champion | null;
-  onDrop: (row: number, col: number, champion: Champion) => void;
+  onDrop: (row: number, col: number, champion: Champion, sourcePosition: { row: number, col: number } | null) => void;
   onRemove: (row: number, col: number) => void;
   size: number;
 }
 
 interface TFTBoardProps {
-  onDropChampion: (row: number, col: number, champion: Champion) => void;
+  onDropChampion: (row: number, col: number, champion: Champion, sourcePosition: { row: number, col: number } | null) => void;
   onRemoveChampion: (row: number, col: number) => void;
   placedChampions?: PlacedChampions;
   containerRef: React.RefObject<HTMLDivElement>;
@@ -45,7 +45,7 @@ interface DraggableChampionProps {
 
 interface TFTBoardContainerProps {
   champions: Champion[];
-  onDropChampion?: (row: number, col: number, champion: Champion) => void;
+  onDropChampion?: (row: number, col: number, champion: Champion, sourcePosition: { row: number, col: number } | null) => void;
   onRemoveChampion?: (row: number, col: number) => void;
   placedChampions?: PlacedChampions;
   containerRef?: React.RefObject<HTMLDivElement>;
@@ -63,6 +63,7 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
   // Drag events
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+   
     setIsOver(true);
   };
 
@@ -74,7 +75,21 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
     e.preventDefault();
     setIsOver(false);
     const championData = JSON.parse(e.dataTransfer.getData('champion'));
-    onDrop(row, col, championData);
+    
+    // Get source position if this was dragged from another hex
+    const sourcePosition = e.dataTransfer.getData('sourcePosition');
+    
+    onDrop(row, col, championData, sourcePosition ? JSON.parse(sourcePosition) : null);
+  };
+
+  // Add drag start functionality for occupied hexes
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    if (champion) {
+      e.dataTransfer.setData('champion', JSON.stringify(champion));
+      // Store the source position to handle swapping
+      e.dataTransfer.setData('sourcePosition', JSON.stringify({ row, col }));
+     
+    }
   };
 
   const handleClick = () => {
@@ -86,32 +101,34 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
   return (
     <div 
       ref={hexRef}
-      className={`relative flex items-center justify-center transition-colors duration-200 ${isOver ? 'ring-2 ring-yellow-400' : ''}`}
+      className={` relative flex items-center justify-center transition-colors duration-200 ${isOver ? 'ring-2 ring-yellow-400' : ''}`}
       style={{
         width: `${hexWidth}px`,
         height: `${hexHeight}px`,
         clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
         backgroundColor: champion 
-          ? 'rgba(60, 60, 100, 0.5)' 
-          : ((row + col) % 2 === 0) ? 'rgba(138, 158, 181, 0.7)' : 'rgba(100, 125, 152, 0.7)',
-        border: '1px solid #3a4a5c',
-        cursor: champion ? 'pointer' : 'default',
+          ? 'rgba(255, 255, 255, 1)' 
+          : ((row + col) % 2 === 0) ? 'rgba(100, 125, 152, 0.5)' : 'rgba(100, 125, 152, 0.5)',
+       
+        cursor: champion ? 'grab' : 'default',
       }}
+      draggable={champion !== null}
+      onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={handleClick}
     >
       {champion ? (
-        <div className=" inset-0 flex items-center justify-center">
+        <div className="inset-0 flex items-center justify-center">
           <img 
             src={getChampionImageUrl(champion.parsedData.apiName)}
             alt={champion.name}
             className="w-4/5 h-4/5 object-contain rounded-full"
           />
-          <span className="  bottom-1 text-xs font-bold text-white drop-shadow-md">
-            {champion.name}
-          </span>
+          <div className="bottom-1 text-center text-xs font-light bg-black/50 w-full border-b-5 -mb-2 border-b-white rounded-xl align-text-bottom text-white drop-shadow-md absolute">
+            {champion.parsedData.name}
+          </div>
         </div>
       ) : null}
     </div>
@@ -181,7 +198,7 @@ export const TFTBoard: React.FC<TFTBoardProps> = ({
  
   return (
     <div 
-      className="  m-auto flex   mt-5 w-8/10 relative "
+      className="m-auto flex mt-5 w-8/10 relative"
       style={{ minHeight: `${rowHeight * 4.5}px` }}
     >
       {boardLayout.map((row) => (
@@ -209,7 +226,7 @@ export const TFTBoard: React.FC<TFTBoardProps> = ({
                   row={row.rowIndex} 
                   col={colIndex}
                   champion={champion}
-                  onDrop={(row, col, champion) => onDropChampion(row, col, champion)}
+                  onDrop={(row, col, champion, sourcePosition) => onDropChampion(row, col, champion, sourcePosition)}
                   onRemove={(row, col) => onRemoveChampion(row, col)}
                   size={hexSize}
                 />
@@ -231,7 +248,7 @@ export const DraggableChampion: React.FC<DraggableChampionProps> = ({ champion, 
 
   return (
     <div
-      className="relative flex flex-col items-center justify-center    rounded cursor-grab outline-none hover:outline-dotted outline-white/50   transition-colors"
+      className="relative flex flex-col items-center justify-center rounded cursor-grab outline-none hover:outline-dotted outline-white/50 transition-colors"
       draggable
       onDragStart={handleDragStart}
     >
@@ -256,14 +273,47 @@ export const TFTBoardContainer: React.FC<TFTBoardContainerProps> = ({
   // Use either external or internal state
   const placedChampions = externalPlacedChampions || internalPlacedChampions;
 
-  const handleDropChampion = (row: number, col: number, champion: Champion) => {
+  const handleDropChampion = (
+    row: number, 
+    col: number, 
+    champion: Champion, 
+    sourcePosition: { row: number, col: number } | null
+  ) => {
     if (onDropChampion) {
-      onDropChampion(row, col, champion);
+      // If using external state management
+      onDropChampion(row, col, champion, sourcePosition);
     } else {
-      setInternalPlacedChampions(prev => ({
-        ...prev,
-        [`${row},${col}`]: champion
-      }));
+      // Using internal state management
+      const targetPosition = `${row},${col}`;
+      
+      if (sourcePosition) {
+        // This is a drag from another hex
+        const sourcePos = `${sourcePosition.row},${sourcePosition.col}`;
+        const targetChampion = placedChampions[targetPosition];
+        
+        setInternalPlacedChampions(prev => {
+          const updated = { ...prev };
+          
+          if (targetChampion) {
+            // Swap champions
+            updated[sourcePos] = targetChampion;
+          } else {
+            // Just remove from the old position
+            delete updated[sourcePos];
+          }
+          
+          // Set the champion in the new position
+          updated[targetPosition] = champion;
+          
+          return updated;
+        });
+      } else {
+        // Regular drop from outside
+        setInternalPlacedChampions(prev => ({
+          ...prev,
+          [targetPosition]: champion
+        }));
+      }
     }
   };
 
@@ -282,7 +332,7 @@ export const TFTBoardContainer: React.FC<TFTBoardContainerProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full bg-black/30 rounded--b-md relative overflow-hidden  e "
+      className="w-full h-full bg-black/30 rounded--b-md relative overflow-hidden"
       style={{
         boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 100, 0, 0.2)",
         border: "1px solid rgba(255, 100, 0, 0.3)",
@@ -298,12 +348,5 @@ export const TFTBoardContainer: React.FC<TFTBoardContainerProps> = ({
     </div>
   );
 };
-
-// // You'll need to implement or import getChampionImage function
-// // Here's a placeholder implementation
-// const getChampionImage = (championName: string): string => {
-//   // Replace with your actual implementation
-//   return `/champion-images/${championName.toLowerCase()}.png`;
-// };
 
 export default TFTBoardContainer;

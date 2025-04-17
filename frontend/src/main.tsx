@@ -5,10 +5,16 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 
+const domain = import.meta.env.VITE_AUTH0DOMAIN!
+const clientId = import.meta.env.VITE_AUTH0CLIENTID!
+ 
 createRoot(document.getElementById('root')!).render(
   <StrictMode >
    <BrowserRouter>
-   <Auth0Provider domain={''} clientId={''}>
+   <Auth0Provider domain={domain} clientId={clientId}
+    authorizationParams={{
+      redirect_uri: window.location.origin
+    }}>
     <App />
     </Auth0Provider>
     </BrowserRouter>

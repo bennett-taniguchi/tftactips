@@ -67,9 +67,36 @@ export default function EditableBuildScreen(): JSX.Element {
     late: { boardChampions: {}, selectedChampions: [] },
   });
 
-  // Effect to save current state when phase changes
-  useEffect(() => {
-    // Save current state to the phase
+// Keep track of the previous phase to use in our save effect
+const previousPhaseRef = useRef<GamePhaseType>(selectedPhase);
+
+// Effect to save current state BEFORE phase changes
+useEffect(() => {
+  // Only execute this effect if we're changing phases (skip on first render)
+  if (previousPhaseRef.current !== selectedPhase) {
+    // Save the current state to the PREVIOUS phase first
+    setPhaseState((prev) => ({
+      ...prev,
+      [previousPhaseRef.current]: {
+        boardChampions: boardChampions,
+        selectedChampions: selectedChampions,
+      },
+    }));
+    
+    // Then update the ref for the next change
+    previousPhaseRef.current = selectedPhase;
+    
+    // Load the new phase's state
+    setBoardChampions(phaseState[selectedPhase].boardChampions || {});
+    setSelectedChampions(phaseState[selectedPhase].selectedChampions || []);
+  }
+}, [selectedPhase]);
+
+// Effect to track changes to the current phase's state
+useEffect(() => {
+  // This effect will save changes within the same phase
+  // Only run if we're not in the initial render
+  if (previousPhaseRef.current === selectedPhase) {
     setPhaseState((prev) => ({
       ...prev,
       [selectedPhase]: {
@@ -77,14 +104,8 @@ export default function EditableBuildScreen(): JSX.Element {
         selectedChampions: selectedChampions,
       },
     }));
-  }, [selectedPhase]);
-
-  // Effect to load state when phase changes
-  useEffect(() => {
-    // Load state from the phase
-    setBoardChampions(phaseState[selectedPhase].boardChampions || {});
-    setSelectedChampions(phaseState[selectedPhase].selectedChampions || []);
-  }, [selectedPhase, phaseState]);
+  }
+}, [boardChampions, selectedChampions]);
 
   // Filter champions based on search query
   const filteredChampions = champions.filter((champion) =>
@@ -116,17 +137,19 @@ export default function EditableBuildScreen(): JSX.Element {
     );
   };
 
-  // Handle dropping a champion on the board
-  const handleDropChampion = (
-    row: number,
-    col: number,
-    champion: Champion
-  ): void => {
-    setBoardChampions((prev) => ({
-      ...prev,
-      [`${row},${col}`]: champion,
-    }));
-  };
+// Handle dropping a champion on the board
+const handleDropChampion = (
+  row: number,
+  col: number,
+  champion: Champion
+): void => {
+  // Create a new object instead of mutating the previous state
+  setBoardChampions((prev) => {
+    const newBoardChampions = { ...prev };
+    newBoardChampions[`${row},${col}`] = champion;
+    return newBoardChampions;
+  });
+};
 
   // Handle removing a champion from the board
   const handleRemoveFromBoard = (row: number, col: number): void => {
