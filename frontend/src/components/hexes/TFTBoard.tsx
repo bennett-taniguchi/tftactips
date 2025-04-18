@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { getChampionImageUrl } from '../champion/ChampionBox';
 import { ChampionRow } from '../champion/ChampionHierarchy';
+import { cn } from '@/lib/utils';
 
 // Type definitions
 interface Champion {
@@ -63,7 +64,8 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
   // Drag events
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-   
+    // change to remove from starting square
+    onRemove(row,col)
     setIsOver(true);
   };
 
@@ -97,17 +99,47 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
       onRemove(row, col);
     }
   };
-
+function getHexColor(champion: Champion | null) {
+  if(!champion) return " "
+  if(champion.parsedData.cost==1) {
+    return "bg-white "
+  }
+  if(champion.parsedData.cost==2) {
+    return "bg-green-400 "
+  }
+  if(champion.parsedData.cost==3) {
+    return "bg-blue-400"
+  }
+  if(champion.parsedData.cost==4) {
+     return "bg-purple-400"
+  }
+   return "bg-orange-400"
+}
+function getBorderColor(champion: Champion) {
+  if(champion.parsedData.cost==1) {
+    return "border-white "
+  }
+  if(champion.parsedData.cost==2) {
+    return "border-green-400 "
+  }
+  if(champion.parsedData.cost==3) {
+    return "border-blue-400"
+  }
+  if(champion.parsedData.cost==4) {
+     return "border-purple-400"
+  }
+   return "border-orange-400"
+}
   return (
     <div 
       ref={hexRef}
-      className={` relative flex items-center justify-center transition-colors duration-200 ${isOver ? 'ring-2 ring-yellow-400' : ''}`}
+      className={cn(` relative flex items-center justify-center transition-colors duration-200  `, getHexColor(champion!))}
       style={{
         width: `${hexWidth}px`,
         height: `${hexHeight}px`,
         clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
         backgroundColor: champion 
-          ? 'rgba(255, 255, 255, 1)' 
+          ? ' ' 
           : ((row + col) % 2 === 0) ? 'rgba(100, 125, 152, 0.5)' : 'rgba(100, 125, 152, 0.5)',
        
         cursor: champion ? 'grab' : 'default',
@@ -120,13 +152,13 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
       onClick={handleClick}
     >
       {champion ? (
-        <div className="inset-0 flex items-center justify-center">
+        <div className={cn("inset-0 flex items-center justify-center   ", getHexColor(champion))}>
           <img 
             src={getChampionImageUrl(champion.parsedData.apiName)}
             alt={champion.name}
             className="w-4/5 h-4/5 object-contain rounded-full"
           />
-          <div className="bottom-1 text-center text-xs font-light bg-black/50 w-full border-b-5 -mb-2 border-b-white rounded-xl align-text-bottom text-white drop-shadow-md absolute">
+          <div className={cn("bottom-1 text-center text-xs font-light bg-black/90 mx-2  w-5/8 border-b-3 border-black -mb-2 rounded-xl align-text-bottom text-white absolute " )}>
             {champion.parsedData.name}
           </div>
         </div>
@@ -198,7 +230,7 @@ export const TFTBoard: React.FC<TFTBoardProps> = ({
  
   return (
     <div 
-      className="m-auto flex mt-5 w-8/10 relative"
+      className="m-auto flex mt-2 w-15/20 relative"
       style={{ minHeight: `${rowHeight * 4.5}px` }}
     >
       {boardLayout.map((row) => (

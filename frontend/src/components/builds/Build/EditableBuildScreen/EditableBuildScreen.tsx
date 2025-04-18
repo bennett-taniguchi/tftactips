@@ -108,9 +108,9 @@ useEffect(() => {
 }, [boardChampions, selectedChampions]);
 
   // Filter champions based on search query
-  const filteredChampions = champions.filter((champion) =>
-    champion.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredChampions = champions.filter((champion) =>
+  //   champion.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   // Handle champion selection from search
   const handleChampionSelect = (champion: Champion): void => {
@@ -184,10 +184,10 @@ const handleDropChampion = (
             Add Champion
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[80svw] bg-gray-800">
+        <DialogContent className="sm:max-w-[80svw] bg-gray-800 text-white">
           <DialogHeader>
-            <DialogTitle>Select Champions</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Select Champions</DialogTitle>
+            <DialogDescription className="text-white">
               Search and select champions for your build.
             </DialogDescription>
           </DialogHeader>
@@ -197,7 +197,7 @@ const handleDropChampion = (
               placeholder="Search champions..."
               value={dialogSearchQuery}
               onChange={(e) => setDialogSearchQuery(e.target.value)}
-              className="  text-black border-gray-700"
+              className="  text-white bg-white/80 border-gray-700"
             />
           </div>
 
@@ -207,7 +207,7 @@ const handleDropChampion = (
                 {filteredDialogChampions.map((champion, idx) => (
                   <div
                     key={champion.parsedData.name + idx + ""}
-                    className="cursor-pointer hover:bg-gray-700/50 p-2 rounded-md transition-colors"
+                    className="cursor-pointer hover:bg-gray-700/50 p-2 rounded-md transition-colors mx-4"
                     style={{
                       backgroundColor: selectedChampions.includes(champion)
                         ? "white"
@@ -231,6 +231,7 @@ const handleDropChampion = (
             <DialogClose>
               <Button
                 type="button"
+                 className="bg-orange-500 hover:bg-orange-700 cursor-pointer"
                 onClick={() => {
                   setDialogOpen(false);
                 }}
@@ -322,7 +323,7 @@ const handleDropChampion = (
             }}
             ref={boardContainerRef}
           >
-            <h2 className="text-white text-2xl font-semibold    font-inter p-2 bg-orange-700 text-center ">
+            <h2 className="text-white/90  text-2xl font-bold    font-inter p-2 bg-black text-center ">
               Board Positioning -{" "}
               {selectedPhase.charAt(0).toUpperCase() + selectedPhase.slice(1)}{" "}
               Game
@@ -383,11 +384,12 @@ const handleDropChampion = (
                   </div>
                 </div>
               )}
+              
             </div>
           </div>
 
           {/* Augments */}
-          <div className="mb-4 mx-[2svw]">
+          <div className="mb-4 mx-[2svw] ">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-white text-2xl font-bold font-inter">
                 Augments
@@ -401,7 +403,7 @@ const handleDropChampion = (
                 Add Augment
               </Button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-5 gap-3  bg-blue-500/20 border-2 border-cyan-400/80 [border-style:dashed] p-2 rounded-md min-h-[100px]">
               {/* Augment slots will go here */}
             </div>
           </div>
