@@ -1,5 +1,6 @@
  
 import Build from "@/components/builds/Build/Build";
+import { WelcomeGlass } from "@/components/home/WelcomeGlass";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -63,10 +64,10 @@ const buildData = {
 export function Builds() {
   return (
     <div className="justify-items-center     ">
+       <div className="mb-20 font-inter text-7xl font-bold text-emerald-400 justify-self-left absolute"> Builds</div>
      
-      <div className="mb-20"> <CyberPunkTitle text="Builds"/></div>
-     
-      <div className="flex flex-col  ">
+      
+      <div className="flex flex-col  pt-25">
       <Build {...buildData} />
       </div>
 

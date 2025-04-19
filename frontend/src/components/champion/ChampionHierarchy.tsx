@@ -121,7 +121,7 @@ type HoverableChampionAbilityProps = {
     
     const name = champion.parsedData?.ability.name || "";
     const desc = champion.parsedData?.ability.desc || "";
-  
+    console.log(name,getAbilityImageUrl(champion.parsedData!.imageAbilityS3) )
     return (
       <HoverCard openDelay={0} closeDelay={1}>
         <HoverCardTrigger asChild>
@@ -144,7 +144,7 @@ type HoverableChampionAbilityProps = {
             <div className="absolute inset-0 bg-cyan-500/5 mix-blend-overlay"></div>
             
             <img
-              src={getAbilityImageUrl(champion.parsedData!.imageAbilityS3)}
+              src={getAbilityImageUrl(champion.parsedData!.imageAbilityS3) }
               alt={champion.parsedData!.name}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
               onError={(e) => {
@@ -300,7 +300,7 @@ export const ChampionRow: React.FC<{ champion: Champion,style:string}> = ({ cham
           {name}
         </span>
         {displayedTraits.length > 0 && (
-          <div className="flex items-center space-x-1 mt-0.5 ml-[.5svw] p-1 bg-black/20 rounded mx-auto">
+          <div className="flex items-center space-x-1 mt-0.5 ml-[5px] p-1 bg-black/20 rounded mx-auto">
             {displayedTraits.map((trait) => (
           
               <TraitIcon key={trait} traitName={trait} />
@@ -348,18 +348,18 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
   } drop-shadow-2xl ${colors.glow} mt-0 absolute  ${colors.line} transform translate-x-[10px]  -skew-x-20  `}
 >
 </div>
-      <div
-        style={{ zIndex: 10 }}
-        className={`${singleItemSpacing} mx-auto overflow-x-hidden flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-43`}
-      >
-        {champions.map((champion) => (
-          <ChampionRow
-          style="min-w-[10svw]]"
-            key={champion["CHAMPION#"] || champion.id || champion.name}
-            champion={champion}
-          />
-        ))}
-      </div>
+<div
+  style={{ zIndex: 10 }}
+  className="mx-auto overflow-x-hidden   grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 sm:gap-[10svw] md:gap-[190px]  "
+>
+  {champions.map((champion,idx) => (
+    <ChampionRow
+      style=" max-w-[200px]" // Changed from style prop to className
+      key={champion["CHAMPION#"]+idx || champion.id || champion.name}
+      champion={champion}
+    />
+  ))}
+</div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ export type Effect = {
 };
 
 export default function TraitBox({ item, children }: any) {
-  console.log('trait')
+ 
   if (!item || !item['TRAIT#']) {
     return <div></div>;
   }
@@ -79,7 +79,7 @@ export default function TraitBox({ item, children }: any) {
   const data = JSON.parse(item.data);
 
   return (
-    <div className="bg-gradient-to-b from-gray-800/90 to-gray-900/90 drop-shadow-lg shadow-gray-700 p-6 rounded-lg mx-auto flex flex-col items-center w-full h-full max-w-2xl ">
+    <div className="border-white/10 border bg-gradient-to-b from-gray-800/90 to-gray-900/90 drop-shadow-lg shadow-gray-700 p-6 rounded-lg mx-auto flex flex-col items-center w-full h-full max-w-2xl ">
       <div className="flex flex-col md:flex-row items-center w-full mb-6 gap-4 ">
         <div className="flex-shrink-0 border-cyan-600/20 border inner-shadow shadow-black rounded-3xl ">
           <img

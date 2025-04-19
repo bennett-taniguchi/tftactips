@@ -33,7 +33,7 @@ export function AugmentBox({ item }: any) {
       className={cn(
         "h-full w-full overflow-hidden rounded-lg",
         "border border-cyan-500/40",
-        "shadow-lg shadow-cyan-400/20",
+        "shadow-lg shadow-cyan-400/10",
         "bg-gray-900/90 backdrop-blur-md",
         "relative"
       )}
@@ -66,25 +66,25 @@ export function AugmentBox({ item }: any) {
       </div>
       
       {/* Content area */}
-      <div className="p-4 flex flex-col h-[calc(100%-80px)]">
+      <div className="p-4 flex flex-col h-[calc(100%-80px)] ">
         {/* Description */}
-        <div className=" my-auto pb-1 text-md">
-          <p className="text-gray-200 leading-relaxed">{desc || "No description available"}</p>
+        <div className="  my-auto pb-1 text-md mx-auto bg-gray-950/40 border-[1px] border-green-600/10 rounded-xl mb-5 p-2 flex-grow w-full overflow-hidden  ">
+          <p className="text-gray-200 align-text-bottom leading-relaxed mx-5 text-center  text-sm ">{desc || "No description available"}</p>
         </div>
         
         {/* Effects section with glossy style */}
         {effects && Object.keys(effects).length > 0 ? (
           <div className="flex-grow bg-gray-800/50 rounded-md p-3 border border-emerald-500/20 overflow-y-auto">
-            <h3 className="text-emerald-300 mb-2 font-medium">Effects</h3>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-4 justify-items-center ">
+            <h3 className="text-emerald-300 mb-2 font-medium text-center">Effects</h3>
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4 justify-items-center  ">
               {Object.entries(effects).map(([key, value]) => (
                 
                 !checkHashEffect(key)
                 
                 ?
-                <div key={key} className="flex justify-between">
-                <span className="text-gray-400 text-sm">{key}:</span>
-                <span className="text-cyan-300 font-medium  text-md">{String(handleRounding(value))}</span>
+                <div key={key} className="flex justify-between ">
+                <span className="text-gray-400 text-xs truncate w-[100px]  h-[50px]">{key}:</span>
+                <span className="text-cyan-300 font-medium  text-sm  w-[20fpx]">{String(handleRounding(value))}</span>
               </div>
                 :
                 <div key={key}></div>

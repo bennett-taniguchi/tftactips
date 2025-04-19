@@ -31,6 +31,7 @@ export default function OrbitingHexagons() {
 //  clipPath: "polygon(20% 0%, 80% 0%, 100% 30%, 100% 70%, 80% 100%, 20% 100%, 0% 70%, 0% 30%)"
 // };
 const hexagonBaseStyle = {
+
   background: "linear-gradient(135deg, rgba(250,232,255,1) 0%, rgba(80,70,225,1) 50%, rgba(250,100,255,1) 100%)",
   filter: "blur(30px)",
   zIndex: 0,
@@ -49,7 +50,7 @@ const hexagonBaseStyle = {
           className="absolute top-0 mt-[-20svh] left-0 ml-[-25svw] w-[40%] h-[80%]"
           style={{
             ...hexagonBaseStyle,
-            animation: "orbit1 90s linear infinite"
+            animation: "orbit1 90s linear infinite",
           }}
         />
         

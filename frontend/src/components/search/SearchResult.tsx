@@ -43,7 +43,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ selectedItem }) => {
 
   if (!selectedItem || !itemData) {
     return (
-      <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-white text-gray-800">
+      <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-white text-gray-800 ">
         <Search className="w-12 h-12 text-cyan-500 mb-4 opacity-50" />
         <h3 className="text-lg font-medium text-cyan-700">No Selection</h3>
         <p className="text-sm text-gray-500 text-center mt-2">
@@ -63,7 +63,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ selectedItem }) => {
     switch (selectedItem.type) {
       case 'champions':
         return (
-          <div className="h-full w-full p-4">
+          <div className="h-full w-full p-4  pb-12">
             < ChampionBox item={itemData} />
           </div>
         );
@@ -89,7 +89,7 @@ const SearchResult: React.FC<SearchResultProps> = ({ selectedItem }) => {
                     <div className="h-full w-full p-4">
                       <TraitBox item={itemData}>
                         {traitChampionsMap &&  (itemData.data)? (
-                          <div className="w-full mt-[20px]">
+                          <div className="w-full mt-[20px]  ">
                             <ChampionHierarchy
                               champions={traitChampionsMap[JSON.parse(itemData.data).name]}
                             />
@@ -114,13 +114,13 @@ const SearchResult: React.FC<SearchResultProps> = ({ selectedItem }) => {
        
       case 'items':
         return (
-          <div className="h-full w-full p-4">
+          <div className="h-full w-full p-4 pb-18 my-auto">
             <ItemBox item={itemData} />
           </div>
         );
       case 'augments':
         return (
-          <div className="h-full w-full p-4">
+          <div className="h-full w-full p-4 pb-12 my-auto">
             <AugmentBox item={itemData} />
           </div>
         );
@@ -134,11 +134,13 @@ const SearchResult: React.FC<SearchResultProps> = ({ selectedItem }) => {
   };
 
   return (
-    <div className="w-full h-full overflow-auto bg-white">
-      <div className="p-2 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border-b border-cyan-500/30">
-        <h3 className="text-sm font-medium text-cyan-700">
+    <div className="w-full h-full    bg-transparent overflow-hidden">
+      <div className=" bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border-b border-cyan-500/30 ">
+      <div className='p-2 bg-white '>
+        <h3 className="text-md font-medium text-cyan-500  text-center">
           {selectedItem.type.charAt(0).toUpperCase() + selectedItem.type.slice(1)} Details
         </h3>
+        </div>
       </div>
       {renderComponent()}
     </div>

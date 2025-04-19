@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { JSX, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-
+import { Axe} from 'lucide-react';
 // === TYPE DEFINITIONS ===
 
 interface ChampionData {
@@ -68,6 +68,7 @@ export function getChampionImageUrl(apiName: string): string {
  * @returns Formatted URL
  */
 export function getAbilityImageUrl(imageUrl: string): string {
+ 
   return imageUrl.replace(
     "https://accesspoint-jgeyja4kne59ihb37jud8qefh8ytsuse2a-s3alias.s3-accesspoint.us-east-2.amazonaws.com/",
     "https://tft-set14.s3.us-east-2.amazonaws.com/"
@@ -309,6 +310,7 @@ interface ChampAbilityProps {
   ability?: AbilityData;
   theme: ThemeStyles;
   imageAbilityS3: string;
+  imageAbility:string;
 }
 
 /**
@@ -318,6 +320,7 @@ function ChampAbility({
   ability,
   theme,
   imageAbilityS3,
+  imageAbility
 }: ChampAbilityProps): JSX.Element {
   if (!ability || !ability.name) {
     return (
@@ -327,7 +330,8 @@ function ChampAbility({
     );
   }
 
-  const abilityUrl = getAbilityImageUrl(imageAbilityS3);
+ let abilityUrl = getAbilityImageUrl(imageAbilityS3);
+
   let topP = "pt-5";
   if (ability.desc!.length >= 320) {
     topP = "pt-[-20px]";
@@ -372,16 +376,20 @@ function ChampAbility({
 interface StatItemProps {
   iconSrc: string;
   value?: string | number;
+  tooltip?: string;
 }
 
 /**
  * Renders a single champion stat
  */
-function StatItem({ iconSrc, value }: StatItemProps): JSX.Element {
+function StatItem({ iconSrc, value, tooltip }: { iconSrc: string; value?: number; tooltip: string }) {
   return (
-    <div className="flex flex-row gap-2">
-      <img className="h-3 w-3 mt-1" src={iconSrc} />
+    <div className="flex flex-row gap-2 group relative ">
+      <img className="h-4 w-4 mt-1" src={iconSrc} />
       <span className="text-white font-medium">{value || "N/A"}</span>
+      <span className="absolute invisible group-hover:visible bg-gray-800 text-xs text-white p-1 rounded -top-6 left-0 whitespace-nowrap">
+        {tooltip}
+      </span>
     </div>
   );
 }
@@ -413,30 +421,39 @@ function ChampStats({ stats, theme }: ChampStatsProps): JSX.Element {
     <div
       className={`${theme.textAccent} h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left p-4`}
     >
-      <p className="text-lg font-semibold mb-2">Champion Stats</p>
-      <div className="grid grid-cols-2 gap-y-3 gap-x-2 flex-grow text-sm overflow-y-auto max-h-full">
-        <StatItem iconSrc="./img/TFT_Health.png" value={hp} />
-        <StatItem iconSrc="./img/TFT_Mana.png" value={mana} />
-        <StatItem iconSrc="./img/TFT_Armor.png" value={armor} />
-        <StatItem iconSrc="./img/TFT_MR.png" value={mr} />
+      <p className="text-lg font-semibold mb-2 mx-auto underline">Champion Stats</p>
+      <div className="grid grid-cols-2 gap-y-3 gap-x-2 flex-grow text-sm overflow-y-auto max-h-full mb-10   justify-items-center overflow-hidden">
+        <div></div><div></div>
+        <StatItem iconSrc="./img/TFT_Health.png" value={hp} tooltip="Health" />
+        <StatItem iconSrc="./img/TFT_Mana.png" value={mana} tooltip="Mana" />
+        <StatItem iconSrc="./img/TFT_Armor.png" value={armor} tooltip="Armor" />
+        <StatItem iconSrc="./img/TFT_MR.png" value={mr} tooltip="Magic Resistance" />
 
-        <p>
-          DPS: <span className="text-white font-medium">{dps || "N/A"}</span>
-        </p>
-
-        <div className="flex flex-row gap-2">
-          <img className="h-3 w-3 mt-1" src="./img/TFT_AS.png" />
-          <span className="text-white font-medium">
-            {formattedAttackSpeed || "N/A"}
+        <div className="flex flex-row gap-x-1 group relative">
+          <Axe className="h-5 w-5 stroke-yellow-100/80"/>
+          <span>{dps}</span>
+          <span className="absolute invisible group-hover:visible bg-gray-800 text-xs text-white p-1 rounded -top-6 left-0 whitespace-nowrap">
+            Damage Per Second
           </span>
         </div>
 
-        <StatItem iconSrc="./img/TFT_Range.png" value={range} />
-        <StatItem iconSrc="./img/TFT_AD.png" value={damage} />
+        <div className="flex flex-row gap-2 group relative">
+          <img className="h-4 w-4 mt-1" src="./img/TFT_AS.png" />
+          <span className="text-white font-medium">
+            {formattedAttackSpeed || "N/A"}
+          </span>
+          <span className="absolute invisible group-hover:visible bg-gray-800 text-xs text-white p-1 rounded -top-6 left-0 whitespace-nowrap">
+            Attack Speed
+          </span>
+        </div>
+
+        <StatItem iconSrc="./img/TFT_Range.png" value={range} tooltip="Attack Range" />
+        <StatItem iconSrc="./img/TFT_AD.png" value={damage} tooltip="Attack Damage" />
       </div>
     </div>
   );
 }
+
 
 interface PlaystyleTipProps {
   label: string;
@@ -772,7 +789,7 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
   const champUrl = getChampionImageUrl(data.apiName);
   const theme = getCostTheme(data.cost);
   const traitsArr: string[] =  JSON.parse(data.traits) ;
-
+ 
   // Render the appropriate tab content
   const renderTabContent = () => {
     switch (activeTab) {
@@ -782,6 +799,7 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
             ability={data.ability}
             theme={theme}
             imageAbilityS3={data.imageAbilityS3}
+            imageAbility={(data as any).imageAbility }
           />
         );
       case "stats":
@@ -794,6 +812,7 @@ export default function ChampionBox({ item }: ChampionBoxProps): JSX.Element {
             ability={data.ability}
             theme={theme}
             imageAbilityS3={data.imageAbilityS3}
+            imageAbility={(data as any).imageAbility }
           />
         );
     }

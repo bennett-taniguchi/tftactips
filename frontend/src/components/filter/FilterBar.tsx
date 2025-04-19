@@ -46,7 +46,9 @@ function FilterBar({
       const fieldsToSearch = [
         item.parsedData?.name,
         item.parsedData?.description,
+        item.parsedData?.desc,
         item.name,
+        item.desc,
         item['AUGMENT#'],
         item['TRAIT#']
         // Add any other fields you want to search here
@@ -69,7 +71,7 @@ function FilterBar({
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4">
+    <div className="mx-auto w-full max-w-full px-4">
       {/* Main filter container with glassmorphism effect */}
       <div 
         className={cn(

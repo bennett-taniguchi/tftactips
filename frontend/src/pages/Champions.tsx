@@ -14,8 +14,13 @@ export default function Champions() {
   return (
     <div className=" flex w-[100svw] justify-self-center  flex-col flex-grow rounded-lg  bg-gradient-to-b from-emerald-950/10 from-50% via-purple-800 via-60% to-orange-800">
       
-        <CyberPunkTitle text={"Champions"} />
-        <div className=" mx-auto w-[80svw] m-5 bg-linear-to-r from-blue-950/50 to-green-900/80 border border-green-700/60  rounded-xl py-3 mb-20">
+      <div className="flex flex-row -mb-10 mx-20 ml-40 rounded-xl  ">
+        <div className="mb-20 font-inter text-7xl font-bold text-emerald-400 justify-self-left  ">
+          {" "}
+          Champions
+        </div>
+
+        <div className="ml-15 w-[60svw] m-5 bg-linear-to-r from-blue-950/50 to-green-900/80 border border-green-700/60 rounded-xl py-3 mb-20">
           <FilterBar
             datasets={champions as any}
             query={query}
@@ -24,6 +29,7 @@ export default function Champions() {
             setFilteredItems={setFilteredItems as any}
           />
         </div>
+      </div>
       
       <div className="   mx-auto w-[95svw] flex-grow rounded-lg  ">
         <div className="text-left   ">

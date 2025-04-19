@@ -36,7 +36,7 @@ export default function BuildRow({
     <div >
       <div
         onClick={toggleView}
-        className="   rounded-4xl text-black mt-[-1svh] h-[120px] w-[80svw] relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
+        className="   rounded-4xl text-black mt-[-1svh] h-[120px] w-[80svw] relative overflow-hidden group hover:scale-[1.001] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
         style={{
           background: "rgba(20, 20, 20, 0.7)",
           boxShadow: `
@@ -55,7 +55,7 @@ export default function BuildRow({
       >
         {/* Main gradient background with red, orange, yellow - brightened */}
         <div
-          className="  absolute inset-0 z-0 opacity-90 saturate-125 group-hover:saturate-[2.5] group-hover:brightness-110 transition-all duration-300"
+          className="  absolute inset-0 z-0 opacity-90 saturate-125 group-hover:saturate-[1.2] group-hover:brightness-102 transition-all duration-300"
           style={{
             background: `
                       radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 1) 0%, transparent 60%),
@@ -78,41 +78,23 @@ export default function BuildRow({
 
         {/* Content container with enhanced 3D raised glass effect - UNIFIED (no interior borders) */}
         <div
-          className=" rounded-4xl  inset-0 flex justify-center z-10 absolute m-1   group-hover:brightness-110 transition-all duration-300"
+          className=" rounded-4xl  inset-0 flex justify-center z-10 absolute m-1   group-hover:brightness-102 transition-all duration-300"
           style={{
-            backdropFilter: "blur(10px)",
-            boxShadow: `
-                      inset 0 2px 5px rgba(255, 255, 255, 0.2), 
-                      inset 0 -2px 5px rgba(0, 0, 0, 0.9),
-                      inset 50px 20px 100px -50px rgba(255, 200, 100, 0.1)
-                    `,
-            borderTop: "1px solid rgba(255, 255, 255, 0.25)",
-            borderLeft: "1px solid rgba(255, 255, 255, 0.2)",
-            borderRight: "1px solid rgba(0, 0, 0, 0.4)",
-            borderBottom: "1px solid rgba(0, 0, 0, 0.5)",
-            transform: "perspective(500px) rotateX(0deg)",
-            transformOrigin: "center bottom",
-            background:
-              "linear-gradient(to bottom, rgba(60, 30, 10, 0.5), rgba(40, 20, 10, 0.3))",
+       
           }}
         >
           {/* Title section with enhanced 3D text effect */}
           <div
-            className="basis-1/4 text-3xl m-auto ml-5 hover:bg-white/10 transition-all duration-300"
+            className="font-bold basis-1/4 text-3xl m-auto ml-5   transition-all duration-300 "
             style={{
               color: "white",
-              textShadow: `
-                        0 1px 0 rgba(255, 255, 255, 0.3), 
-                        0 2px 3px rgba(0, 0, 0, 0.5),
-                        0 0 10px rgba(255, 50, 0, 0.2)
-                      `,
               position: "relative",
               zIndex: 2,
               transform: "translateZ(2px)",
             }}
           >
             {title}
-            <span
+            {/* <span
               className="text-md ml-2 group-hover:text-[#ff6666] transition-colors duration-300"
               style={{
                 color: "#ff5555",
@@ -121,12 +103,12 @@ export default function BuildRow({
               }}
             >
               ({Object.values(traits).reduce((a, b) => a + b, 0)})
-            </span>
+            </span> */}
           </div>
 
           {/* Trait icon section - no border or separate shading */}
           <div
-            className="basis-1/4 my-auto py-4 justify-center flex gap-2 relative hover:bg-white/10 transition-all duration-300"
+            className="basis-1/4 my-auto py-4 justify-center flex gap-2 relative   transition-all duration-300"
             style={{
               position: "relative",
               transform: "translateZ(1px)",
@@ -137,13 +119,13 @@ export default function BuildRow({
               <div key={index} className="relative group/icon">
                 {/* Hexagon outer glow */}
                 <div
-                  className="absolute top-0 left-0 w-full h-full opacity-50 group-hover/icon:opacity-80 group-hover:opacity-80 transition-opacity duration-300"
+                  className="absolute top-0 left-0 w-full h-full opacity-50 group-hover/icon:opacity-120 group-hover:saturate-150 transition-opacity duration-300"
                   style={{
                     // clipPath:
                     //   "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
                     background:
                       "radial-gradient(circle, rgba(255, 100, 0, 0.8) 0%, rgba(255, 50, 0, 0.4) 70%)",
-                    transform: "scale(1.3) ",
+                    transform: "scale(1.00) ",
                     filter: "blur(4px)",
                   }}
                 />
@@ -173,10 +155,10 @@ export default function BuildRow({
 
           {/* Champions section - no border or separate shading */}
           <div
-            className="basis-1/4 my-auto flex gap-2 py-4 justify-center hover:bg-white/10 transition-all duration-300"
+            className="basis-1/4 my-auto flex gap-2 py-4 justify-center   transition-all duration-300"
             style={{
               position: "relative",
-              transform: "translateZ(1px)",
+              
             }}
           >
             {/* Map through champions to display icons */}
@@ -188,7 +170,7 @@ export default function BuildRow({
                   style={{
                     background:
                       "radial-gradient(circle, rgba(255, 220, 0, 0.9) 0%, rgba(255, 120, 0, 0.5) 70%)",
-                    transform: "scale(1.3)",
+                    transform: "scale(1.001)",
                     filter: "blur(4px)",
                   }}
                 />
@@ -207,7 +189,7 @@ export default function BuildRow({
 
                 {/* Champion image */}
                 <div
-                  className="  relative transform hover:scale-125 group-hover:scale-[1.15] transition-all duration-300 z-10 group-hover:brightness-125 flex items-center justify-center"
+                  className="  relative transform hover:scale-125 group-hover:scale-[1.01] transition-all duration-300 z-10 group-hover:brightness-101 flex items-center justify-center"
                   style={{
                     width: "40px",
                     height: "40px",
@@ -244,14 +226,14 @@ export default function BuildRow({
 
           {/* Type and Difficulty section */}
           <div
-            className="basis-1/4 my-auto flex flex-col justify-center text-lg font-bold py-5 hover:bg-white/10 transition-all duration-300"
+            className="basis-1/4 my-auto flex flex-col justify-center text-lg font-bold py-5   transition-all duration-300"
             style={{
               position: "relative",
-              transform: "translateZ(1px)",
+     
             }}
           >
             <span
-              className="ml-5 hover:scale-110 transition-transform duration-300 group-hover:text-[#6aff9a]"
+              className="ml-5   transition-transform duration-300 group-hover:text-[#6aff9a]"
               style={{
                 color: "#5aff90",
                 textShadow: `
@@ -259,13 +241,13 @@ export default function BuildRow({
                           0 1px 2px rgba(0, 0, 0, 0.5),
                           0 3px 5px rgba(0, 0, 0, 0.3)
                         `,
-                transform: "translateZ(2px)",
+                
               }}
             >
               {type}
             </span>
             <span
-              className="ml-5 hover:scale-110 transition-transform duration-300 group-hover:text-[#6aff9a]"
+              className="ml-5  transition-transform duration-300 group-hover:text-[#6aff9a]"
               style={{
                 color: "#5aff90",
                 textShadow: `
@@ -273,7 +255,7 @@ export default function BuildRow({
                           0 1px 2px rgba(0, 0, 0, 0.5),
                           0 3px 5px rgba(0, 0, 0, 0.3)
                         `,
-                transform: "translateZ(2px)",
+          
               }}
             >
               {difficulty}

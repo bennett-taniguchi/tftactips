@@ -309,7 +309,7 @@ const SearchBar = () => {
       </div>
 
       {/* Details panel */}
-      <div className="w-160 rounded-xl overflow-hidden border border-cyan-500/40 shadow-md shadow-black">
+      <div className="w-160 rounded-xl overflow-hidden border border-cyan-500/40 shadow-md shadow-black " >
         <SearchResult selectedItem={selectedItem} />
       </div>
     </div>

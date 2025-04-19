@@ -76,7 +76,7 @@ export default function ItemBox({ item }: ItemBoxProps) {
   const data = item.parsedData;
 
   return (
-    <div className="bg-gradient-to-b from-gray-800/90 to-gray-900/90 drop-shadow-lg shadow-gray-700 p-6 rounded-lg mx-auto flex flex-col items-center w-full h-full max-w-md">
+    <div className="border-white/10 border bg-gradient-to-b from-gray-800/90 to-gray-900/90 drop-shadow-lg shadow-gray-700 p-6 rounded-lg mx-auto flex flex-col items-center w-full h-full max-w-md">
       <div className="flex flex-col items-center w-full mb-4 gap-3">
         <div className="flex-shrink-0 border-cyan-600/20 border inner-shadow shadow-black rounded-xl p-2 bg-gray-900/50">
           <img

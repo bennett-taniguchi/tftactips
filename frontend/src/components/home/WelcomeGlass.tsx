@@ -93,7 +93,7 @@ export function WelcomeGlass() {
    
       
       {/* Your original heading with gradient */}
-      <h1 className="text-6xl md:text-8xl font-inter font-extrabold italic text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-blue-200 pb-2 mt-5 relative z-10">
+      <h1 className="  text-6xl md:text-8xl font-inter font-extrabold italic text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-blue-200 pb-2 mt-5 relative z-10">
         Welcome to Tftac.tips
       </h1>
     </div>

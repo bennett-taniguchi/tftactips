@@ -7,6 +7,7 @@ import SearchBar from "../components/search/SearchBar";
 import { useEffect } from "react";
 import { WelcomeGlass } from "@/components/home/WelcomeGlass";
 import OrbitingHexagons from "@/components/home/OrbitingHexagons";
+ 
 
 const Home = () => {
   const { traits, champions, augments, items } = useGlobalContext();
@@ -63,19 +64,20 @@ const Home = () => {
       >
         {/* Content container that will appear above the isometric grid */}
 
-        <div className="relative  " style={{ zIndex: 1 }}>
+        <div className="relative  opacity-80" style={{ zIndex: 1, mixBlendMode:"color-dodge" }}>
           <img
             src="./img/cybercity_promo.png"
-            className="h-[103svh] w-[100svw] absolute opacity-50"
+            className="h-[103svh] w-[100svw] absolute opacity-70 saturate-40  "
           />
         </div>
 
         <div className="relative z-10 mx-auto max-w-5xl  ">
           <WelcomeGlass />
         </div>
-        <div>
+        <div   >
           <OrbitingHexagons />
         </div>
+      
         {/* <div className="relative h-[100svh] w-[100svw] overflow-hiden">
           
 
