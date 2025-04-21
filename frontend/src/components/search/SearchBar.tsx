@@ -143,7 +143,7 @@ const SearchBar = () => {
                     "text-gray-500 opacity-70"
                   )}
                 >
-                  <Shimmer className="w-full h-full rounded-full" />
+                  <Shimmer className="w-5/2 h-full rounded-full -ml-2 " />
                   {category}
                 </div>
               ))}

@@ -121,7 +121,7 @@ type HoverableChampionAbilityProps = {
     
     const name = champion.parsedData?.ability.name || "";
     const desc = champion.parsedData?.ability.desc || "";
-    console.log(name,getAbilityImageUrl(champion.parsedData!.imageAbilityS3) )
+    
     return (
       <HoverCard openDelay={0} closeDelay={1}>
         <HoverCardTrigger asChild>

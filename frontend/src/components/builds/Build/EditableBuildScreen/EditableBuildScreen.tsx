@@ -1,3 +1,5 @@
+// Example implementation showing how to import and use both components
+
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -6,21 +8,13 @@ import { Search, X } from "lucide-react";
 import { useState, useRef, useEffect, JSX } from "react";
 import { useGlobalContext } from "@/components/context/context";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import {
   DraggableChampion,
   TFTBoardContainer,
 } from "@/components/hexes/TFTBoard";
-import { ChampionRow } from "@/components/champion/ChampionHierarchy";
+ 
 import { Link } from "react-router-dom";
+import { ChampionsDialog } from "@/components/champion/ChampionsDialog"; import { SmallAugmentBox } from "@/components/augment/SmallAugmentBox";
+import { AugmentsDialog } from "@/components/augment/AugmentDialog";
 
 // Type definitions
 interface Champion {
@@ -32,6 +26,15 @@ interface Champion {
   [key: string]: any; // Allow for additional properties
 }
 
+interface Augment {
+ 
+    name: string;
+    desc?: string;
+    effects?: Record<string, any>;
+    imageHighS3?: string;
+ 
+}
+
 interface PlacedChampions {
   [position: string]: Champion;
 }
@@ -39,96 +42,78 @@ interface PlacedChampions {
 interface PhaseState {
   boardChampions: PlacedChampions;
   selectedChampions: Champion[];
+  selectedAugments: Augment[];
 }
 
-interface GlobalContext {
-  champions: Champion[];
-  augments: any[];
-  [key: string]: any;
-}
-
+ 
 type GamePhaseType = "early" | "mid" | "late";
 
 export default function EditableBuildScreen(): JSX.Element {
-  const { champions, augments } = useGlobalContext() as GlobalContext;
+  const [description,setDescription] = useState("")
+
+  const { champions, augments } = useGlobalContext() ;
   const [buildName, setBuildName] = useState<string>("My TFT Build");
   const [selectedPhase, setSelectedPhase] = useState<GamePhaseType>("mid");
+
+  const [selectedAugments, setSelectedAugments] = useState<Augment[]>([]);
   const [selectedChampions, setSelectedChampions] = useState<Champion[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const boardContainerRef = useRef<HTMLDivElement>(null);
   const [boardChampions, setBoardChampions] = useState<PlacedChampions>({});
+
   const [dialogOpen, setDialogOpen] = useState(false);
-  // Keep track of champions for each game phase
+  const [augmentDialogOpen, setAugmentDialogOpen] = useState(false);
+  
+  // Keep track of champions and augments for each game phase
   const [phaseState, setPhaseState] = useState<
     Record<GamePhaseType, PhaseState>
   >({
-    early: { boardChampions: {}, selectedChampions: [] },
-    mid: { boardChampions: {}, selectedChampions: [] },
-    late: { boardChampions: {}, selectedChampions: [] },
+    early: { boardChampions: {}, selectedChampions: [], selectedAugments: [] },
+    mid: { boardChampions: {}, selectedChampions: [], selectedAugments: [] },
+    late: { boardChampions: {}, selectedChampions: [], selectedAugments: [] },
   });
 
-// Keep track of the previous phase to use in our save effect
-const previousPhaseRef = useRef<GamePhaseType>(selectedPhase);
+  // Keep track of the previous phase to use in our save effect
+  const previousPhaseRef = useRef<GamePhaseType>(selectedPhase);
 
-// Effect to save current state BEFORE phase changes
-useEffect(() => {
-  // Only execute this effect if we're changing phases (skip on first render)
-  if (previousPhaseRef.current !== selectedPhase) {
-    // Save the current state to the PREVIOUS phase first
-    setPhaseState((prev) => ({
-      ...prev,
-      [previousPhaseRef.current]: {
-        boardChampions: boardChampions,
-        selectedChampions: selectedChampions,
-      },
-    }));
-    
-    // Then update the ref for the next change
-    previousPhaseRef.current = selectedPhase;
-    
-    // Load the new phase's state
-    setBoardChampions(phaseState[selectedPhase].boardChampions || {});
-    setSelectedChampions(phaseState[selectedPhase].selectedChampions || []);
-  }
-}, [selectedPhase]);
+  // Effect to save current state BEFORE phase changes
+  useEffect(() => {
+    // Only execute this effect if we're changing phases (skip on first render)
+    if (previousPhaseRef.current !== selectedPhase) {
+      // Save the current state to the PREVIOUS phase first
+      setPhaseState((prev) => ({
+        ...prev,
+        [previousPhaseRef.current]: {
+          boardChampions: boardChampions,
+          selectedChampions: selectedChampions,
+          selectedAugments: selectedAugments,
+        },
+      }));
+      
+      // Then update the ref for the next change
+      previousPhaseRef.current = selectedPhase;
+      
+      // Load the new phase's state
+      setBoardChampions(phaseState[selectedPhase].boardChampions || {});
+      setSelectedChampions(phaseState[selectedPhase].selectedChampions || []);
+      setSelectedAugments(phaseState[selectedPhase].selectedAugments || []);
+    }
+  }, [selectedPhase]);
 
-// Effect to track changes to the current phase's state
-useEffect(() => {
-  // This effect will save changes within the same phase
-  // Only run if we're not in the initial render
-  if (previousPhaseRef.current === selectedPhase) {
-    setPhaseState((prev) => ({
-      ...prev,
-      [selectedPhase]: {
-        boardChampions: boardChampions,
-        selectedChampions: selectedChampions,
-      },
-    }));
-  }
-}, [boardChampions, selectedChampions]);
-
-  // Filter champions based on search query
-  // const filteredChampions = champions.filter((champion) =>
-  //   champion.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
-
-  // Handle champion selection from search
-  const handleChampionSelect = (champion: Champion): void => {
-    setSelectedChampions((prev) => {
-      const isAlreadySelected = prev.some(
-        (c) => c.parsedData.name === champion.parsedData.name
-      );
-
-      if (isAlreadySelected) {
-        // Remove the champion
-        return prev.filter((c) => c.id !== champion.id);
-      } else {
-        // Add the champion
-        console.log([...prev, champion]);
-        return [...prev, champion];
-      }
-    });
-  };
+  // Effect to track changes to the current phase's state
+  useEffect(() => {
+    // This effect will save changes within the same phase
+    // Only run if we're not in the initial render
+    if (previousPhaseRef.current === selectedPhase) {
+      setPhaseState((prev) => ({
+        ...prev,
+        [selectedPhase]: {
+          boardChampions: boardChampions,
+          selectedChampions: selectedChampions,
+          selectedAugments: selectedAugments,
+        },
+      }));
+    }
+  }, [boardChampions, selectedChampions, selectedAugments]);
 
   // Handle removing a champion from selection
   const handleRemoveChampion = (name: string | undefined): void => {
@@ -137,19 +122,26 @@ useEffect(() => {
     );
   };
 
-// Handle dropping a champion on the board
-const handleDropChampion = (
-  row: number,
-  col: number,
-  champion: Champion
-): void => {
-  // Create a new object instead of mutating the previous state
-  setBoardChampions((prev) => {
-    const newBoardChampions = { ...prev };
-    newBoardChampions[`${row},${col}`] = champion;
-    return newBoardChampions;
-  });
-};
+  // Handle removing an augment from selection
+  const handleRemoveAugment = (name: string): void => {
+    setSelectedAugments((prev) =>
+      prev.filter((a) => a.name !== name)
+    );
+  };
+
+  // Handle dropping a champion on the board
+  const handleDropChampion = (
+    row: number,
+    col: number,
+    champion: Champion
+  ): void => {
+    // Create a new object instead of mutating the previous state
+    setBoardChampions((prev) => {
+      const newBoardChampions = { ...prev };
+      newBoardChampions[`${row},${col}`] = champion;
+      return newBoardChampions;
+    });
+  };
 
   // Handle removing a champion from the board
   const handleRemoveFromBoard = (row: number, col: number): void => {
@@ -160,90 +152,6 @@ const handleDropChampion = (
     });
   };
 
-  // Champion selection dialog component
-  function ChampionsDialog({ dialogOpen, setDialogOpen }: any): JSX.Element {
-    const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
-
-    console.log(champions);
-    const filteredDialogChampions = champions.filter((champion) =>
-      champion["CHAMPION#"]
-        ?.toLowerCase()
-        .includes(dialogSearchQuery.toLowerCase())
-    );
-
-    return (
-      <Dialog open={dialogOpen}>
-        <DialogTrigger asChild>
-          <Button
-            onClick={() => setDialogOpen(true)}
-            variant="ghost"
-            size="sm"
-            className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/50 bg-white/10"
-          >
-            <Search className="w-4 h-4 mr-1 " />
-            Add Champion
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[80svw] bg-gray-800 text-white">
-          <DialogHeader>
-            <DialogTitle className="text-white">Select Champions</DialogTitle>
-            <DialogDescription className="text-white">
-              Search and select champions for your build.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="w-full mb-4">
-            <Input
-              placeholder="Search champions..."
-              value={dialogSearchQuery}
-              onChange={(e) => setDialogSearchQuery(e.target.value)}
-              className="  text-white bg-white/80 border-gray-700"
-            />
-          </div>
-
-          <div className="grid gap-4 py-4 h-[60svh] w-full ">
-            <ScrollArea className="h-[60svh] w-full ">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-                {filteredDialogChampions.map((champion, idx) => (
-                  <div
-                    key={champion.parsedData.name + idx + ""}
-                    className="cursor-pointer hover:bg-gray-700/50 p-2 rounded-md transition-colors mx-4"
-                    style={{
-                      backgroundColor: selectedChampions.includes(champion)
-                        ? "white"
-                        : "",
-                    }}
-                    onClick={() => {
-                      handleChampionSelect(champion);
-                    }}
-                  >
-                    <ChampionRow
-                      style="w-full h-[60px]"
-                      champion={champion as any}
-                    />
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-
-          <DialogFooter>
-            <DialogClose>
-              <Button
-                type="button"
-                 className="bg-orange-500 hover:bg-orange-700 cursor-pointer"
-                onClick={() => {
-                  setDialogOpen(false);
-                }}
-              >
-                Done
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
     <div
@@ -282,15 +190,15 @@ const handleDropChampion = (
         {/* Left Pane - Game phases, board positioning, carries, tanks, augments */}
         <div className="w-2/3 p-4 border-r border-orange-800/30 flex flex-col">
           {/* Game Phase Selector */}
-          <div className="mb-4  w-full  ml-[20svw] ">
+          <div className="mb-4 w-full ml-[20svw]">
             <Tabs
               value={selectedPhase}
               onValueChange={(value) =>
                 setSelectedPhase(value as GamePhaseType)
               }
-              className="w-full   flex "
+              className="w-full flex"
             >
-              <TabsList className="bg-orange-900/20 w-2/5 grid grid-cols-3   ">
+              <TabsList className="bg-orange-900/20 w-2/5 grid grid-cols-3">
                 <TabsTrigger
                   value="early"
                   className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
@@ -323,14 +231,14 @@ const handleDropChampion = (
             }}
             ref={boardContainerRef}
           >
-            <h2 className="text-white/90  text-2xl font-bold    font-inter p-2 bg-black text-center ">
+            <h2 className="text-white/90 text-2xl font-bold font-inter p-2 bg-black text-center">
               Board Positioning -{" "}
               {selectedPhase.charAt(0).toUpperCase() + selectedPhase.slice(1)}{" "}
               Game
             </h2>
-            <div className="h-full w-full   ">
+            <div className="h-full w-full">
               <TFTBoardContainer
-                champions={champions}
+                champions={champions as any}
                 onDropChampion={handleDropChampion}
                 onRemoveChampion={handleRemoveFromBoard}
                 placedChampions={boardChampions}
@@ -345,24 +253,10 @@ const handleDropChampion = (
               <h2 className="text-white ml-3 text-2xl font-bold font-inter">
                 Selected Champions
               </h2>
-              <ChampionsDialog
-                dialogOpen={dialogOpen}
-                setDialogOpen={setDialogOpen}
-              />
             </div>
 
-            {/* Search input for filtering selected champions */}
-            {/* <div className="mb-3">
-              <Input
-                placeholder="Filter champions..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-gray-800/50 text-white border-gray-700"
-              />
-            </div> */}
-
             {/* Display selected champions as draggable elements */}
-            <div className="grid grid-cols-5 gap-3  bg-orange-500/10 border-2 border-orange-400/80 [border-style:dashed] p-2 rounded-md min-h-[150px]">
+            <div className="grid grid-cols-5 gap-3 bg-orange-500/10 border-2 border-orange-400/80 [border-style:dashed] p-2 rounded-md min-h-[150px]">
               {selectedChampions.length !== 0 ? (
                 selectedChampions.map((champion) => (
                   <div key={champion.parsedData.name} className="relative">
@@ -378,33 +272,63 @@ const handleDropChampion = (
                   </div>
                 ))
               ) : (
-                <div className="col-span-5 flex items-center justify-center h-full ">
-                  <div className="text-white/50 font-bold text-center ">
+                <div className="col-span-5 flex items-center justify-center h-full">
+                  <div className="text-white/50 font-bold text-center">
                     No champions added yet, click Add Champion
                   </div>
                 </div>
               )}
-              
+              <div>
+                <ChampionsDialog
+                  dialogOpen={dialogOpen}
+                  setDialogOpen={setDialogOpen}
+                  selectedChampions={selectedChampions}
+                  setSelectedChampions={setSelectedChampions}
+                  champions={champions}
+                />
+              </div>
             </div>
           </div>
 
           {/* Augments */}
-          <div className="mb-4 mx-[2svw] ">
+          <div className="mb-4 mx-[2svw]">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-white text-2xl font-bold font-inter">
                 Augments
               </h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:text-black font-inter font-light text-sm  hover:bg-white/50 bg-white/10"
-              >
-                <Search className="w-4 h-4 mr-2 " />
-                Add Augment
-              </Button>
+              
             </div>
-            <div className="grid grid-cols-5 gap-3  bg-blue-500/20 border-2 border-cyan-400/80 [border-style:dashed] p-2 rounded-md min-h-[100px]">
-              {/* Augment slots will go here */}
+            <div className="grid grid-cols-5 gap-3 text-white bg-blue-500/20 border-2 border-cyan-400/80 [border-style:dashed] p-2 rounded-md min-h-[100px]">
+              {selectedAugments.length !== 0 ? (
+                selectedAugments.map((augment) => (
+                  <div key={augment.name} className="relative">
+                    <div className="h-[100px]">
+                      <SmallAugmentBox item={augment} />
+                    </div>
+                    <button
+                      className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-[2px] hover:bg-red-800"
+                      onClick={() => handleRemoveAugment(augment.name)}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-5 flex items-center justify-center h-full">
+                  <div className="text-white/50 font-bold text-center">
+                    No augments added yet, click Add Augment
+                  </div>
+                </div>
+              )}
+              <div>
+                <AugmentsDialog
+                  dialogOpen={augmentDialogOpen}
+                  setDialogOpen={setAugmentDialogOpen}
+                  selectedAugments={selectedAugments as any}
+                  setSelectedAugments={setSelectedAugments}
+                  augments={augments}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -413,6 +337,8 @@ const handleDropChampion = (
         <div className="w-1/3 p-4">
           <h2 className="text-white text-xl font-bold mb-2">Build Guide</h2>
           <textarea
+          
+          onChange={(e)=>setDescription(e.target.value)}
             className="w-full h-[calc(100vh-140px)] bg-black/20 border border-orange-800/30 rounded-md p-4 text-gray-300 focus:outline-none focus:ring-1 focus:ring-orange-500/50"
             placeholder="Write your build guide here..."
           />
