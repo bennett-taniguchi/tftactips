@@ -50,6 +50,7 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	// Handle based on HTTP method
 	pkey := r.URL.Query().Get("pkey")
 	pval := r.URL.Query().Get("pval")
+	fmt.Printf("Request of some sort received: %s", r.URL.RawQuery)
 	fmt.Printf("Query params: pkey: %s pval: %s", pkey, pval)
 	switch r.Method {
 	case "GET":
@@ -116,9 +117,18 @@ func (h *CrudHandler) handleGet(w http.ResponseWriter, r *http.Request, tableNam
 // handlePost handles POST requests to create a new item
 func (h *CrudHandler) handlePost(w http.ResponseWriter, r *http.Request, tableName string) {
 	var item TableItem
+
 	err := json.NewDecoder(r.Body).Decode(&item)
+
 	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		errorResponse := map[string]string{
+			"error": err.Error(),
+		}
+
+		// Marshal to JSON and write response
+		jsonResp, _ := json.Marshal(errorResponse)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(jsonResp)
 		return
 	}
 

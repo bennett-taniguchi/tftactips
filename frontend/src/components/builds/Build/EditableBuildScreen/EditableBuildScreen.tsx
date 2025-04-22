@@ -15,6 +15,7 @@ import {
 import { Link } from "react-router-dom";
 import { ChampionsDialog } from "@/components/champion/ChampionsDialog"; import { SmallAugmentBox } from "@/components/augment/SmallAugmentBox";
 import { AugmentsDialog } from "@/components/augment/AugmentDialog";
+import createBuild from "@/api/createbuild";
 
 // Type definitions
 interface Champion {
@@ -39,14 +40,14 @@ interface PlacedChampions {
   [position: string]: Champion;
 }
 
-interface PhaseState {
+export interface PhaseState {
   boardChampions: PlacedChampions;
   selectedChampions: Champion[];
   selectedAugments: Augment[];
 }
 
  
-type GamePhaseType = "early" | "mid" | "late";
+export type GamePhaseType = "early" | "mid" | "late";
 
 export default function EditableBuildScreen(): JSX.Element {
   const [description,setDescription] = useState("")
@@ -152,7 +153,9 @@ export default function EditableBuildScreen(): JSX.Element {
     });
   };
 
-
+function tryToInsert() {
+  createBuild(buildName,description,phaseState)
+}
   return (
     <div
       className="fixed top-0 left-0 w-screen h-screen z-50 flex flex-col"
@@ -178,11 +181,14 @@ export default function EditableBuildScreen(): JSX.Element {
             `,
           }}
         />
+         
         <Link to="/builds">
-          <button className="bg-red-800/50 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors duration-300">
-            Save & Close
+          <button className="left-0 bg-red-800/50 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors duration-300">
+            Go back
           </button>
-        </Link>
+        </Link><button disabled={description.length==0 || buildName.length==0 || !phaseState} onClick={()=>tryToInsert()} className="bg-green-800/50 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-300">
+            Save as build
+          </button>
       </div>
 
       {/* Main content - split into two panes */}

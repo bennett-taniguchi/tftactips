@@ -258,8 +258,8 @@ func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
 }
 
 // Create adds a new item to the specified table
+// Create adds a new item to the specified table
 func (c *CrudAPI) Create(tableName string, item TableItem) error {
-
 	tableArr := strings.Split(tableName, "_")
 	table := tableName
 	if len(tableArr) == 2 {
@@ -269,50 +269,78 @@ func (c *CrudAPI) Create(tableName string, item TableItem) error {
 	// 1. Build the URL
 	reqURL, err := url.Parse(c.apiGatewayURL + "/" + table + "/POST")
 	if err != nil {
+		log.Printf("Error parsing API URL: %v", err)
 		return fmt.Errorf("error parsing API URL: %v", err)
 	}
 
 	q := reqURL.Query()
-	q.Set("TableName", (tableName))
+	q.Set("TableName", tableName)
 	reqURL.RawQuery = q.Encode()
 
 	// 2. Extract partition key from the item
-	partitionKey, partitionValue, err := extractPartitionKey(item)
+	partitionKey, _, err := extractPartitionKey(item)
 	if err != nil {
-		return err
+		log.Printf("Error extracting partition key: %v", err)
+		return err // This error is now properly formatted
 	}
-	//3. Extract non pk,metadata:
-	data := extractNonMetadata(item)
-	// 3. Structure the item for DynamoDB
+
+	// 3. Use the item as is - don't try to restructure it if it already has a partition key
+	if partitionKey != "" {
+		// Item already has a partition key, use it directly
+		return sendRequest(reqURL.String(), item)
+	}
+
+	// 4. Structure the item for DynamoDB if no partition key was found
 	dynamoItem := map[string]interface{}{
-		partitionKey: partitionValue,
-		"METADATA":   item["id"],
+		"BUILD#":   item["name"], // Use name as partition key
+		"METADATA": item["id"],
+		// Copy remaining fields
 	}
-	for key, value := range data {
-		// Optional: Skip if the key already exists to avoid overwriting
-		if _, exists := dynamoItem[key]; !exists {
+
+	for key, value := range item {
+		if key != "id" && key != "name" {
 			dynamoItem[key] = value
 		}
 	}
 
-	// 4. Marshal and send the request
 	return sendRequest(reqURL.String(), dynamoItem)
 }
 
 // Helper function to extract partition key
+// Helper function to extract partition key
 func extractPartitionKey(item TableItem) (string, string, error) {
-	fieldMap, ok := item["partitionKey"].(map[string]interface{})
-	if !ok {
-		return "", "", fmt.Errorf("partitionKey is not a map")
-	}
-
-	for key, value := range fieldMap {
-		if strings.HasPrefix(key, "#") {
-			return key, fmt.Sprintf("%v", value), nil
+	// Check for pkey/pval format first
+	if pkey, ok := item["pkey"].(string); ok {
+		if pval, ok := item["pval"].(string); ok {
+			return pkey, pval, nil
 		}
 	}
 
-	return "", "", fmt.Errorf("no valid partition key found with # prefix")
+	// Try other formats if that doesn't work
+	if buildVal, ok := item["BUILD#"].(string); ok {
+		return "BUILD#", buildVal, nil
+	}
+
+	// Check for partitionKey structure
+	if partitionKeyMap, ok := item["partitionKey"].(map[string]interface{}); ok {
+		for key, value := range partitionKeyMap {
+			if strings.HasSuffix(key, "#") {
+				strValue, ok := value.(string)
+				if !ok {
+					return key, fmt.Sprintf("%v", value), nil
+				}
+				return key, strValue, nil
+			}
+		}
+	}
+
+	// Use name as a fallback
+	if name, ok := item["name"].(string); ok {
+		return "BUILD#", name, nil
+	}
+
+	// Return error as JSON
+	return "", "", fmt.Errorf("no valid partition key found")
 }
 
 // Helper function to extract metadata fields
@@ -328,14 +356,17 @@ func extractNonMetadata(item TableItem) map[string]interface{} {
 }
 
 // Helper function to send the request and process response
+// Update the sendRequest function to handle errors properly
 func sendRequest(url string, data interface{}) error {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return fmt.Errorf("error marshaling item to JSON: %v", err)
 	}
 
-	log.Printf("Request URL: %s", url)
+	//log.Printf("Request URL: %s", url)
+	log.Println()
 	log.Printf("Request data: %s", string(jsonData))
+	log.Println()
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
@@ -365,8 +396,10 @@ func sendRequest(url string, data interface{}) error {
 
 // Helper function to handle error responses
 func handleErrorResponse(statusCode int, body []byte) error {
+	// First try to parse the body as JSON
 	var errorResp map[string]interface{}
 	if err := json.Unmarshal(body, &errorResp); err == nil {
+		// Body is already valid JSON
 		log.Printf("API error details: %+v", errorResp)
 
 		// Check various possible error field names
@@ -380,6 +413,7 @@ func handleErrorResponse(statusCode int, body []byte) error {
 		return fmt.Errorf("API error: %s", string(errBytes))
 	}
 
+	// Body is not JSON, so return the raw string
 	return fmt.Errorf("API returned status code %d: %s", statusCode, string(body))
 }
 
