@@ -36,7 +36,7 @@ export default function BuildRow({
     <div >
       <div
         onClick={toggleView}
-        className="   rounded-4xl text-black mt-[-1svh] h-[120px] w-[80svw] relative overflow-hidden group hover:scale-[1.001] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
+        className="    border-2 border-white rounded-4xl text-black mt-[-1svh] h-[120px] w-[80svw] relative overflow-hidden group hover:scale-[1.001] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
         style={{
           background: "rgba(20, 20, 20, 0.7)",
           boxShadow: `
@@ -55,7 +55,7 @@ export default function BuildRow({
       >
         {/* Main gradient background with red, orange, yellow - brightened */}
         <div
-          className="  absolute inset-0 z-0 opacity-90 saturate-125 group-hover:saturate-[1.2] group-hover:brightness-102 transition-all duration-300"
+          className="  absolute inset-0 z-0 opacity-90 saturate-125 group-hover:saturate-[1.2] group-hover:brightness-102 transition-all duration-300  "
           style={{
             background: `
                       radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 1) 0%, transparent 60%),
@@ -166,7 +166,7 @@ export default function BuildRow({
               <div key={index} className="relative group/icon">
                 {/* Hexagon outer glow */}
                 <div
-                  className="absolute top-0 left-0 w-full h-full opacity-40 group-hover/icon:opacity-80 group-hover:opacity-70 transition-all duration-300"
+                  className="absolute top-0 left-0 w-full h-full opacity-100 group-hover/icon:opacity-80 group-hover:opacity-70 transition-all duration-300"
                   style={{
                     background:
                       "radial-gradient(circle, rgba(255, 220, 0, 0.9) 0%, rgba(255, 120, 0, 0.5) 70%)",
@@ -177,30 +177,27 @@ export default function BuildRow({
 
                 {/* Hexagon effect layers */}
                 <div
-                  className="absolute top-[2px] left-0 w-full h-full rounded-full"
+                  className="absolute top-[-1px] left-0 w-full h-full rounded-full "
                   style={{
                     // clipPath:
                     //   "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                    background: "rgba(0, 0, 0, 0.4)",
-                    transform: "scale(1.1) translateY(1px)",
-                    filter: "blur(2px)",
+                    background: "rgba(255, 255, 255, .1)",
+                    transform: "scale(1.01) translateY(1px)",
+                    filter: "blur(0px)",
                   }}
                 />
 
                 {/* Champion image */}
                 <div
-                  className="  relative transform hover:scale-125 group-hover:scale-[1.01] transition-all duration-300 z-10 group-hover:brightness-101 flex items-center justify-center"
+                  className=" h-15 w-15 relative  border-[2px]  rounded-full border-white transform hover:scale-125 group-hover:scale-[1.01] transition-all duration-300 z-10 group-hover:brightness-101 flex items-center justify-center"
                   style={{
-                    width: "40px",
-                    height: "40px",
-                    background: "rgba(0, 0, 0, 0.6)",
-                    borderRadius: "50%",
+                  
                   }}
                 >
                   <img
                     src={getChampionImage(champion)}
                     alt={champion.name}
-                    className="w-5/6 h-5/6 object-contain rounded-full"
+                    className=" object-contain rounded-full"
                   />
                   {/* Indicator for carry or tank */}
                   {champion.isCarry && (
@@ -233,28 +230,17 @@ export default function BuildRow({
             }}
           >
             <span
-              className="ml-5   transition-transform duration-300 group-hover:text-[#6aff9a]"
+              className="ml-5   transition-transform duration-300 group-hover:drop-shadow-lg text-white drop-shadow-sm shadow-black"
               style={{
-                color: "#5aff90",
-                textShadow: `
-                          0 0 5px rgba(0, 255, 0, 0.5), 
-                          0 1px 2px rgba(0, 0, 0, 0.5),
-                          0 3px 5px rgba(0, 0, 0, 0.3)
-                        `,
-                
+             
               }}
             >
               {type}
             </span>
             <span
-              className="ml-5  transition-transform duration-300 group-hover:text-[#6aff9a]"
+              className="ml-5  transition-transform duration-300 group-hover:drop-shadow-lg text-white drop-shadow-sm shadow-black"
               style={{
-                color: "#5aff90",
-                textShadow: `
-                          0 0 5px rgba(0, 255, 0, 0.5), 
-                          0 1px 2px rgba(0, 0, 0, 0.5),
-                          0 3px 5px rgba(0, 0, 0, 0.3)
-                        `,
+              
           
               }}
             >

@@ -1,10 +1,8 @@
 // Example implementation showing how to import and use both components
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useState, useRef, useEffect, JSX } from "react";
 import { useGlobalContext } from "@/components/context/context";
 import {

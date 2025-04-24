@@ -70,6 +70,8 @@ export default function Build({
 
   // Helper function to get trait image URL
   export const getTraitImage = (traitName: string) => {
+    if(traitName.toLowerCase() == "a.m.p.") {  traitName = "amp"}
+    
     const formattedTraitName = traitName.toLowerCase().replace(/\s+/g, "");
     return `https://tft-set14.s3.us-east-2.amazonaws.com/traits/${formattedTraitName}.png`;
   };

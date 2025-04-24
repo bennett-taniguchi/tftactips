@@ -9,7 +9,10 @@ import {
 } from "./Build";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import TFTBoardContainer, { TFTBoard } from "@/components/hexes/TFTBoard";
+
 type BuildScreenProps = {
+  build?: any;
   title: string;
   view: any;
   setView: any;
@@ -18,21 +21,24 @@ type BuildScreenProps = {
   augments?: AugmentType[];
   description: string;
 };
+
 export default function BuildScreen({
+  build,
   title,
   view,
   setView,
   champions,
   traits,
   description,
-  augments,
+  augments = [],
 }: BuildScreenProps) {
   const [currentPhase, setCurrentPhase] = useState<GamePhase>("mid");
-  currentPhase;
+  
   // Toggle view when clicked
   const toggleView = () => {
     setView(view === "Row" ? "Screen" : "Row");
   };
+  
   // Filter champions by role
   const carryChampions = champions.filter((champ) => champ.isCarry);
   const tankChampions = champions.filter((champ) => champ.isTank);
@@ -49,9 +55,8 @@ export default function BuildScreen({
       {/* Header with title and close button */}
       <div className="relative w-full py-4 px-8 flex justify-between items-center border-b border-orange-800/30">
         <h1
-          className="text-4xl font-bold"
+          className="text-4xl font-bold text-white"
           style={{
-            color: "white",
             textShadow: `
               0 1px 0 rgba(255, 255, 255, 0.3), 
               0 2px 3px rgba(0, 0, 0, 0.5),
@@ -74,28 +79,28 @@ export default function BuildScreen({
         {/* Left Pane - Game phases, board positioning, carries, tanks, augments */}
         <div className="w-2/3 p-4 border-r border-orange-800/30 flex flex-col">
           {/* Game Phase Selector */}
-          <div className="mb-4 ">
+          <div className="mb-4">
             <Tabs
               defaultValue="mid"
               className="w-full"
               onValueChange={(value) => setCurrentPhase(value as GamePhase)}
             >
-              <TabsList className="bg-orange-900/20 w-2/5 grid grid-cols-3   ">
+              <TabsList className="bg-orange-900/20 w-2/5 grid grid-cols-3">
                 <TabsTrigger
                   value="early"
-                  className="  text-white/50   data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
+                  className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
                 >
                   Early Game
                 </TabsTrigger>
                 <TabsTrigger
                   value="mid"
-                  className="  text-white/50   data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
+                  className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
                 >
                   Mid Game
                 </TabsTrigger>
                 <TabsTrigger
                   value="late"
-                  className="  text-white/50    data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
+                  className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
                 >
                   Late Game
                 </TabsTrigger>
@@ -116,15 +121,7 @@ export default function BuildScreen({
               Board Positioning
             </h2>
             <div className="grid grid-cols-7 grid-rows-4 gap-2 p-4 h-full">
-              {/* Generate 28 board slots (7x4) */}
-              {Array.from({ length: 28 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="aspect-square rounded-md border border-orange-800/30 bg-black/20 hover:bg-orange-800/20 transition-colors duration-200 flex items-center justify-center"
-                >
-                  {/* This is where you'd place champions */}
-                </div>
-              ))}
+               <TFTBoardContainer champions={champions} onDropChampion={null as any} onRemoveChampion={null as any} placedChampions={{"32":"32"} as any} containerRef={null as any}/>
             </div>
           </div>
 
@@ -162,7 +159,7 @@ export default function BuildScreen({
               {/* Add placeholder carry slots if needed */}
               {carryChampions.length === 0 && (
                 <div className="w-16 h-16 bg-black/30 rounded-md flex items-center justify-center border border-yellow-500/30">
-                  <span className="text-yellow-500 text-xs">Carry</span>
+                  <span className="text-yellow-500 text-xs">No Carry</span>
                 </div>
               )}
             </div>
@@ -202,7 +199,7 @@ export default function BuildScreen({
               {/* Add placeholder tank slots if needed */}
               {tankChampions.length === 0 && (
                 <div className="w-16 h-16 bg-black/30 rounded-md flex items-center justify-center border border-blue-500/30">
-                  <span className="text-blue-500 text-xs">Tank</span>
+                  <span className="text-blue-500 text-xs">No Tank</span>
                 </div>
               )}
             </div>
@@ -212,31 +209,32 @@ export default function BuildScreen({
           <div>
             <h2 className="text-white text-xl font-bold mb-2">Augments</h2>
             <div className="grid grid-cols-3 gap-4">
-              {augments?.map((augment, index) => (
-                <div
-                  key={index}
-                  className="bg-gradient-to-br from-purple-500/20 to-purple-900/20 rounded-md p-2 border border-purple-500/30"
-                >
-                  <div className="w-full h-12 bg-black/30 flex items-center justify-center mb-2 rounded border border-purple-500/20">
-                    <span className="text-purple-300 font-medium">
-                      {augment.name}
-                    </span>
+              {augments && augments.length > 0 ? (
+                augments.map((augment, index) => (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-purple-500/20 to-purple-900/20 rounded-md p-2 border border-purple-500/30"
+                  >
+                    <div className="w-full h-12 bg-black/30 flex items-center justify-center mb-2 rounded border border-purple-500/20">
+                      <span className="text-purple-300 font-medium">
+                        {augment.name}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-300">{augment.description || (augment as any).desc}</p>
                   </div>
-                  <p className="text-xs text-gray-300">{augment.description}</p>
-                </div>
-              ))}
-              {/* Add placeholder augment slots if needed */}
-              {augments?.length === 0 &&
+                ))
+              ) : (
                 Array.from({ length: 3 }).map((_, index) => (
                   <div
                     key={index}
                     className="bg-black/30 rounded-md p-2 border border-purple-500/20 h-24 flex items-center justify-center"
                   >
                     <span className="text-purple-400 text-xs">
-                      Augment {index + 1}
+                      No Augment {index + 1}
                     </span>
                   </div>
-                ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -280,7 +278,7 @@ export default function BuildScreen({
                   All Champions
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {champions.map((champion: ChampionType, index: number) => (
+                  {champions.map((champion, index) => (
                     <div
                       key={index}
                       className="flex items-center gap-2 bg-black/20 p-2 rounded"

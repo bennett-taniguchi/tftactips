@@ -55,9 +55,9 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		if pkey != "" && pval != "" {
-			h.handleParameterizedGet(w, r, tableName, pkey, pval)
+			h.handleParameterizedGet(w, r, tableName, pkey, pval) // single table
 		} else {
-			h.handleGet(w, r, tableName)
+			h.handleGet(w, r, tableName) // generic get all called at beginning of app
 		}
 
 	case "POST":
