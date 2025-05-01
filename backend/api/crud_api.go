@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-
 	"time"
 )
 
@@ -45,6 +44,17 @@ type UpdateOperation struct {
 	ExpressionAttributeValues map[string]interface{} `json:"ExpressionAttributeValues"`
 }
 
+func finalUrlIndex(tableName string, op string, gatewayUrl string, indexName string, email string) string {
+	tableArr := strings.Split(tableName, "_")
+	table := tableName
+	if len(tableArr) == 2 {
+		table = tableArr[1]
+	}
+
+	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&IndexName=" + indexName + "&email=" + email
+	log.Print("FINALAPIROUTE", apiRoute)
+	return apiRoute
+}
 func finalUrlPartition(tableName string, op string, gatewayUrl string, pKey string, pVal string) string {
 	tableArr := strings.Split(tableName, "_")
 	table := tableName
@@ -69,6 +79,55 @@ func finalUrl(tableName string, op string, gatewayUrl string) string {
 	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName
 	log.Print("FINALAPIROUTE", apiRoute)
 	return apiRoute
+}
+
+func (c *CrudAPI) GetBuildsByEmail(email string) ([]TableItem, error) {
+
+	apiRoute := finalUrlIndex("tft_builds", "GET", c.apiGatewayURL, "email-index", email)
+	reqURL, err := url.Parse(apiRoute)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing API URL: %v", err)
+	}
+	fullURL := reqURL.String()
+
+	// Make the GET request with a timeout
+	client := &http.Client{
+		Timeout: 30 * time.Second, // Add a reasonable timeout
+	}
+
+	resp, err := client.Get(fullURL)
+	if err != nil {
+		return nil, fmt.Errorf("error making GET request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %v", err)
+	}
+
+	// Parse the response
+	var result struct {
+		Items []TableItem `json:"Items"`
+	}
+	bodyStr := string(body)
+	// Check if the response might be directly returning Items array rather than an object
+	if bodyStr[0] == '[' {
+		log.Printf("Response appears to be a direct array, trying to parse as Items")
+		var items []TableItem
+		if err := json.Unmarshal(body, &items); err != nil {
+			return nil, fmt.Errorf("error parsing response as array: %v", err)
+		}
+		return items, nil
+	}
+	// Try parsing as expected structure with Items field
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("error parsing response JSON: %v (body: %s)", err, bodyStr[:min(len(bodyStr), 200)])
+	}
+
+	log.Printf("Successfully parsed response, found %d items", len(result.Items))
+	return result.Items, nil
 }
 
 func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) ([]TableItem, error) {

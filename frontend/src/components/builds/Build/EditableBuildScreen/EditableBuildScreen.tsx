@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { ChampionsDialog } from "@/components/champion/ChampionsDialog"; import { SmallAugmentBox } from "@/components/augment/SmallAugmentBox";
 import { AugmentsDialog } from "@/components/augment/AugmentDialog";
 import createBuild from "@/api/createbuild";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // Type definitions
 interface Champion {
@@ -48,6 +49,9 @@ export interface PhaseState {
 export type GamePhaseType = "early" | "mid" | "late";
 
 export default function EditableBuildScreen(): JSX.Element {
+  const {user} = useAuth0()
+
+  
   const [description,setDescription] = useState("")
 
   const { champions, augments } = useGlobalContext() ;
@@ -152,7 +156,12 @@ export default function EditableBuildScreen(): JSX.Element {
   };
 
 function tryToInsert() {
-  createBuild(buildName,description,phaseState)
+  if(user) {
+    createBuild(buildName,description,user,phaseState)
+  }else {
+    console.log("not logged in")
+  }
+
 }
   return (
     <div

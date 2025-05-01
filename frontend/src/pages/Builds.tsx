@@ -1,4 +1,3 @@
- 
 import Build from "@/components/builds/Build/Build";
 import { WelcomeGlass } from "@/components/home/WelcomeGlass";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";
@@ -13,33 +12,33 @@ import { Link } from "react-router-dom";
 //     "Vanguard": 2
 //   },
 //   champions: [
-//     { 
-//       name: "Miss Fortune", 
-//       parsedData: "missfortune", 
+//     {
+//       name: "Miss Fortune",
+//       parsedData: "missfortune",
 //       isCarry: true,
 //       items: ["IE", "LW", "DB"]
 //     },
-//     { 
-//       name: "Sylas", 
-//       parsedData: "sylas", 
+//     {
+//       name: "Sylas",
+//       parsedData: "sylas",
 //       isTank: true,
 //       items: ["Warmog", "Dragon's Claw", "Gargoyle"]
 //     },
-//     { 
-//       name: "Aurora", 
+//     {
+//       name: "Aurora",
 //       parsedData: "aurora"
 //     },
-//     { 
-//       name: "Leona", 
+//     {
+//       name: "Leona",
 //       parsedData: "leona",
 //       isTank: true
 //     },
-//     { 
-//       name: "Viego", 
+//     {
+//       name: "Viego",
 //       parsedData: "viego"
 //     },
-//     { 
-//       name: "Urgot", 
+//     {
+//       name: "Urgot",
 //       parsedData: "urgot"
 //     }
 //   ],
@@ -64,30 +63,30 @@ import { Link } from "react-router-dom";
 export function Builds() {
   return (
     <div className="justify-items-center     ">
-       <BuildsWithTabs/>
+      <BuildsWithTabs />
     </div>
   );
 }
- 
-import { useState } from 'react';
+
+import { useState } from "react";
 import YourBuilds from "@/components/builds/YourBuilds/YourBuilds";
 import BuildPlaceholder from "@/components/builds/BuildPlaceholder";
 
 const BuildTabs = () => {
-  const [activeTab, setActiveTab] = useState('pro');
+  const [activeTab, setActiveTab] = useState("your");
 
   const tabs = [
-    { id: 'pro', label: 'Pro Builds' },
-    { id: 'user', label: 'User Builds' },
-    { id: 'your', label: 'Your Builds' }
+    // { id: 'pro', label: 'Pro Builds' },
+    // { id: 'user', label: 'User Builds' },
+    { id: "your", label: "Your Builds" },
   ];
 
-  const handleTabClick = (tabId:any) => {
+  const handleTabClick = (tabId: any) => {
     setActiveTab(tabId);
   };
 
   return (
-    <div className="w-full mt-24">
+    <div className="w-full mt-24  ">
       {/* Tab Navigation with Blurred Backdrop */}
       <div className="relative flex space-x-12 mb-8 px-6 py-3">
         <div className="absolute inset-0 bg-slate-800/30 backdrop-blur-md rounded-lg border border-emerald-400/50"></div>
@@ -96,9 +95,9 @@ const BuildTabs = () => {
             key={tab.id}
             onClick={() => handleTabClick(tab.id)}
             className={`relative z-10 cursor-pointer text-xl font-semibold transition-all duration-300 ${
-              activeTab === tab.id 
-                ? 'text-emerald-400 brightness-125    ' 
-                : 'text-emerald-400/70'
+              activeTab === tab.id
+                ? "text-emerald-400 brightness-125    "
+                : "text-emerald-400/70"
             }`}
           >
             {tab.label}
@@ -110,24 +109,27 @@ const BuildTabs = () => {
       </div>
 
       {/* Content Sections */}
-      <div className="w-full">
-        {activeTab === 'pro' && <ProBuildsSection />}
-        {activeTab === 'user' && <UserBuildsSection />}
-        {activeTab === 'your' && <YourBuildsSection />}
+      <div className="w-full ">
+        {activeTab === "pro" && <ProBuildsSection />}
+        {activeTab === "user" && <UserBuildsSection />}
+        {activeTab === "your" && <YourBuildsSection />}
       </div>
     </div>
   );
 };
 
-
 // Individual section components
-const BuildSection = ({ title, children }:any) => {
+const BuildSection = ({ title, children }: any) => {
+  console.log(children)
   return (
     <div className="w-full">
-      <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
-      <div className="w-full">
-        {children}
-      </div>
+      <h3 className="text-2xl font-bold text-white mb-0 ">{title}
+
+       
+        </h3> 
+        <span className="text-sm"> { } out of 10 </span>
+      <div className="w-full">{children}</div>
+     
     </div>
   );
 };
@@ -137,7 +139,7 @@ const ProBuildsSection = () => {
   return (
     <BuildSection title="Popular Pro Builds">
       <div className="text-white  ">
-      <BuildPlaceholder type={"loading"}/>
+        <BuildPlaceholder type={"loading"} />
       </div>
     </BuildSection>
   );
@@ -148,7 +150,7 @@ const UserBuildsSection = () => {
   return (
     <BuildSection title="Trending User Builds">
       <div className="text-white  ">
-         <BuildPlaceholder type={"loading"}/>
+        <BuildPlaceholder type={"loading"} />
       </div>
     </BuildSection>
   );
@@ -158,8 +160,9 @@ const YourBuildsSection = () => {
   // This would eventually use the querySection function prop
   return (
     <BuildSection title="Your Saved Builds">
-      <div className="text-white flex justify-center">
-      <YourBuilds/>
+  
+      <div className="text-white flex justify-center ">
+        <YourBuilds />
       </div>
     </BuildSection>
   );
@@ -169,14 +172,12 @@ const YourBuildsSection = () => {
 const BuildsWithTabs = () => {
   return (
     <div className="justify-items-center">
-      <div className="mb-20 font-inter text-7xl font-bold text-emerald-400 justify-self-left absolute">Builds</div>
-       
-      <div className="flex flex-col ">
-      <BuildTabs />
- 
+      <div className="mb-20 font-inter text-7xl font-bold text-emerald-400 justify-self-left absolute">
+        Builds
+      </div>
 
- 
-        
+      <div className="flex flex-col  ">
+        <BuildTabs />
       </div>
 
       <div className="">

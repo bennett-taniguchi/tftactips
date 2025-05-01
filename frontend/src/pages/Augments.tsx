@@ -31,13 +31,11 @@ export default function Augments() {
 
       <div className="grid grid-cols-4 gap-y-10 gap-x-0 mx-auto w-[90svw]">
         {filteredItems ? (
-          filteredItems.map((augment) => (
+          filteredItems.map((augment,idx) => (
             <div
               className="w-[20svw]"
               key={
-                (augment as any).id ||
-                (augment as any).name ||
-                Math.random().toString()
+               idx
               }
             >
               <AugmentBox item={augment} />

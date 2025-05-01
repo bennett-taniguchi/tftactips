@@ -6,6 +6,7 @@
  */
 
 // Base API URL - adjust to match your Go backend
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 // Table names that can be used with the API
@@ -92,6 +93,40 @@ export const CrudService = {
       }
       throw new ApiError((error as Error).message);
     }
+  },
+
+  getByEmail: async(tableName:TableName,email:string): Promise<Item[]> => {
+
+    console.log(`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}`);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("response",response)
+      if (!response.ok) {
+        const error = await response.json();
+        throw new ApiError(
+          error.error || "Failed to fetch items",
+          response.status
+        );
+      }
+     
+      const data = (await response.json()) as GetItemsResponse;
+      console.log("data",data);
+      return data.items || [];
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError((error as Error).message);
+    }
+
   },
   /**
    * Get all items from a table

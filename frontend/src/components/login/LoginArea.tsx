@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "./LoginButton";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -8,16 +8,18 @@ import {
 } from "@/components/ui/popover";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+ 
 
 export default function LoginArea() {
   const { user, isAuthenticated, isLoading } = useAuth0();
-  
+ 
   useEffect(() => {
     if (user && user.picture) {
       console.log("User picture URL:", user.picture);
+     
     }
   }, [user]);
-
+  
   if (isLoading) return <div>Loading...</div>;
   
   if (isAuthenticated && user) {

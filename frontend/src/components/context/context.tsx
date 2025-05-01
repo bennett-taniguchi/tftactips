@@ -19,6 +19,7 @@ interface GlobalContextType {
 const GlobalContext = createContext<GlobalContextType>({
   champions: [],
   augments: [],
+  
   traits: [],
   items: [],
   traitChampionsMap: [],
@@ -136,3 +137,4 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
 export function useGlobalContext() {
   return useContext(GlobalContext);
 }
+ 

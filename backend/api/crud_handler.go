@@ -48,16 +48,21 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Handle based on HTTP method
-	pkey := r.URL.Query().Get("pkey")
-	pval := r.URL.Query().Get("pval")
+	pkey := r.URL.Query().Get("pkey") // ex. 'AUGMENT#'
+	pval := r.URL.Query().Get("pval") // ex. 'Pandoras Bench'
+	email := r.URL.Query().Get("email")
+
 	fmt.Printf("Request of some sort received: %s", r.URL.RawQuery)
 	fmt.Printf("Query params: pkey: %s pval: %s", pkey, pval)
+	fmt.Printf("Email param value: %s", email)
 	switch r.Method {
 	case "GET":
-		if pkey != "" && pval != "" {
-			h.handleParameterizedGet(w, r, tableName, pkey, pval) // single table
+		if email != "" {
+			h.handleGetByEmail(w, r, tableName, email)
+		} else if pkey != "" && pval != "" {
+			h.handleParameterizedGet(w, r, tableName, pkey, pval) // parameterized only means single table
 		} else {
-			h.handleGet(w, r, tableName) // generic get all called at beginning of app
+			h.handleGet(w, r, tableName) // fetches from all tables
 		}
 
 	case "POST":
@@ -71,6 +76,31 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *CrudHandler) handleGetByEmail(w http.ResponseWriter, r *http.Request, tableName string, email string) {
+	if tableName == "tft_builds" {
+		items, err := h.crudAPI.GetBuildsByEmail(email)
+
+		if err != nil {
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{
+				"error": fmt.Sprintf("Failed to fetch items: %v", err),
+			})
+			fmt.Println("error of some sort", err)
+			fmt.Println("items returned for error of some sort", items)
+			return
+		}
+
+		fmt.Println("items result", items)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"items": items,
+		})
+
+	}
+
+}
+
 func (h *CrudHandler) handleParameterizedGet(w http.ResponseWriter, r *http.Request, tableName string, pkey string, pval string) {
 	items, err := h.crudAPI.GetByPartitionKey(tableName, pkey, pval)
 	if err != nil {
@@ -80,10 +110,6 @@ func (h *CrudHandler) handleParameterizedGet(w http.ResponseWriter, r *http.Requ
 		json.NewEncoder(w).Encode(map[string]string{
 			"error": fmt.Sprintf("Failed to fetch items: %v", err),
 		})
-		return
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

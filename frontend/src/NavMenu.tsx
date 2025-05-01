@@ -26,6 +26,15 @@ const NavMenu = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    console.log('new loc',location)
+    window.scrollTo({
+      top: -500,
+      left: 0,
+      behavior: 'smooth' // or 'auto'
+    });
+  },[location])
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };

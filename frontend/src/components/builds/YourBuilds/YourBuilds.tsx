@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CrudService, { Item } from "@/api/crudapiservice";
 import Build from "@/components/builds/Build/Build";
 import BuildPlaceholder from "../BuildPlaceholder";
+ 
+import { useAuth0 } from "@auth0/auth0-react";
 
 // This function transforms the retrieved build data to match the Build component's expected format
 const transformBuildData = (build: any) => {
@@ -62,11 +64,30 @@ export default function YourBuilds() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+ 
+  const { user ,getAccessTokenSilently  } = useAuth0();
+  const [token,setToken] = useState<any>(undefined)
+
   useEffect(() => {
+    console.log(token)
+  },[token])
+  useEffect(() => {
+   async function setTokenVal() {
+    try {
+       const tokenRes = await getAccessTokenSilently() 
+       setToken(tokenRes)
+    } catch(e) {
+      return e;
+    }
+
+ 
+    }
+     setTokenVal() 
     async function getBuilds() {
+      
       try {
         setLoading(true);
-        const [...retrievedBuilds] = await CrudService.getAll('tft_builds');
+        const [...retrievedBuilds] = await CrudService.getByEmail('tft_builds',user!.email!);
         console.log(retrievedBuilds)
         if (Array.isArray(retrievedBuilds)) {
           setBuilds(retrievedBuilds as any);
@@ -85,7 +106,7 @@ export default function YourBuilds() {
     }
     
     getBuilds();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     console.log("Updated builds:", builds);
