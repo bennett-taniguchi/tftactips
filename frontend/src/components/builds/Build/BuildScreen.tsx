@@ -10,6 +10,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TFTBoardContainer, { TFTBoard } from "@/components/hexes/TFTBoard";
+import { cn } from "@/lib/utils";
 
 type BuildScreenProps = {
   build?: any;
@@ -42,18 +43,18 @@ export default function BuildScreen({
   // Filter champions by role
   const carryChampions = champions.filter((champ) => champ.isCarry);
   const tankChampions = champions.filter((champ) => champ.isTank);
-
+//console.log(build.data.mid.boardChampions)
   return (
     <div
-      className="fixed top-0 left-0 w-screen h-screen z-50 flex flex-col"
+      className="fixed top-0 left-0 w-screen h-screen z-50 flex flex-col bg-radial-[at_50%_75%] from-cyan-600/50 via-emerald-900/70 to-indigo-800/50 to-90%"
       style={{
-        background:
-          "linear-gradient(135deg, rgba(20, 10, 0, 0.95) 0%, rgba(50, 25, 10, 0.98) 100%)",
-        backdropFilter: "blur(10px)",
+        // background:
+        //   "linear-gradient(135deg, rgba(20, 10, 0, 0.95) 0%, rgba(50, 25, 10, 0.98) 100%)",
+        backdropFilter: "blur(40px)",
       }}
     >
       {/* Header with title and close button */}
-      <div className="relative w-full py-4 px-8 flex justify-between items-center border-b border-orange-800/30">
+      <div className="relative w-full py-4 px-8 flex justify-between items-center border-b border-white/30">
         <h1
           className="text-4xl font-bold text-white"
           style={{
@@ -77,30 +78,30 @@ export default function BuildScreen({
       {/* Main content - split into two panes */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Pane - Game phases, board positioning, carries, tanks, augments */}
-        <div className="w-2/3 p-4 border-r border-orange-800/30 flex flex-col">
+        <div className="w-2/3 p-4 border-r border-white/30 flex flex-col">
           {/* Game Phase Selector */}
-          <div className="mb-4">
+          <div className="mb-4 w-full ml-[20svw] ">
             <Tabs
               defaultValue="mid"
               className="w-full"
               onValueChange={(value) => setCurrentPhase(value as GamePhase)}
             >
-              <TabsList className="bg-orange-900/20 w-2/5 grid grid-cols-3">
+              <TabsList className="  bg-emerald-900/50 w-2/5 grid grid-cols-3">
                 <TabsTrigger
                   value="early"
-                  className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
+                  className="cursor-pointer text-white/50 data-[state=active]:text-white data-[state=active]:bg-emerald-600/50"
                 >
                   Early Game
                 </TabsTrigger>
                 <TabsTrigger
                   value="mid"
-                  className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
+                  className="cursor-pointer text-white/50 data-[state=active]:text-white data-[state=active]:bg-emerald-600/50"
                 >
                   Mid Game
                 </TabsTrigger>
                 <TabsTrigger
                   value="late"
-                  className="text-white/50 data-[state=active]:text-white data-[state=active]:bg-orange-600/50"
+                  className="cursor-pointer text-white/50 data-[state=active]:text-white data-[state=active]:bg-emerald-600/50"
                 >
                   Late Game
                 </TabsTrigger>
@@ -110,18 +111,16 @@ export default function BuildScreen({
 
           {/* Board Positioning */}
           <div
-            className="flex-1 mb-4 bg-black/30 rounded-md relative overflow-hidden"
+            className="border border-emerald-400/50 flex-1 mb-4 bg-black/30 rounded-md relative overflow-hidden"
             style={{
-              boxShadow:
-                "inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 100, 0, 0.2)",
-              border: "1px solid rgba(255, 100, 0, 0.3)",
+              
             }}
           >
             <h2 className="text-white text-xl font-bold p-2 bg-black/50">
               Board Positioning
             </h2>
-            <div className="grid grid-cols-7 grid-rows-4 gap-2 p-4 h-full">
-               <TFTBoardContainer champions={champions} onDropChampion={null as any} onRemoveChampion={null as any} placedChampions={{"32":"32"} as any} containerRef={null as any}/>
+            <div className=" h-full w-full">
+               <TFTBoardContainer champions={champions} onDropChampion={null as any} onRemoveChampion={null as any} placedChampions={build.data[currentPhase+""].boardChampions} containerRef={null as any}/>
             </div>
           </div>
 
@@ -132,7 +131,7 @@ export default function BuildScreen({
               {/* Carry champions */}
               {carryChampions.map((champion, index) => (
                 <div key={index} className="relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-500/30 to-orange-700/30 rounded-md flex items-center justify-center border border-yellow-500/50">
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-500/30 to-emerald-700/30 rounded-md flex items-center justify-center border border-yellow-500/50">
                     <img
                       src={getChampionImage(champion)}
                       alt={champion.name}
@@ -249,7 +248,7 @@ export default function BuildScreen({
               ))}
 
               {/* Trait breakdown */}
-              <div className="mt-6 border-t border-orange-800/30 pt-4">
+              <div className="mt-6 border-t border-white/30 pt-4">
                 <h3 className="text-white text-lg font-bold mb-2">
                   Trait Breakdown
                 </h3>
@@ -257,15 +256,17 @@ export default function BuildScreen({
                   {Object.entries(traits).map(([traitName, count], index) => (
                     <div key={index} className="flex items-center gap-2">
                       <div className="w-6 h-6 bg-black/60 rounded-full flex items-center justify-center">
+                      <div className={cn(traitName==("Strategist") ? `  mr-[3px] ml-[6px] ` : `ml-1 `)}>
                         <img
                           src={getTraitImage(traitName)}
                           alt={traitName}
                           className="w-4/5 h-4/5 object-contain"
                         />
+                        </div>
                       </div>
                       <span className="text-white">
                         {traitName}:{" "}
-                        <span className="text-orange-400">{count}</span>
+                        <span className="text-emerald-400">{count}</span>
                       </span>
                     </div>
                   ))}
@@ -273,7 +274,7 @@ export default function BuildScreen({
               </div>
 
               {/* Champion list */}
-              <div className="mt-6 border-t border-orange-800/30 pt-4">
+              <div className="mt-6 border-t border-white/30 pt-4">
                 <h3 className="text-white text-lg font-bold mb-2">
                   All Champions
                 </h3>
@@ -287,7 +288,7 @@ export default function BuildScreen({
                         <img
                           src={getChampionImage(champion)}
                           alt={champion.name}
-                          className="w-4/5 h-4/5 object-contain"
+                          className="w-4/5 h-4/5 object-contain rounded-full"
                         />
                       </div>
                       <div>

@@ -5,6 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	// "github.com/lestrrat-go/jwx/v3/jwe"
+	// "github.com/lestrrat-go/jwx/v3/jwk"
+	// "github.com/lestrrat-go/jwx/v2/jwt"
+	// "github.com/lestrrat-go/jwx/v2/jwa"
+	// jwtmiddleware "github.com/auth0/go-jwt-middleware"
 )
 
 // CrudHandler handles HTTP requests for CRUD operations
@@ -19,6 +24,12 @@ func NewCrudHandler() *CrudHandler {
 	}
 }
 
+// func validateToken(token string) {
+// 	// Auth0 domain and API audience
+// 	domain := "your-tenant.auth0.com"
+// 	audience := "your-api-identifier"
+
+// }
 // RegisterRoutes registers the CRUD API routes with the given mux
 func (h *CrudHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/crud/", h.handleCrud)
@@ -51,12 +62,28 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	pkey := r.URL.Query().Get("pkey") // ex. 'AUGMENT#'
 	pval := r.URL.Query().Get("pval") // ex. 'Pandoras Bench'
 	email := r.URL.Query().Get("email")
+	token := r.URL.Query().Get("token")
+	if token != "" || r.Method != "GET" || tableName == "tft_builds" {
+		fmt.Println("token case hit")
+		// use old method to grab domain or keep hardcoding
+		userInfo, err := GetUserInfo(token)
+		fmt.Println("official email", userInfo.Email)
+		fmt.Println("passed email", email)
+		fmt.Println("check equality", email == userInfo.Email)
+		if err != nil {
+			fmt.Printf("Error somehow: %s", err)
+		} else {
+			fmt.Print("user info:", userInfo)
+		}
 
-	fmt.Printf("Request of some sort received: %s", r.URL.RawQuery)
-	fmt.Printf("Query params: pkey: %s pval: %s", pkey, pval)
-	fmt.Printf("Email param value: %s", email)
+		if email != userInfo.Email {
+			http.Error(w, "Invalid Email value(s), not equal from token", http.StatusMethodNotAllowed)
+		}
+	}
+
 	switch r.Method {
 	case "GET":
+
 		if email != "" {
 			h.handleGetByEmail(w, r, tableName, email)
 		} else if pkey != "" && pval != "" {
@@ -92,7 +119,7 @@ func (h *CrudHandler) handleGetByEmail(w http.ResponseWriter, r *http.Request, t
 			return
 		}
 
-		fmt.Println("items result", items)
+		//fmt.Println("items result", items)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"items": items,
 		})

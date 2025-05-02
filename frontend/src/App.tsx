@@ -15,6 +15,7 @@ import Traits from "./pages/Traits";
 import Items from "./pages/Items";
 import NewBuild from "./pages/NewBuild";
 import Augments from "./pages/Augments";
+import User from "./pages/User";
 
 const PageLayout = ({ children }: any) => (
   <div className="text-gray-100">{children}</div>
@@ -34,6 +35,7 @@ function App() {
               <Route path="/traits" element={<Traits />} />
               <Route path="/items" element={<Items />} />
               <Route path="/newbuild" element={<NewBuild />} />
+              <Route path="/user/" element={<User/>} />
               <Route
                 path="/builds"
                 element={

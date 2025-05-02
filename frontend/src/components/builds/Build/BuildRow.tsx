@@ -5,6 +5,8 @@ import {
   getChampionImage,
   getTraitImage,
 } from "./Build";
+import searchContext from '../../../../utils/search'
+import { cn } from "@/lib/utils";
 interface BuildRowProps {
   title: string;
   traits: TraitType;
@@ -26,27 +28,20 @@ export default function BuildRow({
   difficulty,
 }: BuildRowProps) {
   // Find the maximum trait count to calculate scaling
+   //console.log(searchContext("champions","Zyra"))
 
   // Toggle view when clicked
   const toggleView = () => {
     setView(view === "Row" ? "Screen" : "Row");
   };
-
+ 
   return (
     <div >
       <div
         onClick={toggleView}
-        className="    border-2 border-white rounded-4xl text-black mt-[-1svh] h-[120px] w-[80svw] relative overflow-hidden group hover:scale-[1.001] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
+        className="    bg-black/20 border-white  group-hover:opacity-10  rounded-xl text-black mt-[-1svh] h-[120px] w-[75svw] relative overflow-hidden group hover:scale-[1.001] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
         style={{
-          background: "rgba(20, 20, 20, 0.7)",
-          boxShadow: `
-                    0 8px 32px 0 rgba(0, 0, 0, 0.6), 
-                    0 0 0 1px rgba(255, 100, 0, 0.3),
-                    0 -1px 0 0 rgba(255, 255, 255, 0.3),
-                    0 1px 0 0 rgba(0, 0, 0, 0.6),
-                    inset 0 0 15px rgba(0, 0, 0, 0.6),
-                    inset 0 1px 5px rgba(255, 255, 255, 0.15)
-                  `,
+          
           backdropFilter: "blur(4px)",
           transformOrigin: "center center",
           transition:
@@ -55,20 +50,20 @@ export default function BuildRow({
       >
         {/* Main gradient background with red, orange, yellow - brightened */}
         <div
-          className="  absolute inset-0 z-0 opacity-90 saturate-125 group-hover:saturate-[1.2] group-hover:brightness-102 transition-all duration-300  "
+          className=" absolute inset-0 z-0 opacity-90 saturate-125 group-hover:opacity-10 group-hover:saturate-[1.2] group-hover:brightness-102 transition-all duration-300  "
           style={{
-            background: `
-                      radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 1) 0%, transparent 60%),
-                      linear-gradient(130deg, rgba(255, 50, 0, 1) 0%, rgba(255, 160, 0, 1) 50%, rgba(255, 220, 0, 1) 100%)
-                    `,
+            // background: `
+            //           radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 1) 0%, transparent 60%),
+            //           linear-gradient(130deg, rgba(255, 50, 0, 1) 0%, rgba(255, 160, 0, 1) 50%, rgba(255, 220, 0, 1) 100%)
+            //         `,
             boxShadow:
-              "inset 0 0 50px rgba(255, 120, 0, 0.1), inset 0 0 100px rgba(0, 0, 0, 0.1)",
+              "inset 0 0 50px rgba(0, 0, 0, 0.1), inset 0 0 100px rgba(0, 0, 0, 0.1)",
           }}
         />
 
         {/* Enhanced hover effect layer - only visible on hover */}
         <div
-          className="absolute inset-0 z-1 opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+          className="absolute inset-0 z-1 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
           style={{
             background:
               "radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%)",
@@ -123,8 +118,7 @@ export default function BuildRow({
                   style={{
                     // clipPath:
                     //   "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                    background:
-                      "radial-gradient(circle, rgba(255, 100, 0, 0.8) 0%, rgba(255, 50, 0, 0.4) 70%)",
+                 
                     transform: "scale(1.00) ",
                     filter: "blur(4px)",
                   }}
@@ -139,12 +133,14 @@ export default function BuildRow({
                     background: "rgba(0, 0, 0, 0.6)",
                     borderRadius: "50%",
                   }}
-                >
+                ><div className={cn(traitName==("Strategist") ? `  mr-[9px] ml-[10px] pt-[5px]` : ` `)}>
+                                       
                   <img
                     src={getTraitImage(traitName)}
                     alt={traitName}
                     className=" object-contain"
                   />
+                  </div>
                   <div className="absolute bottom-[-5px] right-[-5px] bg-black/80 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs font-bold">
                     {count}
                   </div>
@@ -168,8 +164,7 @@ export default function BuildRow({
                 <div
                   className="absolute top-0 left-0 w-full h-full opacity-100 group-hover/icon:opacity-80 group-hover:opacity-70 transition-all duration-300"
                   style={{
-                    background:
-                      "radial-gradient(circle, rgba(255, 220, 0, 0.9) 0%, rgba(255, 120, 0, 0.5) 70%)",
+               
                     transform: "scale(1.001)",
                     filter: "blur(4px)",
                   }}
@@ -189,7 +184,7 @@ export default function BuildRow({
 
                 {/* Champion image */}
                 <div
-                  className=" h-15 w-15 relative  border-[2px]  rounded-full border-white transform hover:scale-125 group-hover:scale-[1.01] transition-all duration-300 z-10 group-hover:brightness-101 flex items-center justify-center"
+                  className=" h-15 w-15 relative  border-[3px]  rounded-full border-indigo-400/30   transform hover:scale-125 group-hover:scale-[1.01] transition-all duration-300 z-10 group-hover:brightness-101 flex items-center justify-center"
                   style={{
                   
                   }}
@@ -200,6 +195,7 @@ export default function BuildRow({
                     className=" object-contain rounded-full"
                   />
                   {/* Indicator for carry or tank */}
+                
                   {champion.isCarry && (
                     <div className="absolute top-[-4px] right-[-4px] bg-yellow-500 rounded-full w-4 h-4 flex items-center justify-center text-black text-xs font-bold">
                       C
@@ -211,6 +207,11 @@ export default function BuildRow({
                     </div>
                   )}
                 </div>
+                <div className="text-center text-white"> 
+                
+                 
+                  </div>
+               
               </div>
             ))}
             {/* Show a + indicator if there are more champions */}

@@ -351,8 +351,10 @@ func (c *CrudAPI) Create(tableName string, item TableItem) error {
 
 	// 4. Structure the item for DynamoDB if no partition key was found
 	dynamoItem := map[string]interface{}{
-		"BUILD#":   item["name"], // Use name as partition key
-		"METADATA": item["id"],
+		"BUILD#":    item["name"], // Use name as partition key
+		"METADATA":  item["id"],
+		"Upvotes":   "",
+		"Downvotes": "",
 		// Copy remaining fields
 	}
 

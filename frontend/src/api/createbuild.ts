@@ -2,6 +2,7 @@ import { GamePhaseType, PhaseState } from "@/components/builds/Build/EditableBui
 import CrudService from "./crudapiservice";
 import { useAuth0 } from "@auth0/auth0-react";
 export default function createBuild(
+  token:string,
   title: string,
   desc: string,
  user:any,
@@ -29,12 +30,13 @@ export default function createBuild(
     desc: desc,
     name: title,
     data: phaseData,
-    email:user.email
+    email:user.email,
+  
   };
 
   try {
    
-    CrudService.create("tft_builds", buildItem);
+    CrudService.create("tft_builds", buildItem,token);
   } catch (e) {
     console.log(e);
   }

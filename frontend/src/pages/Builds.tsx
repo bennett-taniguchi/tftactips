@@ -71,6 +71,8 @@ export function Builds() {
 import { useState } from "react";
 import YourBuilds from "@/components/builds/YourBuilds/YourBuilds";
 import BuildPlaceholder from "@/components/builds/BuildPlaceholder";
+import { SeparatorHorizontal } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const BuildTabs = () => {
   const [activeTab, setActiveTab] = useState("your");
@@ -120,14 +122,15 @@ const BuildTabs = () => {
 
 // Individual section components
 const BuildSection = ({ title, children }: any) => {
-  console.log(children)
+ 
   return (
     <div className="w-full">
-      <h3 className="text-2xl font-bold text-white mb-0 ">{title}
+      <h3 className="text-2xl font-bold text-emerald-400 mb-0 ">{title}
 
        
         </h3> 
-        <span className="text-sm"> { } out of 10 </span>
+        <div className="w-full ml-[-1svw]    h-[1px] bg-emerald-400"/>
+        
       <div className="w-full">{children}</div>
      
     </div>
@@ -172,7 +175,7 @@ const YourBuildsSection = () => {
 const BuildsWithTabs = () => {
   return (
     <div className="justify-items-center">
-      <div className="mb-20 font-inter text-7xl font-bold text-emerald-400 justify-self-left absolute">
+      <div className=" -mb-20 font-inter text-7xl font-bold text-emerald-400 justify-self-start">
         Builds
       </div>
 

@@ -67,7 +67,7 @@ export function AugmentsDialog({
             onClick={() => setDialogOpen(true)}
             variant="ghost"
             size="sm"
-            className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/50 bg-white/20 w-[200px] h-[60px] ml-[25svw] mt-[-1svh] border-cyan-400 border-dashed border-2"
+            className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/10 bg-black/40 w-[200px] h-[60px] ml-[25svw] mt-[-1svh]    "
           >
             <Search className="w-4 h-4 mr-2" />
             Add Augment

@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/popover";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "../ui/button";
  
 
 export default function LoginArea() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading,logout } = useAuth0();
  
   useEffect(() => {
     if (user && user.picture) {
@@ -53,7 +55,10 @@ export default function LoginArea() {
         </PopoverTrigger>
         <PopoverContent className="w-64 p-4">
           <div className="space-y-2">
-            <h3 className="font-medium text-sm text-gray-700">User Profile</h3>
+            <h3 className="font-medium text-sm text-gray-700">User Profile
+              
+            </h3>
+        
             <div className="grid gap-2">
               <div>
                 <p className="text-xs font-medium text-gray-500">Name</p>
@@ -63,6 +68,12 @@ export default function LoginArea() {
                 <p className="text-xs font-medium text-gray-500">Email</p>
                 <p className="text-sm">{user.email || "No email available"}</p>
               </div>
+              <div className="underline text-end text-blue-400">
+              <Link to={"/user"}>Go to profile</Link>
+              </div>
+              <Button onClick={()=>logout()}>
+                Logout
+              </Button>
             </div>
           </div>
         </PopoverContent>

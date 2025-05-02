@@ -171,16 +171,16 @@ export const CrudService = {
    * @param item The item data to create
    * @returns Promise that resolves when creation is successful
    */
-  create: async (tableName: TableName, item: Item): Promise<void> => {
+  create: async (tableName: TableName, item: Item,token:string): Promise<void> => {
     try {
       // Ensure the item has a unique ID if not provided
       if (!item.id) {
         item.id = Date.now().toString();
       }
-
+      
       
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}`,
+        `${API_BASE_URL}/api/crud/?table=${tableName}&token=${token}&email=${item.email}`,
         {
           method: "POST",
           headers: {

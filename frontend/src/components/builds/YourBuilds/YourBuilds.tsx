@@ -2,49 +2,52 @@ import { useContext, useEffect, useState } from "react";
 import CrudService, { Item } from "@/api/crudapiservice";
 import Build from "@/components/builds/Build/Build";
 import BuildPlaceholder from "../BuildPlaceholder";
- 
+
 import { useAuth0 } from "@auth0/auth0-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // This function transforms the retrieved build data to match the Build component's expected format
 const transformBuildData = (build: any) => {
   // Using optional chaining to safely access nested properties
   const selectedChampions = build?.data?.mid?.selectedChampions || [];
   const selectedAugments = build?.data?.mid?.selectedAugments || [];
-  
+
   // Map champions to the format expected by the Build component
-  const champions = selectedChampions.map((champion:any) => {
+  const champions = selectedChampions.map((champion: any) => {
     const parsedData = champion.parsedData || {};
     return {
       name: parsedData.name || champion?.CHAMPION || "",
       parsedData: parsedData.apiName?.toLowerCase().replace("tft14_", "") || "",
       // You can determine if a champion is a carry or tank based on your own logic
       isCarry: parsedData.role?.includes("Carry") || false,
-      isTank: parsedData.role?.includes("Tank") || parsedData.stats?.hp > 700 || false,
+      isTank:
+        parsedData.role?.includes("Tank") ||
+        parsedData.stats?.hp > 700 ||
+        false,
       // Add more properties as needed
-      items: [] // You might want to extract items if available in your data
+      items: [], // You might want to extract items if available in your data
     };
   });
-  
+
   // Map traits based on champions' traits
   const traits = {};
   selectedChampions.forEach((champion: Item) => {
     const champTraits = champion.parsedData?.parsedTraits || [];
-    champTraits.forEach((trait : string) => {
-      
-      if ((traits as any)[trait]  ) {
+    champTraits.forEach((trait: string) => {
+      if ((traits as any)[trait]) {
         (traits as any)[trait] += 1;
       } else {
         (traits as any)[trait] = 1;
       }
     });
   });
-  
+
   // Map augments
   const augments = selectedAugments.map((augment: Item) => ({
     name: augment.name || "",
-    description: augment.desc || ""
+    description: augment.desc || "",
   }));
-  
+
   // Return transformed build object
   return {
     id: build.id || "",
@@ -64,31 +67,30 @@ export default function YourBuilds() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- 
-  const { user ,getAccessTokenSilently  } = useAuth0();
-  const [token,setToken] = useState<any>(undefined)
+  const { user, getAccessTokenSilently } = useAuth0();
+  const [token, setToken] = useState<any>(undefined);
 
   useEffect(() => {
-    console.log(token)
-  },[token])
+    console.log(token + "");
+  }, [token]);
   useEffect(() => {
-   async function setTokenVal() {
-    try {
-       const tokenRes = await getAccessTokenSilently() 
-       setToken(tokenRes)
-    } catch(e) {
-      return e;
+    async function setTokenVal() {
+      try {
+        const tokenRes = await getAccessTokenSilently();
+        setToken(tokenRes);
+      } catch (e) {
+        return e;
+      }
     }
-
- 
-    }
-     setTokenVal() 
+    setTokenVal();
     async function getBuilds() {
-      
       try {
         setLoading(true);
-        const [...retrievedBuilds] = await CrudService.getByEmail('tft_builds',user!.email!);
-        console.log(retrievedBuilds)
+        const [...retrievedBuilds] = await CrudService.getByEmail(
+          "tft_builds",
+          user!.email!
+        );
+        console.log(retrievedBuilds);
         if (Array.isArray(retrievedBuilds)) {
           setBuilds(retrievedBuilds as any);
         } else if (retrievedBuilds) {
@@ -99,12 +101,11 @@ export default function YourBuilds() {
         }
       } catch (err) {
         console.error("Error fetching builds:", err);
-        
       } finally {
         setLoading(false);
       }
     }
-    
+
     getBuilds();
   }, [user]);
 
@@ -113,7 +114,11 @@ export default function YourBuilds() {
   }, [builds]);
 
   if (loading) {
-    return <div className="text-emerald-400 text-xl"><BuildPlaceholder type="loading"/></div>;
+    return (
+      <div className="text-emerald-400 text-xl grid grid-cols-1 gap-8 ml-[-5svw] mt-7">
+        <BuildPlaceholder type="loading" />
+      </div>
+    );
   }
 
   if (error) {
@@ -122,7 +127,7 @@ export default function YourBuilds() {
 
   if (!builds || builds.length === 0) {
     return (
-      <div className="text-emerald-400/70 text-xl p-8 text-center">
+      <div className="text-emerald-400/70 text-xl p-8 text-center grid grid-cols-1 gap-8 ml-[-5svw] mt-7 w-[80svw]">
         You don't have any saved builds yet. Use the + button to create one!
       </div>
     );
@@ -130,14 +135,15 @@ export default function YourBuilds() {
 
   return (
     <div className="grid grid-cols-1 gap-8 ml-[-5svw] mt-7">
+      
       {builds.map((build, idx) => {
         const transformedBuild = transformBuildData(build);
         return (
-          <div key={  idx} className=" transition-all duration-200">
-            <Build {...transformedBuild} />
+          <div key={idx} className=" transition-all duration-200">
+            <Build {...transformedBuild} build={build} />
           </div>
         );
-      })}
+      })} 
     </div>
   );
 }

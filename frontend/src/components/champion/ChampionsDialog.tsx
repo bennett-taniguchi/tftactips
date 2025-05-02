@@ -45,7 +45,7 @@ import { Champion } from "utils/champions";
             onClick={() => setDialogOpen(true)}
             variant="ghost"
             size="sm"
-            className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/50 bg-white/20 w-[200px] h-[60px] ml-[25svw] mt-[-1svh] border-orange-400 border-dashed border-2"
+            className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/10 bg-black/40 w-[200px] h-[60px] ml-[25svw] mt-[-1svh]   "
           >
             <Search className="w-4 h-4 mr-0" />
             Add Champion
@@ -57,7 +57,7 @@ import { Champion } from "utils/champions";
           onClick={() => setDialogOpen(true)}
           variant="ghost"
           size="sm"
-          className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/50 bg-white/20 w-[200px] h-[60px] border-orange-400 border-dashed border-2"
+          className="text-white font-inter font-light text-sm hover:text-black hover:bg-white/50 bg-white/20 w-[200px] h-[60px] border-emerald-400 border-dashed border-2"
         >
           <Search className="w-4 h-4 mr-0" />
           Add Champion
@@ -111,7 +111,7 @@ import { Champion } from "utils/champions";
             <DialogClose>
               <Button
                 type="button"
-                 className="bg-orange-500 hover:bg-orange-700 cursor-pointer"
+                 className="bg-emerald-500 hover:bg-emerald-700 cursor-pointer"
                 onClick={() => {
                   setDialogOpen(false);
                 }}

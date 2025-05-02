@@ -102,7 +102,7 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
 function getHexColor(champion: Champion | null) {
   if(!champion) return " "
   if(champion.parsedData.cost==1) {
-    return "bg-white "
+    return "bg-stone-500 "
   }
   if(champion.parsedData.cost==2) {
     return "bg-green-400 "
@@ -115,21 +115,21 @@ function getHexColor(champion: Champion | null) {
   }
    return "bg-orange-400"
 }
-function getBorderColor(champion: Champion) {
-  if(champion.parsedData.cost==1) {
-    return "border-white "
-  }
-  if(champion.parsedData.cost==2) {
-    return "border-green-400 "
-  }
-  if(champion.parsedData.cost==3) {
-    return "border-blue-400"
-  }
-  if(champion.parsedData.cost==4) {
-     return "border-purple-400"
-  }
-   return "border-orange-400"
-}
+// function getBorderColor(champion: Champion) {
+//   if(champion.parsedData.cost==1) {
+//     return "border-white "
+//   }
+//   if(champion.parsedData.cost==2) {
+//     return "border-green-400 "
+//   }
+//   if(champion.parsedData.cost==3) {
+//     return "border-blue-400"
+//   }
+//   if(champion.parsedData.cost==4) {
+//      return "border-purple-400"
+//   }
+//    return "border-orange-400"
+// }
   return (
     <div 
       ref={hexRef}
@@ -364,10 +364,9 @@ export const TFTBoardContainer: React.FC<TFTBoardContainerProps> = ({
   return (
     <div 
       ref={containerRef}
-      className="w-full h-full bg-black/30 rounded--b-md relative overflow-hidden"
+      className="w-full h-full bg-black/30 rounded--b-md relative overflow-hidden border-emerald-400/50 border"
       style={{
-        boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 100, 0, 0.2)",
-        border: "1px solid rgba(255, 100, 0, 0.3)",
+       
         minHeight: "300px" // Set minimum height
       }}
     >
