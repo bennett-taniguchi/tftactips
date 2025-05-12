@@ -323,7 +323,8 @@ const CostTier: React.FC<{ cost: number; champions: Champion[] }> = ({
 }) => {
   const colors = COST_COLORS[cost] || DEFAULT_COLORS;
   let singleItemSpacing = "";
-  if (champions.length == 1) singleItemSpacing = "ml-[0svw]";
+  if (champions.length == 1) {singleItemSpacing = "ml-[0svw]"}
+  singleItemSpacing;
   return (
     <div className="flex items-start space-x-1 p-1 mx-auto overflow-x-hidden">
       <div className={`flex-shrink-0 sticky top-4 left-0 z-10 ${colors.bg} ${colors.glow} border-2 ${colors.border} rounded-4xl p-1`}>

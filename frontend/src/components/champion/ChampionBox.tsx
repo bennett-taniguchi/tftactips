@@ -340,7 +340,7 @@ function ChampAbility({
     <div
       className={cn(
         topP,
-        `${theme.textAccent} text-xs   px-5 pb-5 h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left relative pb-10`
+        `${theme.textAccent} text-xs   px-5  h-full flex flex-col font-mono tracking-wide bg-gray-900/50 rounded text-left relative pb-10`
       )}
     >
       <div className="flex-grow overflow-y-auto pr-2 max-h-full">
@@ -348,7 +348,7 @@ function ChampAbility({
         <div className="font-extralight text-xs">{ability.desc}</div>
 
         {/* Dynamically render ability stats in priority order */}
-        <div className="mt-2 space-y-1">
+        <div className="mt-2 space-y-1" id={imageAbility}>
           <AbilityStats ability={ability} />
         </div>
       </div>
@@ -372,12 +372,7 @@ function ChampAbility({
     </div>
   );
 }
-
-interface StatItemProps {
-  iconSrc: string;
-  value?: string | number;
-  tooltip?: string;
-}
+ 
 
 /**
  * Renders a single champion stat

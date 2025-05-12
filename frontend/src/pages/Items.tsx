@@ -1,7 +1,7 @@
 import { useGlobalContext } from "@/components/context/context";
 import FilterBar from "@/components/filter/FilterBar";
 import ItemBox from "@/components/item/ItemBox";
-import CyberPunkTitle from "@/components/text/CyberPunkTitle";
+ 
 import { useState } from "react";
 
 export default function Items() {

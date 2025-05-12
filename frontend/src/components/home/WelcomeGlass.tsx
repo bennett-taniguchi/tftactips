@@ -1,5 +1,4 @@
-import React from 'react';
-
+ 
 // CSS for the glitch effect
 const glitchStyles = `
   .glitch {

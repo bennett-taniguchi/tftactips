@@ -1,9 +1,7 @@
 import ChampionBox from "@/components/champion/ChampionBox";
 import { useGlobalContext } from "@/components/context/context";
 import FilterBar from "@/components/filter/FilterBar";
-import SearchBar from "@/components/search/SearchBar";
-
-import CyberPunkTitle from "@/components/text/CyberPunkTitle";
+       
 import { useState } from "react";
 // import { Link } from "react-router-dom"
 

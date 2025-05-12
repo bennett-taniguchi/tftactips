@@ -1,6 +1,5 @@
 import { formatEffectKey, formatEffectValue, getItemImage, ItemData, replaceTFTTags } from "../../../utils/items";
-import { ScrollArea } from "../ui/scroll-area";
-
+ 
 type ItemBoxProps = {
   item: ItemData;
 };

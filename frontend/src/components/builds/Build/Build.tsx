@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, useState } from "react";
 
 import BuildRow from "./BuildRow";
 import BuildScreen from "./BuildScreen";
@@ -34,6 +34,7 @@ interface BuildProps {
   description: string;
   augments?: AugmentType[];
   build:any;
+  setRefetch: Dispatch<any>
 }
 
 export default function Build({
@@ -44,7 +45,8 @@ export default function Build({
   difficulty,
   description,
   augments = [],
-  build
+  build,
+  setRefetch
 }: BuildProps) {
   const [view, setView] = useState<ViewType>("Row");
 
@@ -52,7 +54,7 @@ export default function Build({
   if (view === "Row") {
     return (
       <div className="overflow-hidden flex flex-row  py-3 rounded-t-xl shadow-emerald-500/10 shadow-xl rounded-b-xl pr-[5svw] w-[80svw] border-t border-emerald-400/20  bg-gradient-to-r from-emerald-600 from-10% via-indigo-500 via-30% to-emerald-600 to-90% ">
-        <div className="  ml-2     mr-2 flex flex-col bg-black/40  gap-2 rounded-xl     ">
+        <div className="  ml-4     mr-2 flex flex-col bg-black/40  gap-2 rounded-xl     ">
           <ChevronUp className="w-10 h-10 stroke-emerald-400 " />
           <div className="   text-2xl text-white font-inter font-medium  rounded-full  mx-auto  ">
             {" "}
@@ -86,6 +88,7 @@ export default function Build({
       traits={traits}
       description={description}
       build={build}
+      setRefetch={setRefetch}
     />
   );
 }
@@ -105,7 +108,7 @@ export const getTraitImage = (traitName: string) => {
   if(traitName.toLowerCase().includes("boom")) {
     traitName+="s"
   }
-console.log(traitName)
+ 
   const formattedTraitName = traitName.toLowerCase().replace(/\s+/g, "");
   return `https://tft-set14.s3.us-east-2.amazonaws.com/traits/${formattedTraitName}.png`;
 };

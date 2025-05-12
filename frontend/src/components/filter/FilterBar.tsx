@@ -26,7 +26,7 @@ function FilterBar({
   datasets,
   query,
   setQuery,
-  filteredItems,
+  
   setFilteredItems,
 }: FilterBarProps) {
   // Filter items whenever query changes

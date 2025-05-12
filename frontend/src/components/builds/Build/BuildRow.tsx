@@ -1,3 +1,4 @@
+import TraitDisplay from "@/components/trait/TraitDisplay";
 import {
   TraitType,
   ChampionType,
@@ -5,7 +6,7 @@ import {
   getChampionImage,
   getTraitImage,
 } from "./Build";
-import searchContext from '../../../../utils/search'
+
 import { cn } from "@/lib/utils";
 interface BuildRowProps {
   title: string;
@@ -28,20 +29,19 @@ export default function BuildRow({
   difficulty,
 }: BuildRowProps) {
   // Find the maximum trait count to calculate scaling
-   //console.log(searchContext("champions","Zyra"))
+  //console.log(searchContext("champions","Zyra"))
 
   // Toggle view when clicked
   const toggleView = () => {
     setView(view === "Row" ? "Screen" : "Row");
   };
- 
+
   return (
-    <div >
+    <div>
       <div
         onClick={toggleView}
         className="    bg-black/20 border-white  group-hover:opacity-10  rounded-xl text-black mt-[-1svh] h-[120px] w-[75svw] relative overflow-hidden group hover:scale-[1.001] transition-all duration-300 ease-in-out hover:z-10 cursor-pointer"
         style={{
-          
           backdropFilter: "blur(4px)",
           transformOrigin: "center center",
           transition:
@@ -74,9 +74,7 @@ export default function BuildRow({
         {/* Content container with enhanced 3D raised glass effect - UNIFIED (no interior borders) */}
         <div
           className=" rounded-4xl  inset-0 flex justify-center z-10 absolute m-1   group-hover:brightness-102 transition-all duration-300"
-          style={{
-       
-          }}
+          style={{}}
         >
           {/* Title section with enhanced 3D text effect */}
           <div
@@ -110,43 +108,9 @@ export default function BuildRow({
             }}
           >
             {/* Map through traits to display icons */}
-            {Object.entries(traits).map(([traitName, count], index) => (
-              <div key={index} className="relative group/icon">
-                {/* Hexagon outer glow */}
-                <div
-                  className="absolute top-0 left-0 w-full h-full opacity-50 group-hover/icon:opacity-120 group-hover:saturate-150 transition-opacity duration-300"
-                  style={{
-                    // clipPath:
-                    //   "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                 
-                    transform: "scale(1.00) ",
-                    filter: "blur(4px)",
-                  }}
-                />
-
-                {/* Trait icon with scaling based on count/maxTraitCount */}
-                <div
-                  //   className="relative transform hover:scale-125 group-hover:scale-[1.15] transition-all duration-300 z-10 group-hover:brightness-125 flex items-center justify-center"
-                  style={{
-                    width: "47px",
-                    height: "47px",
-                    background: "rgba(0, 0, 0, 0.6)",
-                    borderRadius: "50%",
-                  }}
-                ><div className={cn(traitName==("Strategist") ? `  mr-[9px] ml-[10px] pt-[5px]` : ` `)}>
-                                       
-                  <img
-                    src={getTraitImage(traitName)}
-                    alt={traitName}
-                    className=" object-contain"
-                  />
-                  </div>
-                  <div className="absolute bottom-[-5px] right-[-5px] bg-black/80 rounded-full w-5 h-5 flex items-center justify-center text-white text-xs font-bold">
-                    {count}
-                  </div>
-                </div>
-              </div>
-            ))}
+             
+               <TraitDisplay traits={traits} getTraitImage={getTraitImage } />
+             
           </div>
 
           {/* Champions section - no border or separate shading */}
@@ -154,7 +118,6 @@ export default function BuildRow({
             className="basis-1/4 my-auto flex gap-2 py-4 justify-center   transition-all duration-300"
             style={{
               position: "relative",
-              
             }}
           >
             {/* Map through champions to display icons */}
@@ -164,7 +127,6 @@ export default function BuildRow({
                 <div
                   className="absolute top-0 left-0 w-full h-full opacity-100 group-hover/icon:opacity-80 group-hover:opacity-70 transition-all duration-300"
                   style={{
-               
                     transform: "scale(1.001)",
                     filter: "blur(4px)",
                   }}
@@ -185,9 +147,7 @@ export default function BuildRow({
                 {/* Champion image */}
                 <div
                   className=" h-15 w-15 relative  border-[3px]  rounded-full border-indigo-400/30   transform hover:scale-125 group-hover:scale-[1.01] transition-all duration-300 z-10 group-hover:brightness-101 flex items-center justify-center"
-                  style={{
-                  
-                  }}
+                  style={{}}
                 >
                   <img
                     src={getChampionImage(champion)}
@@ -195,7 +155,7 @@ export default function BuildRow({
                     className=" object-contain rounded-full"
                   />
                   {/* Indicator for carry or tank */}
-                
+
                   {champion.isCarry && (
                     <div className="absolute top-[-4px] right-[-4px] bg-yellow-500 rounded-full w-4 h-4 flex items-center justify-center text-black text-xs font-bold">
                       C
@@ -207,11 +167,7 @@ export default function BuildRow({
                     </div>
                   )}
                 </div>
-                <div className="text-center text-white"> 
-                
-                 
-                  </div>
-               
+                <div className="text-center text-white"></div>
               </div>
             ))}
             {/* Show a + indicator if there are more champions */}
@@ -227,23 +183,17 @@ export default function BuildRow({
             className="basis-1/4 my-auto flex flex-col justify-center text-lg font-bold py-5   transition-all duration-300"
             style={{
               position: "relative",
-     
             }}
           >
             <span
               className="ml-5   transition-transform duration-300 group-hover:drop-shadow-lg text-white drop-shadow-sm shadow-black"
-              style={{
-             
-              }}
+              style={{}}
             >
               {type}
             </span>
             <span
               className="ml-5  transition-transform duration-300 group-hover:drop-shadow-lg text-white drop-shadow-sm shadow-black"
-              style={{
-              
-          
-              }}
+              style={{}}
             >
               {difficulty}
             </span>

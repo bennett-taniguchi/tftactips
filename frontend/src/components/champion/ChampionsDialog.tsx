@@ -11,12 +11,36 @@ import { Champion } from "utils/champions";
   export function ChampionsDialog({ dialogOpen, setDialogOpen, selectedChampions, setSelectedChampions,champions }: any): JSX.Element {
     const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
 
- 
-    const filteredDialogChampions = champions.filter((champion: any) =>
-      champion["CHAMPION#"]
-        ?.toLowerCase()
-        .includes(dialogSearchQuery.toLowerCase())
-    );
+ console.log(champions)
+    // Advanced: Configurable fields to search
+    const searchableFields = ["CHAMPION#", "traits" ];
+  
+    const filteredDialogChampions = (champions: Champion[], searchQuery: string) => {
+      const query = searchQuery.toLowerCase().trim();
+      if (!query) return champions;
+      
+      // Filter champions that match in their direct properties
+      const directMatches = champions.filter(champion => 
+        searchableFields.some(field => 
+          champion[field as keyof Champion]?.toString().toLowerCase().includes(query)
+        )
+      );
+      
+      // Filter champions that match in their parsedData properties
+      const parsedDataMatches = champions.filter(champion => 
+        searchableFields.some(field => 
+          champion?.parsedData?.[field as any]?.toString().toLowerCase().includes(query) 
+        )
+      );
+      
+      // Combine results without duplicates
+      const allMatches = [...directMatches,...parsedDataMatches];
+      
+     
+      return allMatches;
+    };
+    const filteredChampions = filteredDialogChampions(champions, dialogSearchQuery);
+  
  // Handle champion selection from search
  const handleChampionSelect = (champion: Champion): void => {
     setSelectedChampions((prev:any) => {
@@ -84,7 +108,7 @@ import { Champion } from "utils/champions";
           <div className="grid gap-4 py-4 h-[60svh] w-full ">
             <ScrollArea className="h-[60svh] w-full ">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
-                {filteredDialogChampions.map((champion:any, idx:number) => (
+                {filteredChampions?.map((champion:any, idx:number) => (
                   <div
                     key={champion.parsedData.name + idx + ""}
                     className="cursor-pointer hover:bg-gray-700/50 p-2 rounded-md transition-colors mx-4"

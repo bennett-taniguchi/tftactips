@@ -1,5 +1,4 @@
-import React from 'react';
-
+ 
 export default function CyberPunkTitle({ text }:any) {
   return (
     <div className="relative pt-8 px-8 pb-6 flex justify-center font-inter font-extrabold ">

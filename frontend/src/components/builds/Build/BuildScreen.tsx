@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import {
   AugmentType,
   ChampionType,
@@ -9,8 +9,11 @@ import {
 } from "./Build";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import TFTBoardContainer, { TFTBoard } from "@/components/hexes/TFTBoard";
+import TFTBoardContainer  from "@/components/hexes/TFTBoard";
 import { cn } from "@/lib/utils";
+import CrudService from "@/api/crudapiservice";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
 
 type BuildScreenProps = {
   build?: any;
@@ -21,6 +24,8 @@ type BuildScreenProps = {
   traits: TraitType;
   augments?: AugmentType[];
   description: string;
+  setRefetch: Dispatch<any>;
+
 };
 
 export default function BuildScreen({
@@ -32,18 +37,44 @@ export default function BuildScreen({
   traits,
   description,
   augments = [],
+
+  setRefetch
 }: BuildScreenProps) {
   const [currentPhase, setCurrentPhase] = useState<GamePhase>("mid");
-  
+  const {user,getAccessTokenSilently} = useAuth0()
   // Toggle view when clicked
   const toggleView = () => {
     setView(view === "Row" ? "Screen" : "Row");
   };
-  
+  const [deleteStatus,setDeleteStatus] = useState("Delete")
+ 
+  async function tryDelete() {
+    if(deleteStatus=="Delete") {
+      setDeleteStatus("Are you sure?")
+    } else{
+      if(user && user.email)
+      {CrudService.delete('tft_builds',build['BUILD#'],user!.email,await getAccessTokenSilently(),build['METADATA']);
+
+      console.log(build)
+      setDeleteStatus("Delete")
+      setView('Row')
+      setRefetch(true)
+    
+    }
+    }
+  }
   // Filter champions by role
   const carryChampions = champions.filter((champ) => champ.isCarry);
   const tankChampions = champions.filter((champ) => champ.isTank);
-//console.log(build.data.mid.boardChampions)
+  useEffect(() => {
+  },[build])
+ 
+ 
+async function copyUrl() {
+  // fix the url so double slashes and whatnot are handled properly
+  await navigator.clipboard.writeText(window.location.href+"/"+build.id);
+}
+if(build)
   return (
     <div
       className="fixed top-0 left-0 w-screen h-screen z-50 flex flex-col bg-radial-[at_50%_75%] from-cyan-600/50 via-emerald-900/70 to-indigo-800/50 to-90%"
@@ -67,12 +98,25 @@ export default function BuildScreen({
         >
           {title}
         </h1>
+        <div className="justify-items-end gap-2 flex">
+        <button
+          onClick={()=>copyUrl()}
+          className="bg-green-800/50 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-300 j "
+        >
+          Share URL
+        </button>
+        <button
+          onClick={()=>tryDelete()}
+          className="bg-red-800/50 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors duration-300 j "
+        >
+          {deleteStatus}
+        </button>
         <button
           onClick={toggleView}
           className="bg-red-800/50 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors duration-300"
         >
           Close
-        </button>
+        </button></div>
       </div>
 
       {/* Main content - split into two panes */}

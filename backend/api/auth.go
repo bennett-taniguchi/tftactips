@@ -3,11 +3,11 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/lestrrat-go/jwx/v3/jwe"
 
-	"io/ioutil"
 	"net/http"
 )
 
@@ -78,12 +78,12 @@ func GetUserInfo(accessToken string) (*UserInfo, error) {
 
 	// Check for successful response
 	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return nil, fmt.Errorf("request failed with status %d: %s", resp.StatusCode, body)
 	}
 
 	// Read and parse the response
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %v", err)
 	}
@@ -95,4 +95,49 @@ func GetUserInfo(accessToken string) (*UserInfo, error) {
 	}
 
 	return &userInfo, nil
+}
+
+func validateToken(w http.ResponseWriter, token string, email string) bool {
+
+	fmt.Println("token case hit")
+	// use old method to grab domain or keep hardcoding
+	userInfo, err := GetUserInfo(token)
+	if err != nil {
+		fmt.Printf("Error somehow: %s", err)
+		http.Error(w, "Error with userInfo", http.StatusMethodNotAllowed)
+	} else {
+		fmt.Print("user info:", userInfo)
+	}
+
+	fmt.Println("check equality", email == userInfo.Email)
+
+	if email != userInfo.Email {
+		http.Error(w, "Invalid Email value(s), not equal from token", http.StatusMethodNotAllowed)
+		return false
+	}
+
+	return true
+
+}
+
+// Returns TRUE if validated properly, Returns FALSE if too many builds currently exist per user
+func validateBuildSlots(w http.ResponseWriter, h *CrudHandler, email string) bool {
+	if email != "" {
+		res, err := h.crudAPI.GetBuildsByIndex("email-index", email)
+		if err == nil {
+
+			fmt.Println("length of curr builds:", len(res))
+			if len(res) >= 10 {
+				http.Error(w, "Error too many builds", http.StatusNotExtended)
+				return false
+			}
+		} else {
+			fmt.Println("err getting builds", err)
+		}
+	} else {
+		fmt.Println("err no email provided")
+		return false
+	}
+
+	return true
 }

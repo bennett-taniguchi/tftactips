@@ -3,7 +3,7 @@ import { useGlobalContext } from "@/components/context/context";
 
 import TraitBox from "@/components/trait/TraitBox";
 
-import CyberPunkTitle from "@/components/text/CyberPunkTitle";
+ 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import FilterBar from "@/components/filter/FilterBar";

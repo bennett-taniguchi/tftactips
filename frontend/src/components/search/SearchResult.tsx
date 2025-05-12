@@ -5,7 +5,7 @@ import TraitBox from '@/components/trait/TraitBox';
 import ItemBox from '@/components/item/ItemBox';
 import { AugmentBox } from '@/components/augment/AugmentBox';
 import ChampionHierarchy from '@/components/champion/ChampionHierarchy';
-import { cn } from '@/lib/utils';
+ 
 import { Search } from 'lucide-react';
 
 interface SearchResultProps {

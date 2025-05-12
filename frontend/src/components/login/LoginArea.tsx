@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "./LoginButton";
-import { useContext, useEffect, useState } from "react";
+import {  useEffect } from "react";
 import {
   Popover,
   PopoverContent,

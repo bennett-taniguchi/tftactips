@@ -52,15 +52,15 @@ export function replaceTFTTags(text: string): string {
     // Define replacement patterns and their styled equivalents
     const replacements: Record<string, (match: string, content: string) => string> = {
       // Replace <TFTKeyword>Content</TFTKeyword> tags
-      "<TFTKeyword>(.*?)</TFTKeyword>": (match, content) =>
+      "<TFTKeyword>(.*?)</TFTKeyword>": (_match, content) =>
         `<span class="tft-keyword">${content}</span>`,
       
       // Replace <tftitemrules>Content</tftitemrules> tags
-      "<tftitemrules>(.*?)</tftitemrules>": (match, content) =>
+      "<tftitemrules>(.*?)</tftitemrules>": (_match, content) =>
         `<div class="tft-item-rules">${content}</div>`,
       
       // Replace <tftbold>Content</tftbold> tags
-      "<tftbold>(.*?)</tftbold>": (match, content) =>
+      "<tftbold>(.*?)</tftbold>": (_match, content) =>
         `<span class="tft-bold">${content}</span>`
     };
   

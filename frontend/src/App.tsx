@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {  Route, Routes } from "react-router-dom";
 import NavMenu from "./NavMenu";
  
  
@@ -16,6 +16,7 @@ import Items from "./pages/Items";
 import NewBuild from "./pages/NewBuild";
 import Augments from "./pages/Augments";
 import User from "./pages/User";
+import SingleBuild from "./pages/SingleBuild";
 
 const PageLayout = ({ children }: any) => (
   <div className="text-gray-100">{children}</div>
@@ -41,6 +42,14 @@ function App() {
                 element={
                   <PageLayout>
                     <Builds />
+                  </PageLayout>
+                }
+              />
+              <Route 
+                path="/builds/*"
+                element={
+                  <PageLayout>
+                    <SingleBuild />
                   </PageLayout>
                 }
               />

@@ -2,7 +2,7 @@ import { AugmentBox } from "@/components/augment/AugmentBox";
 import { useGlobalContext } from "@/components/context/context";
 import FilterBar from "@/components/filter/FilterBar";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Augments() {
   const { augments } = useGlobalContext();

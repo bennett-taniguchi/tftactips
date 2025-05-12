@@ -65,6 +65,7 @@ const Hex: React.FC<HexProps> = ({ row, col, champion, onDrop, onRemove, size })
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     // change to remove from starting square
+    isOver;
     onRemove(row,col)
     setIsOver(true);
   };
@@ -186,6 +187,7 @@ export const TFTBoard: React.FC<TFTBoardProps> = ({
 
   // Calculate board dimensions based on container size
   useEffect(() => {
+    boardSize;
     if (!containerRef?.current) return;
 
     const resizeBoard = () => {
@@ -292,7 +294,7 @@ export const DraggableChampion: React.FC<DraggableChampionProps> = ({ champion, 
 
 // Sample usage in EditableBuildScreen
 export const TFTBoardContainer: React.FC<TFTBoardContainerProps> = ({ 
-  champions,
+ 
   onDropChampion,
   onRemoveChampion,
   placedChampions: externalPlacedChampions,

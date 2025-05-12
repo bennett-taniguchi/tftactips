@@ -44,15 +44,24 @@ type UpdateOperation struct {
 	ExpressionAttributeValues map[string]interface{} `json:"ExpressionAttributeValues"`
 }
 
-func finalUrlIndex(tableName string, op string, gatewayUrl string, indexName string, email string) string {
+func finalUrlIndex(tableName string, op string, gatewayUrl string, indexName string, indexValue string) string {
 	tableArr := strings.Split(tableName, "_")
 	table := tableName
 	if len(tableArr) == 2 {
 		table = tableArr[1]
 	}
 
-	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&IndexName=" + indexName + "&email=" + email
-	log.Print("FINALAPIROUTE", apiRoute)
+	if indexName == "email-index" {
+		apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&IndexName=" + indexName + "&email=" + indexValue
+		fmt.Println("Final Url Index: ", apiRoute)
+		return apiRoute
+	} else if indexName == "id-index" {
+		apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&IndexName=" + indexName + "&id=" + indexValue
+		fmt.Println("Final Url Index: ", apiRoute)
+		return apiRoute
+	}
+	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&IndexName=" + indexName + "&email=" + indexValue
+	fmt.Println("Final Url Index: ", apiRoute)
 	return apiRoute
 }
 func finalUrlPartition(tableName string, op string, gatewayUrl string, pKey string, pVal string) string {
@@ -69,7 +78,7 @@ func finalUrlPartition(tableName string, op string, gatewayUrl string, pKey stri
 
 // tableName: items,augments,etc.
 // op: GET,POST,...
-func finalUrl(tableName string, op string, gatewayUrl string) string {
+func finalUrl(tableName string, op string, gatewayUrl string, key string, metadata string) string {
 	tableArr := strings.Split(tableName, "_")
 	table := tableName
 	if len(tableArr) == 2 {
@@ -77,13 +86,23 @@ func finalUrl(tableName string, op string, gatewayUrl string) string {
 	}
 
 	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName
-	log.Print("FINALAPIROUTE", apiRoute)
+	if op == "DELETE" {
+		pkey := ""
+		pval := ""
+
+		if tableName == "tft_builds" {
+			pkey = "BUILD%23"
+			pval = key
+		}
+		apiRoute = apiRoute + fmt.Sprintf("&PartitionKey=%s&PartitionValue=%s&MetadataValue=%s", pkey, pval, metadata)
+	}
+	log.Print("FINAL API ROUTE (finalUrl func): ", apiRoute)
 	return apiRoute
 }
 
-func (c *CrudAPI) GetBuildsByEmail(email string) ([]TableItem, error) {
+func (c *CrudAPI) GetBuildsByIndex(indexName string, indexValue string) ([]TableItem, error) {
 
-	apiRoute := finalUrlIndex("tft_builds", "GET", c.apiGatewayURL, "email-index", email)
+	apiRoute := finalUrlIndex("tft_builds", "GET", c.apiGatewayURL, indexName, indexValue)
 	reqURL, err := url.Parse(apiRoute)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing API URL: %v", err)
@@ -131,6 +150,7 @@ func (c *CrudAPI) GetBuildsByEmail(email string) ([]TableItem, error) {
 }
 
 func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) ([]TableItem, error) {
+
 	apiRoute := finalUrlPartition(tableName, "GET", c.apiGatewayURL, pkey, pval)
 
 	log.Printf("GetAll function called for table: %s and pkey %s and pval %s", tableName, pkey, pval)
@@ -225,7 +245,7 @@ func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) 
 
 func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
 
-	apiRoute := finalUrl(tableName, "GET", c.apiGatewayURL)
+	apiRoute := finalUrl(tableName, "GET", c.apiGatewayURL, "", "")
 
 	log.Printf("GetAll function called for table: %s", tableName)
 	log.Print(" ApiRoute: ", apiRoute)
@@ -531,9 +551,12 @@ func (c *CrudAPI) Update(tableName string, updateOp UpdateOperation) error {
 }
 
 // Delete removes an item from the specified table
-func (c *CrudAPI) Delete(tableName string, key Key) error {
+func (c *CrudAPI) Delete(tableName string, key string, val string, metadata string) error {
 	// Build the URL with query parameters
-	reqURL, err := url.Parse(c.apiGatewayURL)
+	fmt.Println("key, val:", key, val)
+	apiRoute := finalUrl(tableName, "DELETE", c.apiGatewayURL, val, metadata)
+	reqURL, err := url.Parse(apiRoute)
+
 	if err != nil {
 		return fmt.Errorf("error parsing API URL: %v", err)
 	}
@@ -544,7 +567,7 @@ func (c *CrudAPI) Delete(tableName string, key Key) error {
 
 	// Create the request payload
 	payload := map[string]interface{}{
-		"Key": key,
+		key: val,
 	}
 
 	// Marshal the payload to JSON
@@ -575,6 +598,7 @@ func (c *CrudAPI) Delete(tableName string, key Key) error {
 		return fmt.Errorf("error reading response body: %v", err)
 	}
 
+	fmt.Println("req string", reqURL.String())
 	// Check if the status code indicates an error
 	if resp.StatusCode != http.StatusOK {
 		var errorResp map[string]string

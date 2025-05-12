@@ -5,11 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	// "github.com/lestrrat-go/jwx/v3/jwe"
-	// "github.com/lestrrat-go/jwx/v3/jwk"
-	// "github.com/lestrrat-go/jwx/v2/jwt"
-	// "github.com/lestrrat-go/jwx/v2/jwa"
-	// jwtmiddleware "github.com/auth0/go-jwt-middleware"
 )
 
 // CrudHandler handles HTTP requests for CRUD operations
@@ -24,12 +19,6 @@ func NewCrudHandler() *CrudHandler {
 	}
 }
 
-// func validateToken(token string) {
-// 	// Auth0 domain and API audience
-// 	domain := "your-tenant.auth0.com"
-// 	audience := "your-api-identifier"
-
-// }
 // RegisterRoutes registers the CRUD API routes with the given mux
 func (h *CrudHandler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/api/crud/", h.handleCrud)
@@ -58,54 +47,92 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	// Set content type for responses
 	w.Header().Set("Content-Type", "application/json")
 
-	// Handle based on HTTP method
+	// retrieving query-strings to determine r.Method sub-case
 	pkey := r.URL.Query().Get("pkey") // ex. 'AUGMENT#'
 	pval := r.URL.Query().Get("pval") // ex. 'Pandoras Bench'
 	email := r.URL.Query().Get("email")
 	token := r.URL.Query().Get("token")
-	if token != "" || r.Method != "GET" || tableName == "tft_builds" {
-		fmt.Println("token case hit")
-		// use old method to grab domain or keep hardcoding
-		userInfo, err := GetUserInfo(token)
-		fmt.Println("official email", userInfo.Email)
-		fmt.Println("passed email", email)
-		fmt.Println("check equality", email == userInfo.Email)
-		if err != nil {
-			fmt.Printf("Error somehow: %s", err)
-		} else {
-			fmt.Print("user info:", userInfo)
-		}
+	id := r.URL.Query().Get("id")
 
-		if email != userInfo.Email {
-			http.Error(w, "Invalid Email value(s), not equal from token", http.StatusMethodNotAllowed)
+	tokenValidated := false
+	buildSlotsValidated := false
+	// if we are getting user-specific data or modifying data, must have valid token!
+	if token != "" || r.Method != "GET" || tableName == "tft_builds" && r.Method != "GET" { // err without && statementn for some reason
+		tokenValidated = validateToken(w, token, email)
+		if !tokenValidated {
+			http.Error(w, "Token Invalid", http.StatusBadRequest)
+			return
 		}
 	}
+	// verify enough build spaces left && if we are dealing with a non generic get all case
+	if r.Method == "POST" && tableName == "tft_builds" || r.Method == "PUT" && tableName == "tft_builds" {
+		buildSlotsValidated = validateBuildSlots(w, h, email)
+		if !buildSlotsValidated {
+			http.Error(w, "Too Many Builds", http.StatusBadRequest)
+			return
+		}
+	}
+	userSpecificTable := tableName == "tft_builds" || tableName == "tft_users"
 
+	staticTable := tableName == "tft_augments" || tableName == "tft_champions" || tableName == "tft_items" || tableName == "tft_traits"
+	if !userSpecificTable && !staticTable {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+	fmt.Println("id:", id, "email:", email, "pkey", pkey, "pval", pval)
 	switch r.Method {
 	case "GET":
+		// add specific tables to check { better to have covered by invariant before}
+		// need to add specific flags to request
+		if id != "" && email != "" || pkey != "" && pval != "" {
+			// single param get, needs to be authenticated to prevent abuse
 
-		if email != "" {
-			h.handleGetByEmail(w, r, tableName, email)
-		} else if pkey != "" && pval != "" {
-			h.handleParameterizedGet(w, r, tableName, pkey, pval) // parameterized only means single table
+			if tokenValidated {
+				if pkey != "" && pval != "" && id == "" {
+					fmt.Println("handle parameterized get case")
+					h.handleParameterizedGet(w, r, tableName, pkey, pval) // grab by passed partition key&value
+				} else {
+					fmt.Println("handle get by index case")
+					h.handleGetByIndex(w, r, tableName, "id-index", id) // grab by passed partition key&value
+				}
+
+			}
+		} else if email != "" {
+			//  using the fact we don't pass pkey pval
+			fmt.Println("handle   get by email case")
+			h.handleGetByIndex(w, r, tableName, "email-index", email) // get all builds by email
 		} else {
-			h.handleGet(w, r, tableName) // fetches from all tables
+			// need to be fixed
+			fmt.Println("handle unimplemented get case")
+			if tableName != "tft_builds" && tableName != "tft_users" {
+				h.handleGet(w, r, tableName) // fetches from all tables
+			} else {
+				http.Error(w, "Cannot fetch all for given table", http.StatusBadRequest)
+			}
+
 		}
 
 	case "POST":
-		h.handlePost(w, r, tableName)
+		// createBuilds hits here
+		if tokenValidated && buildSlotsValidated && userSpecificTable {
+			h.handlePost(w, r, tableName)
+		}
+
 	case "PUT":
-		h.handlePut(w, r, tableName)
+		if tokenValidated && buildSlotsValidated && userSpecificTable {
+			h.handlePut(w, r, tableName)
+		}
 	case "DELETE":
-		h.handleDelete(w, r, tableName)
+		if tokenValidated && buildSlotsValidated && userSpecificTable {
+			h.handleDelete(w, r, tableName)
+		}
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func (h *CrudHandler) handleGetByEmail(w http.ResponseWriter, r *http.Request, tableName string, email string) {
+func (h *CrudHandler) handleGetByIndex(w http.ResponseWriter, r *http.Request, tableName string, indexName string, indexValue string) {
 	if tableName == "tft_builds" {
-		items, err := h.crudAPI.GetBuildsByEmail(email)
+		items, err := h.crudAPI.GetBuildsByIndex(indexName, indexValue)
 
 		if err != nil {
 
@@ -129,6 +156,7 @@ func (h *CrudHandler) handleGetByEmail(w http.ResponseWriter, r *http.Request, t
 }
 
 func (h *CrudHandler) handleParameterizedGet(w http.ResponseWriter, r *http.Request, tableName string, pkey string, pval string) {
+
 	items, err := h.crudAPI.GetByPartitionKey(tableName, pkey, pval)
 	if err != nil {
 		log.Printf("Error fetching items from %s: on PKEY: %s with PVAL: %s %v", tableName, pkey, pval, err)
@@ -165,6 +193,7 @@ func (h *CrudHandler) handleGet(w http.ResponseWriter, r *http.Request, tableNam
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"items": items,
 	})
+
 }
 
 // handlePost handles POST requests to create a new item
@@ -220,17 +249,15 @@ func (h *CrudHandler) handlePut(w http.ResponseWriter, r *http.Request, tableNam
 
 // handleDelete handles DELETE requests to remove an item
 func (h *CrudHandler) handleDelete(w http.ResponseWriter, r *http.Request, tableName string) {
-	var payload struct {
-		Key Key `json:"key"`
-	}
+	fmt.Println("before struct")
+	key := r.URL.Query().Get("pkey")
+	val := r.URL.Query().Get("pval")
+	metadata := r.URL.Query().Get("metadata")
+	fmt.Println("Deleting from table:", tableName)
+	fmt.Println("key: ", (key))
+	fmt.Println("val: ", (val))
 
-	err := json.NewDecoder(r.Body).Decode(&payload)
-	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	err = h.crudAPI.Delete(tableName, payload.Key)
+	err := h.crudAPI.Delete(tableName, key, val, metadata)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

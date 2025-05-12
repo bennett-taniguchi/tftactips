@@ -12,6 +12,7 @@ import { useGlobalContext } from "@/components/context/context";
 import { AugmentBox } from "@/components/augment/AugmentBox";
 import ChampionHierarchy from "@/components/champion/ChampionHierarchy";
 import ChampionBox from "@/components/champion/ChampionBox";
+import BuildPlaceholder from "@/components/builds/BuildPlaceholder";
  
 
 export default function CurrentSet() {
@@ -30,7 +31,7 @@ export default function CurrentSet() {
   if (isLoading)
     return (
       <div className="h-[90svh] flex items-center justify-center">
-        <TftacLogo />
+        <BuildPlaceholder type={"loading"} text={"Set 14"} size="large"/>
       </div>
     );
 

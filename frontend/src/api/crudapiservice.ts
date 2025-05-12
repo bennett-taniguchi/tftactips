@@ -59,14 +59,17 @@ export const CrudService = {
   getByPartitionKey: async (
     tableName: TableName,
     pkey: string,
-    pval: string
+    pval: string,
+    email: string,
+    token:string,
   ): Promise<Item[]> => {
+     let queryString =`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}&${pkey}=${pval}&token=${token}`
     console.log(
-      `${API_BASE_URL}/api/crud/?table=${tableName}&pkey=${pkey}&pval=${pval}`
+      queryString
     );
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}&pkey=${pkey}&pval=${pval}`,
+        queryString,
         {
           method: "GET",
 
@@ -95,12 +98,18 @@ export const CrudService = {
     }
   },
 
-  getByEmail: async(tableName:TableName,email:string): Promise<Item[]> => {
+  getByEmail: async(tableName:TableName,email:string,flags?:Record<string,string>): Promise<Item[]> => {
 
-    console.log(`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}`);
+    let queryString =`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}`
+    if(flags) {
+       Object.entries(flags).forEach(([key,value]) => {
+        queryString += `&${key}=${value}`
+       })
+    }
+    console.log(queryString);
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}`,
+        queryString,
         {
           method: "GET",
           headers: {
@@ -276,16 +285,16 @@ export const CrudService = {
    * @param key The primary key of the item to delete
    * @returns Promise that resolves when deletion is successful
    */
-  delete: async (tableName: TableName, key: Key): Promise<void> => {
+  delete: async (tableName: TableName, key: Key, email: string,token:string,metadata:string): Promise<void> => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}`,
+        `${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}&token=${token}&pkey=BUILD%23&pval=${key}&metadata=${metadata}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ key }),
+         
         }
       );
 

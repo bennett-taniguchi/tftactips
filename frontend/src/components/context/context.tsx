@@ -2,7 +2,7 @@
 import CrudService, { Item } from '@/api/crudapiservice';
 import { createContext, ReactNode, useContext, useState, useEffect, useRef } from 'react';
 import { initializeTraitChampionData } from '../../../utils/champions'
-import { ItemData, parseItems } from '../../../utils/items'
+import {   parseItems } from '../../../utils/items'
  
  
  
