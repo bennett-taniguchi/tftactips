@@ -124,7 +124,7 @@ const CyberpunkBentoBox: React.FC<CyberpunkBentoBoxProps> = ({
     
       
       <h2 className="text-center text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-white mb-12   ">
-        Set 14
+        Set 14 (More info coming soon!)
       </h2> 
       
       {/* First row - 3 panels */}
@@ -140,7 +140,7 @@ const CyberpunkBentoBox: React.FC<CyberpunkBentoBoxProps> = ({
             onClick={() => onPanelClick(panels[0].id)}
           >
             <div className="flex  h-full "  >
-              <img src="./img/cybercity.png" className=" ml-50 w-50 h-50 fixed  "/>
+              {/* <img src="./img/cybercity.png" className=" ml-50 w-50 h-50 fixed  "/> */}
               <h3 className="z-11 text-left text-xl font-semibold text-white bg-black-400">{panels[0].content}</h3>
             </div>
           </CyberPanel>

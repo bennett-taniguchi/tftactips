@@ -145,7 +145,18 @@ export default function YourBuilds() {
   if (error) {
     return <div className="text-red-400 text-xl">{error}</div>;
   }
-
+  if(!user) return (
+     <div className="text-emerald-400/70 text-xl p-8 text-center grid grid-cols-1 gap-8 ml-[-5svw] mt-7 w-[80svw]">
+        Try logging in first.
+        <div className="">
+          <Link to="/newbuild">
+            <Button className="right-10 bottom-10 absolute w-20 h-20 border borde-rwhite rounded-full cursor-pointer bg-green-400">
+              <div className="text-6xl text-center mb-3">+</div>
+            </Button>
+          </Link>
+        </div>
+      </div>
+  )
   if (!builds || builds.length === 0) {
     return (
       <div className="text-emerald-400/70 text-xl p-8 text-center grid grid-cols-1 gap-8 ml-[-5svw] mt-7 w-[80svw]">

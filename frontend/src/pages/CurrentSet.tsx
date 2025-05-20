@@ -1,6 +1,5 @@
  
 import CyberpunkPCB from "@/components/background/CyberpunkPCB";
-import TftacLogo from "@/components/logo/LoadingLogo";
  
 import TraitBox from "@/components/trait/TraitBox";
 import CyberPunkTitle from "@/components/text/CyberPunkTitle";

@@ -7,7 +7,7 @@ import {
   getTraitImage,
 } from "./Build";
 
-import { cn } from "@/lib/utils";
+ 
 interface BuildRowProps {
   title: string;
   traits: TraitType;

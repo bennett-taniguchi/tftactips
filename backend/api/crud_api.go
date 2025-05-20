@@ -11,23 +11,37 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 // CrudAPI handles CRUD operations through the API Gateway
 type CrudAPI struct {
 	apiGatewayURL string
+	apiKey        string
 }
 
 // NewCrudAPI creates a new instance of the CRUD API client
 func NewCrudAPI() *CrudAPI {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found")
+	}
 	// Get API Gateway URL from environment variables
 	apiGatewayURL := os.Getenv("API_GATEWAY_URL")
 	if apiGatewayURL == "" {
 		apiGatewayURL = "https://mga0vgs4zg.execute-api.us-east-1.amazonaws.com/prod" // Default or fallback URL
+		fmt.Print("gateway url not loaded!")
+	}
+
+	apiKey := os.Getenv("API_GATEWAY_KEY")
+	if apiKey == "" {
+		panic("API_GATEWAY_KEY is not set in environment")
 	}
 
 	return &CrudAPI{
 		apiGatewayURL: apiGatewayURL,
+		apiKey:        apiKey,
 	}
 }
 
@@ -60,6 +74,7 @@ func finalUrlIndex(tableName string, op string, gatewayUrl string, indexName str
 		fmt.Println("Final Url Index: ", apiRoute)
 		return apiRoute
 	}
+
 	apiRoute := gatewayUrl + "/" + table + "/" + op + "?TableName=" + tableName + "&IndexName=" + indexName + "&email=" + indexValue
 	fmt.Println("Final Url Index: ", apiRoute)
 	return apiRoute
@@ -101,20 +116,22 @@ func finalUrl(tableName string, op string, gatewayUrl string, key string, metada
 }
 
 func (c *CrudAPI) GetBuildsByIndex(indexName string, indexValue string) ([]TableItem, error) {
-
+	fmt.Println("trying to get builds by index")
 	apiRoute := finalUrlIndex("tft_builds", "GET", c.apiGatewayURL, indexName, indexValue)
-	reqURL, err := url.Parse(apiRoute)
+
+	reqURL, _ := url.Parse(apiRoute)
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing API URL: %v", err)
 	}
-	fullURL := reqURL.String()
 
+	req.Header.Set("x-api-key", c.apiKey)
 	// Make the GET request with a timeout
 	client := &http.Client{
 		Timeout: 30 * time.Second, // Add a reasonable timeout
 	}
 
-	resp, err := client.Get(fullURL)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error making GET request: %v", err)
 	}
@@ -150,7 +167,7 @@ func (c *CrudAPI) GetBuildsByIndex(indexName string, indexValue string) ([]Table
 }
 
 func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) ([]TableItem, error) {
-
+	fmt.Println("trying to get by pkey")
 	apiRoute := finalUrlPartition(tableName, "GET", c.apiGatewayURL, pkey, pval)
 
 	log.Printf("GetAll function called for table: %s and pkey %s and pval %s", tableName, pkey, pval)
@@ -161,16 +178,21 @@ func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) 
 		return nil, fmt.Errorf("error parsing API URL: %v", err)
 	}
 
-	fullURL := reqURL.String()
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing API URL: %v", err)
+	}
 
-	log.Printf("Making GET request to: %s", fullURL)
+	req.Header.Set("x-api-key", c.apiKey)
+
+	log.Printf("Making GET request to: %s", req.URL.String())
 
 	// Make the GET request with a timeout
 	client := &http.Client{
 		Timeout: 30 * time.Second, // Add a reasonable timeout
 	}
 
-	resp, err := client.Get(fullURL)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error making GET request: %v", err)
 	}
@@ -244,7 +266,7 @@ func (c *CrudAPI) GetByPartitionKey(tableName string, pkey string, pval string) 
 }
 
 func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
-
+	fmt.Print("trying to get all for table")
 	apiRoute := finalUrl(tableName, "GET", c.apiGatewayURL, "", "")
 
 	log.Printf("GetAll function called for table: %s", tableName)
@@ -255,16 +277,21 @@ func (c *CrudAPI) GetAll(tableName string) ([]TableItem, error) {
 		return nil, fmt.Errorf("error parsing API URL: %v", err)
 	}
 
-	fullURL := reqURL.String()
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing API URL: %v", err)
+	}
 
-	log.Printf("Making GET request to: %s", fullURL)
+	req.Header.Set("x-api-key", c.apiKey)
+
+	log.Printf("Making GET request to: %s", req.URL.String())
 
 	// Make the GET request with a timeout
 	client := &http.Client{
 		Timeout: 30 * time.Second, // Add a reasonable timeout
 	}
 
-	resp, err := client.Get(fullURL)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error making GET request: %v", err)
 	}
@@ -366,7 +393,7 @@ func (c *CrudAPI) Create(tableName string, item TableItem) error {
 	// 3. Use the item as is - don't try to restructure it if it already has a partition key
 	if partitionKey != "" {
 		// Item already has a partition key, use it directly
-		return sendRequest(reqURL.String(), item)
+		return c.sendRequest(reqURL.String(), item)
 	}
 
 	// 4. Structure the item for DynamoDB if no partition key was found
@@ -384,7 +411,7 @@ func (c *CrudAPI) Create(tableName string, item TableItem) error {
 		}
 	}
 
-	return sendRequest(reqURL.String(), dynamoItem)
+	return c.sendRequest(reqURL.String(), dynamoItem)
 }
 
 // Helper function to extract partition key
@@ -438,7 +465,7 @@ func extractNonMetadata(item TableItem) map[string]interface{} {
 
 // Helper function to send the request and process response
 // Update the sendRequest function to handle errors properly
-func sendRequest(url string, data interface{}) error {
+func (c *CrudAPI) sendRequest(url string, data interface{}) error {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return fmt.Errorf("error marshaling item to JSON: %v", err)
@@ -455,6 +482,8 @@ func sendRequest(url string, data interface{}) error {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	// Set the API key header
+	req.Header.Set("x-api-key", c.apiKey) // <- standard for API Gateway
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -523,6 +552,7 @@ func (c *CrudAPI) Update(tableName string, updateOp UpdateOperation) error {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", c.apiKey)
 
 	// Make the request
 	client := &http.Client{}
@@ -553,7 +583,7 @@ func (c *CrudAPI) Update(tableName string, updateOp UpdateOperation) error {
 // Delete removes an item from the specified table
 func (c *CrudAPI) Delete(tableName string, key string, val string, metadata string) error {
 	// Build the URL with query parameters
-	fmt.Println("key, val:", key, val)
+	fmt.Println("DELETING: key, val:", key, val)
 	apiRoute := finalUrl(tableName, "DELETE", c.apiGatewayURL, val, metadata)
 	reqURL, err := url.Parse(apiRoute)
 
@@ -583,6 +613,7 @@ func (c *CrudAPI) Delete(tableName string, key string, val string, metadata stri
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", c.apiKey)
 
 	// Make the request
 	client := &http.Client{}

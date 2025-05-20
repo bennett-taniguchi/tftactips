@@ -7,6 +7,7 @@ services:
       - "8080:8080"
     environment:
       - API_GATEWAY_URL=https://mga0vgs4zg.execute-api.us-east-1.amazonaws.com/prod
+      - API_GATEWAY_KEY=sSdUbnYefi3RxoPLruBnn6KaJmFEiMr09vh0Vaxe
       - PORT=8080
       - AWS_REGION=us-east-1
       - TFT_CURRENT_SET=14
@@ -24,11 +25,11 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "5173:5173"
+      - "80:5173"
  
     volumes:
       - ./frontend/src:/app/src
-      - ./frontend/public:/app/public\
+      - ./frontend/public:/app/public
       - /app/node_modules
     depends_on:
       - backend

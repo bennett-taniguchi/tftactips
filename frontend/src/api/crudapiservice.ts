@@ -224,8 +224,10 @@ export const CrudService = {
   update: async (
     tableName: TableName,
     key: Key,
-    updates: Item
+    updates: Item,
+    token:String
   ): Promise<void> => {
+    token;
     try {
       // Format for DynamoDB update operation
       const updateExpressionParts: string[] = [];
@@ -297,7 +299,7 @@ export const CrudService = {
          
         }
       );
-
+      console.log("delete request:",`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}&token=${token}&pkey=BUILD%23&pval=${key}&metadata=${metadata}`)
       if (!response.ok) {
         const error = await response.json();
         throw new ApiError(

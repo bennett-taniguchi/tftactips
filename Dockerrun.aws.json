@@ -1,0 +1,68 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "479032281765.dkr.ecr.us-east-1.amazonaws.com/teamfight/main/frontend:latest",
+      "essential": true,
+      "memory": 256,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 5173
+        }
+      ],
+      "environment": [
+        {
+          "name": "VITE_API_URL",
+          "value": "http://localhost:8080"
+        },
+        {
+          "name": "VITE_AUTH0DOMAIN",
+          "value": "dev-a0oi0uq2ah7wnkxf.us.auth0.com"
+        },
+        {
+          "name": "VITE_AUTH0CLIENTID",
+          "value": "ijy2cm6uFgnroDBuHkjSZhhQnOjQu4cH"
+        }
+      ],
+      "links": [
+        "backend"
+      ]
+    },
+    {
+      "name": "backend",
+      "image": "479032281765.dkr.ecr.us-east-1.amazonaws.com/teamfight/main/backend:latest",
+      "essential": true,
+      "memory": 256,
+      "portMappings": [
+        {
+          "hostPort": 8080,
+          "containerPort": 8080
+        }
+      ],
+      "environment": [
+        {
+          "name": "PORT",
+          "value": "8080"
+        },
+        {
+          "name": "API_GATEWAY_URL",
+          "value": "https://mga0vgs4zg.execute-api.us-east-1.amazonaws.com/prod"
+        },
+        {
+          "name": "API_GATEWAY_KEY",
+          "value": "sSdUbnYefi3RxoPLruBnn6KaJmFEiMr09vh0Vaxe"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "TFT_CURRENT_SET",
+          "value": "14"
+        }
+      ]
+    }
+  ]
+}

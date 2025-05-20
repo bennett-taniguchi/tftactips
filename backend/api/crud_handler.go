@@ -56,6 +56,7 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 
 	tokenValidated := false
 	buildSlotsValidated := false
+	buildSlotsValidated = validateBuildSlots(w, h, email)
 	// if we are getting user-specific data or modifying data, must have valid token!
 	if token != "" || r.Method != "GET" || tableName == "tft_builds" && r.Method != "GET" { // err without && statementn for some reason
 		tokenValidated = validateToken(w, token, email)
@@ -66,7 +67,7 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	}
 	// verify enough build spaces left && if we are dealing with a non generic get all case
 	if r.Method == "POST" && tableName == "tft_builds" || r.Method == "PUT" && tableName == "tft_builds" {
-		buildSlotsValidated = validateBuildSlots(w, h, email)
+
 		if !buildSlotsValidated {
 			http.Error(w, "Too Many Builds", http.StatusBadRequest)
 			return
@@ -78,7 +79,8 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 	if !userSpecificTable && !staticTable {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
-	fmt.Println("id:", id, "email:", email, "pkey", pkey, "pval", pval)
+	fmt.Println("token:", token, "id:", id, "email:", email, "pkey", pkey, "pval", pval, "method:", r.Method)
+	fmt.Println("tokenValidated", tokenValidated, "buildSlotsValidated", buildSlotsValidated, "userSpecificTable", userSpecificTable)
 	switch r.Method {
 	case "GET":
 		// add specific tables to check { better to have covered by invariant before}
@@ -123,6 +125,7 @@ func (h *CrudHandler) handleCrud(w http.ResponseWriter, r *http.Request) {
 		}
 	case "DELETE":
 		if tokenValidated && buildSlotsValidated && userSpecificTable {
+			fmt.Println("handling delete conditions passed:")
 			h.handleDelete(w, r, tableName)
 		}
 	default:

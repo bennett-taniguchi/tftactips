@@ -9,9 +9,10 @@ import {
   DraggableChampion,
   TFTBoardContainer,
 } from "@/components/hexes/TFTBoard";
- 
+
 import { Link } from "react-router-dom";
-import { ChampionsDialog } from "@/components/champion/ChampionsDialog"; import { SmallAugmentBox } from "@/components/augment/SmallAugmentBox";
+import { ChampionsDialog } from "@/components/champion/ChampionsDialog";
+import { SmallAugmentBox } from "@/components/augment/SmallAugmentBox";
 import { AugmentsDialog } from "@/components/augment/AugmentDialog";
 import createBuild from "@/api/createbuild";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -28,12 +29,10 @@ interface Champion {
 }
 
 interface Augment {
- 
-    name: string;
-    desc?: string;
-    effects?: Record<string, any>;
-    imageHighS3?: string;
- 
+  name: string;
+  desc?: string;
+  effects?: Record<string, any>;
+  imageHighS3?: string;
 }
 
 interface PlacedChampions {
@@ -46,16 +45,15 @@ export interface PhaseState {
   selectedAugments: Augment[];
 }
 
- 
 export type GamePhaseType = "early" | "mid" | "late";
 
 export default function EditableBuildScreen(): JSX.Element {
-  const {user,getAccessTokenSilently} = useAuth0()
-  const [token,setToken] = useState('')
-  
-  const [description,setDescription] = useState("")
+  const { user, getAccessTokenSilently } = useAuth0();
+  const [token, setToken] = useState("");
 
-  const { champions, augments } = useGlobalContext() ;
+  const [description, setDescription] = useState("");
+
+  const { champions, augments } = useGlobalContext();
   const [buildName, setBuildName] = useState<string>("My TFT Build");
   const [selectedPhase, setSelectedPhase] = useState<GamePhaseType>("mid");
 
@@ -66,18 +64,18 @@ export default function EditableBuildScreen(): JSX.Element {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [augmentDialogOpen, setAugmentDialogOpen] = useState(false);
-  
 
   useEffect(() => {
-    async function getToken(){ 
-      let v = await getAccessTokenSilently( { authorizationParams:{scope: 'openid profile email'} })
-      setToken(v+"")
+    async function getToken() {
+      let v = await getAccessTokenSilently({
+        authorizationParams: { scope: "openid profile email" },
+      });
+      setToken(v + "");
     }
-    getToken()
-  },[user])
-  useEffect(() => {
-  },[token])
-  
+    getToken();
+  }, [user]);
+  useEffect(() => {}, [token]);
+
   // Keep track of champions and augments for each game phase
   const [phaseState, setPhaseState] = useState<
     Record<GamePhaseType, PhaseState>
@@ -103,10 +101,10 @@ export default function EditableBuildScreen(): JSX.Element {
           selectedAugments: selectedAugments,
         },
       }));
-      
+
       // Then update the ref for the next change
       previousPhaseRef.current = selectedPhase;
-      
+
       // Load the new phase's state
       setBoardChampions(phaseState[selectedPhase].boardChampions || {});
       setSelectedChampions(phaseState[selectedPhase].selectedChampions || []);
@@ -139,9 +137,7 @@ export default function EditableBuildScreen(): JSX.Element {
 
   // Handle removing an augment from selection
   const handleRemoveAugment = (name: string): void => {
-    setSelectedAugments((prev) =>
-      prev.filter((a) => a.name !== name)
-    );
+    setSelectedAugments((prev) => prev.filter((a) => a.name !== name));
   };
 
   // Handle dropping a champion on the board
@@ -167,14 +163,13 @@ export default function EditableBuildScreen(): JSX.Element {
     });
   };
 
-function tryToInsert() {
-  if(user && token) {
-    createBuild(token,buildName,description,user,phaseState)
-  }else {
-    console.log("not logged")
+  function tryToInsert() {
+    if (user && token) {
+      createBuild(token, buildName, description, user, phaseState);
+    } else {
+      console.log("not logged");
+    }
   }
-
-}
   return (
     <div
       className="fixed top-0 left-0 w-screen h-screen z-50 flex flex-col bg-radial-[at_50%_75%] from-cyan-600/20 via-emerald-900/70 to-indigo-800/50 to-90%"
@@ -200,18 +195,33 @@ function tryToInsert() {
             `,
           }}
         />
-         
+
         <Link to="/builds">
           <button className="left-0 bg-red-800/50 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors duration-300">
             Go back
           </button>
-        </Link >
-        
-        <Button disabled={description.length==0 || buildName.length==0 || !phaseState} onClick={ ()=>tryToInsert()} className="bg-green-800/50 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-300">
-        <Link to="/builds">
-            Save as build</Link>
+        </Link>
+        {user ? (
+          <Button
+            disabled={
+              description.length == 0 || buildName.length == 0 || !phaseState
+            }
+            onClick={() => tryToInsert()}
+            className="bg-green-800/50 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-300"
+          >
+            <Link to="/builds">Save as build</Link>
           </Button>
-          
+        ) : (
+          <Button
+            disabled={
+              description.length == 0 || buildName.length == 0 || !phaseState
+            }
+            onClick={() => tryToInsert()}
+            className="bg-gray-800/50 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-colors duration-300"
+          >
+            <Link to="/builds">Log in to create and save builds.</Link>
+          </Button>
+        )}
       </div>
 
       {/* Main content - split into two panes */}
@@ -253,9 +263,7 @@ function tryToInsert() {
           {/* Board Positioning */}
           <div
             className="mb-4 bg-gray-950/50 rounded-md relative overflow-hidden basis-11/20 w-9/10 mx-auto border-emerald-400/90 border"
-            style={{
-             
-            }}
+            style={{}}
             ref={boardContainerRef}
           >
             <h2 className="text-white/90 text-2xl font-bold font-inter p-2 bg-black text-center">
@@ -278,7 +286,7 @@ function tryToInsert() {
           <div className="mb-2 mx-[2svw]">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-white ml-1 text-2xl font-bold font-inter">
-              Champions
+                Champions
               </h2>
             </div>
 
@@ -301,7 +309,7 @@ function tryToInsert() {
               ) : (
                 <div className="col-span-5 flex items-center justify-center h-full">
                   <div className="text-white/50 font-bold text-center ml-9">
-                    No champions added yet 
+                    No champions added yet
                   </div>
                 </div>
               )}
@@ -323,7 +331,6 @@ function tryToInsert() {
               <h2 className="text-white text-2xl  ml-1 font-bold font-inter">
                 Augments
               </h2>
-              
             </div>
             <div className="grid grid-cols-5 gap-3 text-white bg-gray-900/70 border-2 border-cyan-400/80 [border-style:dashed] p-2 rounded-md min-h-[140px]">
               {selectedAugments.length !== 0 ? (
@@ -343,7 +350,7 @@ function tryToInsert() {
               ) : (
                 <div className="col-span-5 flex items-center justify-center h-full">
                   <div className="text-white/50 font-bold text-center ml-10">
-                    No augments added yet 
+                    No augments added yet
                   </div>
                 </div>
               )}
@@ -364,8 +371,7 @@ function tryToInsert() {
         <div className="w-1/3 p-4">
           <h2 className="text-white text-xl font-bold mb-2">Build Guide</h2>
           <textarea
-          
-          onChange={(e)=>setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             className="w-full h-[calc(100vh-140px)] bg-black/20 border border-emerald-800/90 rounded-md p-4 text-gray-300 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
             placeholder="Write your build guide here..."
           />

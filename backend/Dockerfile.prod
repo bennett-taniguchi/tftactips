@@ -1,0 +1,41 @@
+# Build stage
+FROM golang:1.24-alpine AS build
+
+WORKDIR /app
+
+# Copy go.mod and go.sum files
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+
+# If you need to create the data directory (if it doesn't exist)
+RUN mkdir -p /app/data
+
+# Production stage
+FROM alpine:latest
+
+WORKDIR /app
+
+# Copy binary from build stage
+COPY --from=build /app/main .
+
+# Create data directory in the production image
+RUN mkdir -p /app/data
+
+# Set environment variable for export directory
+ENV EXPORT_DIR=/app/data/exports
+
+# Only copy the data directory if you're certain it exists and needs to be copied
+# If the directory might not exist, don't include this line:
+# COPY --from=build /app/data ./data
+
+# Expose port
+EXPOSE 8080
+
+# Run the Go backend
+CMD ["./main"]
