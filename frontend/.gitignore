@@ -26,3 +26,7 @@ dist-ssr
 # should be simple
 .env
 .yml
+
+# workers
+workers/.dev.vars
+.env.local

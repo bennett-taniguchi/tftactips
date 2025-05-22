@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 const domain = import.meta.env.VITE_AUTH0DOMAIN!
 const clientId = import.meta.env.VITE_AUTH0CLIENTID!
- 
+ console.log(domain,clientId)
 createRoot(document.getElementById('root')!).render(
   <StrictMode >
    <BrowserRouter>

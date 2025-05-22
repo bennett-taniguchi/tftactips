@@ -94,7 +94,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
         CrudService.getAll("tft_augments"),
         CrudService.getAll("tft_items")
       ]);
-      
+      console.log(traitResult,championResult,augmentResult,itemResult)
       const sortedChampionResult = championResult.sort(
         (a : Item, b: Item) => JSON.parse(a.data).cost - JSON.parse(b.data).cost
       );

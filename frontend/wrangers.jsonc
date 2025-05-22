@@ -1,0 +1,9 @@
+{
+  "name": "teamfight-api-proxy",
+  "main": "workers/src/index.ts",
+  "compatibility_date": "2025-05-21",
+  "workers_dev": true,
+  "vars": {
+    "API_GATEWAY_STAGE": "prod"
+  }
+}

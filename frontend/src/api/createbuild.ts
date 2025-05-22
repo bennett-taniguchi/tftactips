@@ -1,14 +1,16 @@
-import { GamePhaseType, PhaseState } from "@/components/builds/Build/EditableBuildScreen/EditableBuildScreen";
+import {
+  GamePhaseType,
+  PhaseState,
+} from "@/components/builds/Build/EditableBuildScreen/EditableBuildScreen";
 import CrudService from "./crudapiservice";
- 
+
 export default function createBuild(
-  token:string,
+  token: string,
   title: string,
   desc: string,
- user:any,
-  phaseData:   Record<GamePhaseType, PhaseState>
+  user: any,
+  phaseData: Record<GamePhaseType, PhaseState>
 ) {
-
   // check title,desc,phaseData
   if (title == "" || title == "My TFT Build") {
     // edit title case
@@ -21,29 +23,27 @@ export default function createBuild(
     // handle empty desc if needed
   }
 
-  if(!user||!user.email) return;
- 
-    let buildItem = {
-    "BUILD#": title,  // This follows DynamoDB naming convention for partition keys
-    "METADATA": new Date()+"",  // This follows DynamoDB naming convention for sort keys
+  if (!user || !user.email) return;
+
+  let buildItem = {
+    "BUILD#": title, // This follows DynamoDB naming convention for partition keys
+    METADATA: new Date() + "", // This follows DynamoDB naming convention for sort keys
     title: title,
     desc: desc,
     name: title,
     data: phaseData,
-    email:user.email,
-  
+    email: user.email,
   };
 
   try {
-   
-    CrudService.create("tft_builds", buildItem,token);
+    CrudService.create("tft_builds", buildItem, token);
   } catch (e) {
     console.log(e);
   }
 
- 
   // fill in with proper
-  if(!user)
-console.log("createbuild.ts : Error user or item schema invalid for build insertion!")
- 
+  if (!user)
+    console.log(
+      "createbuild.ts : Error user or item schema invalid for build insertion!"
+    );
 }

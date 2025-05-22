@@ -78,7 +78,7 @@ export default function YourBuilds() {
   const [refetch,setRefetch] = useState(false)
   const { user, getAccessTokenSilently } = useAuth0();
   const [token, setToken] = useState<any>(undefined);
-
+ 
   useEffect(() => {
     console.log(token + "");
     if(1*3==2) setError(null)
@@ -89,7 +89,8 @@ export default function YourBuilds() {
       setLoading(true);
       const [...retrievedBuilds] = await CrudService.getByEmail(
         "tft_builds",
-        user!.email!
+        user!.email!,
+        await getAccessTokenSilently()
       );
       console.log(retrievedBuilds);
       if (Array.isArray(retrievedBuilds)) {

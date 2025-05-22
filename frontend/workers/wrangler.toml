@@ -1,0 +1,23 @@
+# name = "teamfight-api-proxy"
+# main = "src/index.ts"
+# compatibility_date = "2025-05-01"
+
+# # Routes should be defined as an array
+# [[routes]]
+# pattern = "api.yourdomain.com/*"
+# zone_name = "yourdomain.com"
+
+# # For local development, this is fine
+# workers_dev = true
+
+# # Add your environment variables here
+# [vars]
+# API_GATEWAY_STAGE = "prod"
+name = "teamfight-api-proxy"
+main = "src/index.ts"  # Relative to workers directory
+compatibility_date = "2025-05-21"  # Updated to today's date
+
+workers_dev = true
+
+[vars]
+API_GATEWAY_STAGE = "prod"

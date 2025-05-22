@@ -7,7 +7,7 @@
 
 // Base API URL - adjust to match your Go backend
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_BASE_URL = "http://127.0.0.1:8787";
 
 // Table names that can be used with the API
 export type TableName =
@@ -38,7 +38,15 @@ interface ApiResponse {
 }
 
 interface GetItemsResponse extends ApiResponse {
-  items: Item[];
+  Items: Item[];
+  Count: number;
+  ScannedCount: number;
+  $metadata: {
+    attempts: number;
+    httpStatusCode: number;
+    requestID: string;
+    totalRetryDelay: number;
+  };
 }
 
 // Error class for API errors
@@ -61,23 +69,19 @@ export const CrudService = {
     pkey: string,
     pval: string,
     email: string,
-    token:string,
+    token: string
   ): Promise<Item[]> => {
-     let queryString =`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}&${pkey}=${pval}&token=${token}`
-    console.log(
-      queryString
-    );
+    let table = tableName.split("_")[1];
+    let queryString = `${API_BASE_URL}/${table}/GET?TableName=${tableName}&email=${email}&${pkey}=${pval}&token=${token}`;
+    console.log(queryString);
     try {
-      const response = await fetch(
-        queryString,
-        {
-          method: "GET",
+      const response = await fetch(queryString, {
+        method: "GET",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         const error = await response.json();
@@ -89,7 +93,7 @@ export const CrudService = {
 
       const data = (await response.json()) as GetItemsResponse;
       console.log("data");
-      return data.items || [];
+      return data["Items"] || [];
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -98,26 +102,28 @@ export const CrudService = {
     }
   },
 
-  getByEmail: async(tableName:TableName,email:string,flags?:Record<string,string>): Promise<Item[]> => {
-
-    let queryString =`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}`
-    if(flags) {
-       Object.entries(flags).forEach(([key,value]) => {
-        queryString += `&${key}=${value}`
-       })
+  getByEmail: async (
+    tableName: TableName,
+    email: string,
+    token:string,
+    flags?: Record<string, string>
+  ): Promise<Item[]> => {
+    let table = tableName.split("_")[1];
+    let queryString = `${API_BASE_URL}/${table}/?GET?TableName=${tableName}&email=${email}&token=${token}`;
+    if (flags) {
+      Object.entries(flags).forEach(([key, value]) => {
+        queryString += `&${key}=${value}`;
+      });
     }
     console.log(queryString);
     try {
-      const response = await fetch(
-        queryString,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("response",response)
+      const response = await fetch(queryString, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("response", response);
       if (!response.ok) {
         const error = await response.json();
         throw new ApiError(
@@ -125,17 +131,16 @@ export const CrudService = {
           response.status
         );
       }
-     
+
       const data = (await response.json()) as GetItemsResponse;
-      console.log("data",data);
-      return data.items || [];
+      console.log("data", data);
+      return data["Items"] || [];
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
       }
       throw new ApiError((error as Error).message);
     }
-
   },
   /**
    * Get all items from a table
@@ -143,10 +148,11 @@ export const CrudService = {
    * @returns Promise with array of items
    */
   getAll: async (tableName: TableName): Promise<Item[]> => {
-    console.log(`${API_BASE_URL}/api/crud/?table=${tableName}`);
+    let table = tableName.split("_")[1];
+    console.log(`${API_BASE_URL}/${table}/GET?TableName=${tableName}`);
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}`,
+        `${API_BASE_URL}/${table}/GET?TableName=${tableName}`,
         {
           method: "GET",
           headers: {
@@ -164,8 +170,9 @@ export const CrudService = {
       }
 
       const data = (await response.json()) as GetItemsResponse;
-      console.log("data");
-      return data.items || [];
+
+      console.log("data", data);
+      return data["Items"] || [];
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -180,16 +187,20 @@ export const CrudService = {
    * @param item The item data to create
    * @returns Promise that resolves when creation is successful
    */
-  create: async (tableName: TableName, item: Item,token:string): Promise<void> => {
+  create: async (
+    tableName: TableName,
+    item: Item,
+    token: string
+  ): Promise<void> => {
     try {
       // Ensure the item has a unique ID if not provided
       if (!item.id) {
         item.id = Date.now().toString();
       }
-      
-      
+      let table = tableName.split("_")[1];
+
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}&token=${token}&email=${item.email}`,
+        `${API_BASE_URL}/${table}/GET?TableName=${tableName}&token=${token}&email=${item.email}`,
         {
           method: "POST",
           headers: {
@@ -225,7 +236,7 @@ export const CrudService = {
     tableName: TableName,
     key: Key,
     updates: Item,
-    token:String
+    token: String
   ): Promise<void> => {
     token;
     try {
@@ -254,9 +265,9 @@ export const CrudService = {
         UpdateExpression: `SET ${updateExpressionParts.join(", ")}`,
         ExpressionAttributeValues: expressionAttributeValues,
       };
-
+      let table = tableName.split("_")[1];
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}`,
+        `${API_BASE_URL}/${table}/UPDATE?TableName=${tableName}`,
         {
           method: "PUT",
           headers: {
@@ -287,19 +298,28 @@ export const CrudService = {
    * @param key The primary key of the item to delete
    * @returns Promise that resolves when deletion is successful
    */
-  delete: async (tableName: TableName, key: Key, email: string,token:string,metadata:string): Promise<void> => {
+  delete: async (
+    tableName: TableName,
+    key: Key,
+    email: string,
+    token: string,
+    metadata: string
+  ): Promise<void> => {
+    let table = tableName.split("_")[1];
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}&token=${token}&pkey=BUILD%23&pval=${key}&metadata=${metadata}`,
+        `${API_BASE_URL}/${table}/DELETE?TableName=${tableName}&email=${email}&token=${token}&pkey=BUILD%23&pval=${key}&metadata=${metadata}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
-         
         }
       );
-      console.log("delete request:",`${API_BASE_URL}/api/crud/?table=${tableName}&email=${email}&token=${token}&pkey=BUILD%23&pval=${key}&metadata=${metadata}`)
+      console.log(
+        "delete request:",
+        `${API_BASE_URL}/${table}/DELETE?TableName=${tableName}&email=${email}&token=${token}&pkey=BUILD%23&pval=${key}&metadata=${metadata}`
+      );
       if (!response.ok) {
         const error = await response.json();
         throw new ApiError(
